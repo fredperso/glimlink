@@ -615,3 +615,32 @@ test('Notifications — la lecture conseiller ne modifie aucune demande hors viv
     false,
   );
 });
+
+test('Notifications — la démonstration apparaît dans les deux espaces avec des données anciennes vides', () => {
+  const store = initialStore();
+  store.alerts = [];
+  store.requests = [];
+  for (const role of ['company', 'adviser'] as const) {
+    const items = notifications(store, role);
+    assert.equal(items.length, 1);
+    assert.equal(items[0].welcome, true);
+    assert.equal(items[0].read, false);
+  }
+  assert.equal(store.alerts.length, 0);
+  assert.equal(store.requests.length, 0);
+});
+
+test('Notifications — la lecture de bienvenue est indépendante par entreprise et espace', () => {
+  const store = initialStore();
+  const welcome = notifications(store, 'company').find((item) => item.welcome)!;
+  const read = readNotifications(store, 'company', [welcome.id]);
+  assert.equal(notifications(read, 'company').find((item) => item.welcome)?.read, true);
+  assert.equal(notifications(read, 'adviser').find((item) => item.welcome)?.read, false);
+  const other = { ...read, activeCompanyId: 'bloom-studio' };
+  assert.equal(notifications(other, 'company').find((item) => item.welcome)?.read, false);
+  assert.deepEqual(read.students, store.students);
+  assert.deepEqual(read.needs, store.needs);
+  assert.deepEqual(read.requests, store.requests);
+  assert.equal(companyStore(read).notificationWelcomeRead?.adviser, undefined);
+  assert.equal(adviserStore(read).notificationWelcomeRead?.companies, undefined);
+});

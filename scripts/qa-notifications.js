@@ -9,9 +9,10 @@ async (page) => {
   await page.evaluate(()=>localStorage.clear());await page.reload();
   await page.goto('http://glimlink.demo/#/company/home');
   await bell().click();
-  assert(await page.locator('.notification-item').count()===1,'Alerte initiale absente');
+  assert(await page.locator('.notification-item').count()===2,'Alerte initiale absente');
+  await page.getByRole('button',{name:'Compris',exact:true}).click();
   await page.getByRole('button',{name:'Simuler une alerte de talent'}).click();
-  assert(await page.locator('.notification-item').count()===2,'Simulation entreprise absente');
+  assert(await page.locator('.notification-item').count()===3,'Simulation entreprise absente');
   assert((await bell().getAttribute('aria-label')).includes('2 non lues'),'Compteur entreprise non mis à jour');
   await page.locator('.notification-item').first().getByRole('button',{name:'Marquer comme lu',exact:true}).click();
   assert((await bell().getAttribute('aria-label')).includes('1 non lue'),'Lecture individuelle absente');
@@ -28,11 +29,12 @@ async (page) => {
   await close();await page.reload();await bell().click();
   assert(await page.locator('.notification-item.unread').count()===0,'État lu perdu au rechargement');await close();
   await page.getByLabel('Entreprise de démonstration').selectOption('bloom-studio');await bell().click();
-  assert(await page.locator('.notification-item').count()===0,'Alerte d’une autre entreprise exposée');await close();
+  assert(await page.locator('.notification-item').count()===1 && (await page.locator('.notification-item').innerText()).includes('Bienvenue'), 'Alerte d’une autre entreprise exposée');await close();
   await page.goto('http://glimlink.demo/#/adviser/home');await bell().click();
-  assert(await page.locator('.notification-item').count()===0,'État vide conseiller absent');
+  assert(await page.locator('.notification-item').count()===1,'Notification de démonstration conseiller absente');
+  await page.getByRole('button',{name:'Compris',exact:true}).click();
   await page.getByRole('button',{name:'Simuler une demande entreprise'}).click();
-  assert(await page.locator('.notification-item').count()===1,'Demande simulée absente');
+  assert(await page.locator('.notification-item').count()===2,'Demande simulée absente');
   assert((await bell().getAttribute('aria-label')).includes('1 non lue'),'Compteur conseiller absent');
   await page.addScriptTag({content:axeSource});
   violations=await page.evaluate(async()=>(await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>v.id));
@@ -46,5 +48,8 @@ async (page) => {
   await page.reload();assert((await bell().getAttribute('aria-label')).includes('0 non lue'),'Lecture conseiller non persistée');
   report.push({width,status:'pass',violations:[]});
  }
+ await page.evaluate(()=>{const key='glimlink-prototype-v1';const s=JSON.parse(localStorage.getItem(key));delete s.notificationWelcomeRead;s.alerts=s.alerts.map(a=>({...a,read:true}));s.requests=[];localStorage.setItem(key,JSON.stringify(s));});await page.reload();
+ for(const role of ['company','adviser']) { await page.goto('http://glimlink.demo/#/'+role+'/home');assert((await bell().getAttribute('aria-label')).includes('1 non lue'),'Badge absent sur données anciennes : '+role);await bell().click();await page.getByRole('button',{name:'Compris',exact:true}).click();assert((await bell().getAttribute('aria-label')).includes('0 non lue'),'Lecture bienvenue absente');await close();await page.reload();assert((await bell().getAttribute('aria-label')).includes('0 non lue'),'Bienvenue réapparaît après lecture');}
+ report.push({scenario:'Données anciennes avec alertes lues et aucune demande',status:'pass'});
  await page.evaluate(()=>localStorage.clear());await page.reload();return report;
 }

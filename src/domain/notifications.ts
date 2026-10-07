@@ -15,13 +15,30 @@ export type NotificationItem = {
   message: string;
   date: string;
   read: boolean;
-  needId: string;
+  needId?: string;
+  welcome?: boolean;
   studentId?: string;
   simulated?: boolean;
 };
 export function notifications(store: Store, role: Role): NotificationItem[] {
   const scoped = role === 'company' ? companyStore(store) : adviserStore(store);
-  return (
+  const companyId = getCompany(scoped, scoped.activeCompanyId).id;
+  const welcome: NotificationItem = {
+    id: role === 'company' ? `welcome-company-${companyId}` : 'welcome-adviser-campus-a',
+    title: 'Bienvenue dans vos notifications',
+    message:
+      role === 'company'
+        ? 'Découvrez ici les alertes de talents. Le bouton « Simuler une alerte de talent » permet de tester la cloche.'
+        : 'Retrouvez ici les demandes des entreprises. Le bouton « Simuler une demande entreprise » permet de tester la cloche.',
+    date: '',
+    read:
+      role === 'company'
+        ? (scoped.notificationWelcomeRead?.companies ?? []).includes(companyId)
+        : (scoped.notificationWelcomeRead?.adviser ?? false),
+    welcome: true,
+    simulated: true,
+  };
+  const events: NotificationItem[] =
     role === 'company'
       ? scoped.alerts.map((alert) => {
           const need = scoped.needs.find((n) => n.id === alert.needId);
@@ -51,8 +68,8 @@ export function notifications(store: Store, role: Role): NotificationItem[] {
             needId: request.needId,
             simulated: request.message.startsWith('[Simulation]'),
           };
-        })
-  ).sort((a, b) => b.date.localeCompare(a.date));
+        });
+  return [...events, welcome].sort((a, b) => b.date.localeCompare(a.date));
 }
 export function readNotifications(store: Store, role: Role, ids: string[]): Store {
   const allowed = new Set(
@@ -60,15 +77,26 @@ export function readNotifications(store: Store, role: Role, ids: string[]): Stor
       .filter((item) => ids.includes(item.id))
       .map((item) => item.id),
   );
+  const welcome = notifications(store, role).find((item) => item.welcome && allowed.has(item.id));
+  const welcomeRead = { ...store.notificationWelcomeRead };
+  if (welcome) {
+    if (role === 'company')
+      welcomeRead.companies = [
+        ...new Set([...(welcomeRead.companies ?? []), getCompany(store, store.activeCompanyId).id]),
+      ];
+    else welcomeRead.adviser = true;
+  }
   return role === 'company'
     ? {
         ...store,
+        notificationWelcomeRead: welcomeRead,
         alerts: store.alerts.map((alert) =>
           allowed.has(alert.id) ? { ...alert, read: true } : alert,
         ),
       }
     : {
         ...store,
+        notificationWelcomeRead: welcomeRead,
         requests: store.requests.map((request) =>
           allowed.has(request.id) ? { ...request, adviserNotificationRead: true } : request,
         ),

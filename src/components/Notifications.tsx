@@ -41,23 +41,26 @@ export default function Notifications() {
               {item.simulated && <Badge>Simulation</Badge>}
             </div>
             <p>{item.message}</p>
-            <small>{dateLabel(item.date)}</small>
+            {item.date && <small>{dateLabel(item.date)}</small>}
             <div className="notification-actions">
               <Button
                 variant="secondary"
                 onClick={() => {
                   read([item.id]);
+                  if (item.welcome) return;
                   closeModal();
                   if (role === 'company' && item.studentId)
-                    openModal({ kind: 'profile', studentId: item.studentId, needId: item.needId });
+                    openModal({ kind: 'profile', studentId: item.studentId, needId: item.needId! });
                   else go(role === 'company' ? 'alerts' : 'requests');
                 }}
               >
-                {role === 'company'
-                  ? item.studentId
-                    ? 'Voir le profil'
-                    : 'Voir les alertes'
-                  : 'Voir les demandes'}
+                {item.welcome
+                  ? 'Compris'
+                  : role === 'company'
+                    ? item.studentId
+                      ? 'Voir le profil'
+                      : 'Voir les alertes'
+                    : 'Voir les demandes'}
                 <Icon name="arrow" size={16} />
               </Button>
               {!item.read && (

@@ -121,6 +121,7 @@ export type Store = {
   alerts: Alert[];
   companies?: PartnerCompany[];
   activeCompanyId?: string;
+  notificationWelcomeRead?: { companies?: string[]; adviser?: boolean };
 };
 export type Check = { kind: 'ok' | 'unknown' | 'conflict'; text: string };
 
@@ -247,6 +248,9 @@ export function companyStore(store: Store): Store {
   const schools = new Set(companySchools(store, company.id));
   return {
     ...store,
+    notificationWelcomeRead: {
+      companies: (store.notificationWelcomeRead?.companies ?? []).filter((id) => id === company.id),
+    },
     needs: needs.map((need) => ({
       ...need,
       schools: need.schools.filter((school) => schools.has(school)),
@@ -548,6 +552,7 @@ export function adviserStore(store: Store, school = 'campus-a'): Store {
   const needs = adviserNeeds(store, school);
   return {
     ...store,
+    notificationWelcomeRead: { adviser: store.notificationWelcomeRead?.adviser },
     students,
     needs,
     calendars: store.calendars.filter((calendar) => calendar.school === school),
