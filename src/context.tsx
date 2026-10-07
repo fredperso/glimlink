@@ -7,7 +7,7 @@ export type ModalState =
   | { kind: 'request'; needId: string }
   | { kind: 'contact'; companyId?: string }
   | { kind: 'activation'; companyId?: string }
-  | { kind: 'help' | 'invite' | 'reset' | 'import' };
+  | { kind: 'help' | 'invite' | 'reset' | 'import' | 'notifications' };
 export type AppContextValue = {
   store: Store;
   setStore: Dispatch<SetStateAction<Store>>;

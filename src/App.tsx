@@ -1,3 +1,4 @@
+import { notifications } from './domain/notifications.ts';
 import { useEffect, useRef, useState } from 'react';
 import { AppContext, type ModalState } from './context.tsx';
 import { loadStore, persistStore } from './domain/storage.ts';
@@ -70,6 +71,7 @@ export default function App() {
     (n, need) => n + (need.status === 'active' ? need.selected.length : 0),
     0,
   );
+  const notificationCount = notifications(store, current.role).filter((item) => !item.read).length;
   const pending = adviserRequests(store).filter((r) => r.status === 'received').length;
   const companyNav = [
     ['home', 'home', 'Vue d’ensemble', 0],
@@ -235,18 +237,20 @@ export default function App() {
                 <option value="adviser">Conseiller</option>
               </select>
             </label>
-            <a
+            <button
+              type="button"
               className="icon-button notification-button"
-              href={`#/${current.role}/${current.role === 'company' ? 'alerts' : 'requests'}`}
-              aria-label={
-                current.role === 'company'
-                  ? `Talent Alerts, ${unread} non lues`
-                  : `Demandes, ${pending} à traiter`
-              }
+              aria-label={`Notifications, ${notificationCount} non lue${notificationCount > 1 ? 's' : ''}`}
+              aria-haspopup="dialog"
+              onClick={() => setModal({ kind: 'notifications' })}
             >
               <Icon name="bell" />
-              {(current.role === 'company' ? unread : pending) > 0 && <i />}
-            </a>
+              {notificationCount > 0 && (
+                <span className="notification-count" aria-hidden="true">
+                  {notificationCount > 99 ? '99+' : notificationCount}
+                </span>
+              )}
+            </button>
             <span className="initial-avatar header-avatar">
               {current.role === 'company'
                 ? getCompany(store, store.activeCompanyId)

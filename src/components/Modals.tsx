@@ -1,3 +1,4 @@
+import Notifications from './Notifications.tsx';
 import {
   ChoiceSelect,
   CANDIDATE_MOBILITY,
@@ -1222,6 +1223,8 @@ function Help() {
 export default function Modals({ modal }: { modal: ModalState }) {
   const { closeModal, setStore, notify } = useApp();
   switch (modal.kind) {
+    case 'notifications':
+      return <Notifications />;
     case 'profile':
       return (
         <Profile

@@ -1,3 +1,8 @@
+import {
+  notifications,
+  readNotifications,
+  simulateNotification,
+} from '../src/domain/notifications.ts';
 import { applySwipe, undoSwipe } from '../src/domain/swipe.ts';
 import { normalizeSkills, addSkill, skillKey } from '../src/domain/skills.ts';
 import { calendarDay, monthDates, monthSummary } from '../src/domain/calendar.ts';
@@ -527,5 +532,86 @@ test('Swipe — un profil retiré ou hors vivier ne peut pas être sélectionné
   assert.equal(
     applySwipe(store, { needId: 'need-admin', studentId: 'nora', direction: 'right' }),
     store,
+  );
+});
+
+test('Notifications — la simulation entreprise ne publie ni brouillon ni profil hors vivier', () => {
+  const store = initialStore();
+  const next = simulateNotification(store, 'company');
+  const alert = next.alerts[0];
+  assert.equal(next.alerts.length, store.alerts.length + 1);
+  assert.ok(alert.id.startsWith('simulation-'));
+  const need = next.needs.find((item) => item.id === alert.needId)!;
+  assert.ok(visibleStudents(next, need).some((student) => student.id === alert.studentId));
+  assert.deepEqual(next.students, store.students);
+  const closed = {
+    ...store,
+    needs: store.needs.map((need) => ({ ...need, status: 'closed' as const })),
+  };
+  assert.equal(simulateNotification(closed, 'company'), closed);
+});
+
+test('Notifications — lire une alerte reste limité au compte entreprise', () => {
+  const store = initialStore();
+  store.alerts.push({
+    id: 'foreign-alert',
+    needId: 'need-com',
+    studentId: 'maya',
+    read: false,
+    date: '',
+  });
+  const next = readNotifications(
+    store,
+    'company',
+    store.alerts.map((alert) => alert.id),
+  );
+  assert.equal(next.alerts.find((alert) => alert.id === 'alert-nora')?.read, true);
+  assert.equal(next.alerts.find((alert) => alert.id === 'foreign-alert')?.read, false);
+  assert.ok(notifications(next, 'company').every((item) => item.id !== 'foreign-alert'));
+});
+
+test('Notifications — une demande simulée conserve les sélections et un instantané publié', () => {
+  const store = initialStore();
+  const next = simulateNotification(store, 'adviser');
+  assert.equal(next.requests.length, 1);
+  assert.deepEqual(next.needs, store.needs);
+  const request = next.requests[0];
+  assert.ok(request.snapshot);
+  assert.ok(request.message.startsWith('[Simulation]'));
+  assert.equal(request.status, 'received');
+  assert.equal(notifications(next, 'adviser')[0].read, false);
+  const read = readNotifications(next, 'adviser', [request.id]);
+  assert.equal(notifications(read, 'adviser')[0].read, true);
+  assert.equal(read.requests[0].status, 'received');
+  assert.equal(companyStore(read).requests[0].adviserNotificationRead, undefined);
+  assert.equal(
+    read.requests[0].snapshot?.students[0].details.note,
+    request.snapshot.students[0].details.note,
+  );
+});
+
+test('Notifications — la lecture conseiller ne modifie aucune demande hors vivier', () => {
+  const store = simulateNotification(initialStore(), 'adviser');
+  const outsider = store.students.find((student) => student.school !== 'campus-a')!;
+  store.requests.push({
+    id: 'outside-request',
+    needId: store.needs[0].id,
+    studentIds: [outsider.id],
+    message: 'Hors périmètre',
+    date: '',
+    status: 'received',
+  });
+  const next = readNotifications(
+    store,
+    'adviser',
+    store.requests.map((request) => request.id),
+  );
+  assert.equal(
+    next.requests.find((request) => request.id === 'outside-request')?.adviserNotificationRead,
+    undefined,
+  );
+  assert.equal(
+    notifications(next, 'adviser').some((item) => item.id === 'outside-request'),
+    false,
   );
 });

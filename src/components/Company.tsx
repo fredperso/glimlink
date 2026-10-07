@@ -1,3 +1,4 @@
+import { readNotifications } from '../domain/notifications.ts';
 import ValidatedBrief from './ValidatedBrief.tsx';
 import { TalentCard } from './TalentCard.tsx';
 import SwipeDeck from './SwipeDeck.tsx';
@@ -750,10 +751,13 @@ function Alerts() {
         <Button
           variant="secondary"
           onClick={() =>
-            setStore((prev) => ({
-              ...prev,
-              alerts: prev.alerts.map((a) => ({ ...a, read: true })),
-            }))
+            setStore((prev) =>
+              readNotifications(
+                prev,
+                'company',
+                store.alerts.map((alert) => alert.id),
+              ),
+            )
           }
         >
           <Icon name="check" /> Tout marquer comme lu

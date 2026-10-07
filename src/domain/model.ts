@@ -109,6 +109,7 @@ export type Request = {
   adviserId?: string;
   meetingDate?: string;
   followUp?: string;
+  adviserNotificationRead?: boolean;
 };
 export type Alert = { id: string; needId: string; studentId: string; read: boolean; date: string };
 export type Store = {
@@ -252,7 +253,7 @@ export function companyStore(store: Store): Store {
     })),
     requests: store.requests
       .filter((request) => needs.some((need) => need.id === request.needId))
-      .map(({ followUp: _privateFollowUp, ...request }) =>
+      .map(({ followUp: _privateFollowUp, adviserNotificationRead: _privateRead, ...request }) =>
         scopeRequest(
           request,
           store.students.filter((s) => schools.has(s.school)).map((s) => s.id),
