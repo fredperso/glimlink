@@ -113,3 +113,11 @@ Validation : build TypeScript/autonome réussi. `qa-selects.js` et `qa-talents-t
 Le choix Entreprise/Conseiller de l’en-tête utilise désormais un menu dédié : deux options avec leurs intitulés complets, indication de l’espace courant et position bornée à la fenêtre. Le bouton affiche « Espace entreprise » ou « Espace conseiller » sur PC et un libellé court sur téléphone. Le menu se ferme après sélection, clic extérieur, Tab ou Échap. Il conserve les valeurs de rôle et les routes existantes. Les autres sélecteurs de formulaire restent natifs.
 
 `qa-role-picker.js` passe à 1920×1080, 1366×900, 1024×768, 390×844, 320×740 et 740×390 : options lisibles, limites de fenêtre respectées, sélection à la souris, flèches/Home/End/Entrée, fermeture et restauration du focus, sans violation axe WCAG A/AA sur les écrans testés. Les parcours de bascule d’espace de `qa-flows.js` et le test E2E ont été adaptés au nouveau menu. Les vérifications générales mobiles passent également.
+
+## Menus communs à tous les sélecteurs — 7 octobre 2026
+
+Le composant `Select` affiche un bouton de sélection et une liste dans la couche popover : textes complets sur plusieurs lignes, choix courant coché, liste défilante et position ajustée à la fenêtre, même dans un dialogue. Les valeurs de formulaire et la validation obligatoire restent conservées. Le clavier permet les flèches, Home/End, Entrée/Espace, la recherche par préfixe, Échap et Tab. Le choix courant et les erreurs sont associés au contrôle accessible.
+
+`qa-selects.js` passe à 1920, 1366, 1024, 390 et 320 px : sélection souris et clavier, focus, options longues, menu dans les limites de l’écran et aucune violation axe WCAG A/AA sur les écrans testés. La validation d’un champ obligatoire, la valeur FormData et le choix « Autre… » passent également. Les contrôles de menus sur les pages principales passent aussi à 740×390. Captures : `docs/screenshots/selects-1366.png` et `selects-390.png`.
+
+Validation complémentaire : compilation TypeScript et build, 44 tests métier, 10 parcours de `qa-flows.js`, `qa-choices.js` sur 3 formats, et `qa-mobile.js` sur 5 formats (13 pages et 3 fenêtres par format).

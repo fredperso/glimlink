@@ -33,15 +33,82 @@
 }
 body .select-field > select {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  max-width: none;
-  height: 100%;
+  width: 1px;
+  height: 1px;
   min-height: 0;
   margin: 0;
   padding: 0;
   opacity: 0;
+  pointer-events: none;
+}
+body .select-field > .select-trigger {
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
   cursor: pointer;
+}
+.select-trigger:focus-visible {
+  outline: 3px solid #176c43;
+  outline-offset: 3px;
+}
+.select-trigger:disabled {
+  cursor: default;
+}
+.select-menu {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: 6px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid #cbd5cc;
+  border-radius: 12px;
+  background: white;
+  color: #263c35;
+  box-shadow: 0 12px 32px #173a2429;
+}
+.select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.select-option span {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.select-option svg {
+  flex-shrink: 0;
+}
+.select-option[aria-selected='true'] {
+  background: #e7f3e9;
+  color: #145b39;
+  font-weight: 650;
+}
+.select-option.active {
+  outline: 2px solid #176c43;
+  outline-offset: -2px;
+  background: #f1f6ef;
+}
+.select-option[aria-disabled='true'] {
+  color: #69756c;
+  cursor: default;
 }
 .select-field:has(select:focus-visible) {
   outline: 3px solid #176c43;
@@ -115,4 +182,15 @@ body .select-field > select {
   .skill-edit-fields {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+.select-field:has(.select-trigger[aria-invalid='true']) {
+  border-color: #b33b28;
+}
+.select-error {
+  display: block;
+  padding: 0 14px 10px;
+  color: #9a3020;
+  font-size: 14px;
+  line-height: 1.5;
 }
