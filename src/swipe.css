@@ -1,0 +1,356 @@
+.profile-deck {
+  max-width: 980px;
+  margin: 1.75rem auto 0;
+}
+.deck-intro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.deck-intro h2 {
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.deck-intro p,
+.deck-details > p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #52655a;
+}
+.deck-remaining {
+  flex-shrink: 0;
+  padding: 0.5rem 0.75rem;
+  background: #e7efe5;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: #254a37;
+}
+.deck-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 430px) minmax(0, 1fr);
+  gap: 3rem;
+  align-items: center;
+}
+.deck-column {
+  min-width: 0;
+}
+.deck-stage {
+  position: relative;
+  isolation: isolate;
+  padding: 0 10px 15px;
+}
+.deck-back {
+  position: absolute;
+  inset: 16px 22px 0;
+  border-radius: 24px;
+  border: 1px solid #b6c8b9;
+  background: #e5ecdf;
+  z-index: -1;
+}
+.deck-back-one {
+  transform: rotate(3deg);
+}
+.deck-back-two {
+  transform: rotate(-3deg);
+  background: #eff3e9;
+  z-index: -2;
+}
+.deck-front {
+  position: relative;
+  touch-action: pan-y;
+  cursor: grab;
+  transition:
+    transform 220ms ease,
+    opacity 220ms ease;
+  border-radius: 22px;
+  outline-offset: 6px;
+}
+.deck-front.is-dragging {
+  cursor: grabbing;
+  transition: none;
+}
+.deck-front.exit-right {
+  transform: translateX(180px) rotate(14deg);
+  opacity: 0;
+  pointer-events: none;
+}
+.deck-front.exit-left {
+  transform: translateX(-180px) rotate(-14deg);
+  opacity: 0;
+  pointer-events: none;
+}
+.deck-front .talent-card {
+  border-radius: 22px;
+  box-shadow: 0 10px 30px #173a2414;
+}
+.deck-front .talent-art {
+  height: 190px;
+  background: #deebd1;
+}
+.deck-front .talent-art .avatar {
+  width: 150px;
+  height: 150px;
+}
+.deck-front .talent-content {
+  padding: 1.25rem;
+}
+.deck-front .talent-name-row h3 {
+  font-size: 1.65rem;
+}
+.deck-front .talent-actions {
+  border-top: 1px solid #e5ebdf;
+  padding-top: 0.8rem;
+}
+.deck-front .talent-actions .text-button {
+  font-size: 0.875rem;
+  min-height: 44px;
+}
+.deck-stamp {
+  position: absolute;
+  top: 30px;
+  left: 20px;
+  z-index: 2;
+  padding: 0.4rem 0.6rem;
+  border: 3px solid currentColor;
+  border-radius: 8px;
+  font-size: 1.15rem;
+  font-weight: 750;
+  opacity: 0;
+  transform: rotate(-12deg);
+  background: #ffffffed;
+  pointer-events: none;
+}
+.deck-stamp.stamp-select {
+  opacity: 1;
+  color: #187447;
+}
+.deck-stamp.stamp-pass {
+  opacity: 1;
+  color: #97513b;
+}
+.deck-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  margin: 1rem 0 0.65rem;
+}
+.deck-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 56px;
+  padding: 0.8rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 32px;
+  font-size: 1rem;
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: 0 3px 10px #173a240a;
+}
+.deck-action:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.deck-pass {
+  background: white;
+  border-color: #d3c4bd;
+  color: #804631;
+}
+.deck-select {
+  background: #176c43;
+  color: white;
+}
+.deck-select:hover {
+  background: #125336;
+}
+.deck-pass:hover {
+  background: #fbf0e9;
+}
+.deck-keyboard {
+  text-align: center;
+  color: #52655a;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.deck-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+}
+.deck-footer .text-button {
+  font-size: 0.8rem;
+  min-height: 44px;
+}
+.deck-footer .text-button:disabled {
+  color: #6a736d;
+  cursor: default;
+}
+.deck-feedback {
+  min-height: 2.5em;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #315444;
+  text-align: center;
+}
+.deck-details h3 {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+.deck-details h4 {
+  font-size: 0.875rem;
+  margin: 1.5rem 0 0.65rem;
+}
+.deck-details .week {
+  margin-block: 0.5rem;
+}
+.deck-human {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  border-top: 1px solid #cdd9ca;
+  padding-top: 1.25rem;
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.deck-human svg {
+  flex-shrink: 0;
+}
+.deck-finished {
+  padding: 2rem 1.25rem;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #ced9c8;
+  border-radius: 22px;
+  background: white;
+  text-align: center;
+}
+.deck-finished h3 {
+  font-size: 1.35rem;
+}
+.deck-finished p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.view-switch button {
+  gap: 0.35rem;
+}
+@media (max-width: 760px) {
+  .deck-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+    max-width: 450px;
+    margin-inline: auto;
+  }
+  .deck-intro {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .deck-intro p {
+    font-size: 0.875rem;
+  }
+  .deck-remaining {
+    padding: 0.3rem 0.65rem;
+  }
+  .deck-stage {
+    padding-inline: 6px;
+  }
+  .deck-front .talent-art {
+    height: 155px;
+  }
+  .deck-front .talent-art .avatar {
+    width: 125px;
+    height: 125px;
+  }
+  .deck-front .talent-content {
+    padding: 1rem;
+  }
+  .deck-action {
+    padding: 0.75rem 1rem;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+  }
+  .deck-actions {
+    gap: 0.75rem;
+  }
+  .deck-details {
+    padding: 1.25rem 0;
+  }
+  .deck-details h3 {
+    font-size: 1.2rem;
+  }
+  .deck-footer {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .deck-front {
+    transition: none;
+  }
+  .deck-front.exit-right,
+  .deck-front.exit-left {
+    transform: none;
+  }
+}
+
+body .view-switch button {
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.5rem 0.7rem;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+}
+.swipe-discovery .selection-dock {
+  position: static;
+  margin-top: 1.5rem;
+}
+@media (max-width: 760px) {
+  .swipe-discovery .back-link {
+    margin-bottom: 0.75rem;
+  }
+  .swipe-discovery .page-heading {
+    margin-bottom: 1rem;
+  }
+  .swipe-discovery .page-heading h1 {
+    font-size: 1.4rem;
+  }
+  .swipe-discovery .brief-summary {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .swipe-discovery .brief-summary > div > span {
+    display: none;
+  }
+  .swipe-discovery .result-explanation {
+    margin-block: 0.5rem;
+  }
+  .swipe-discovery .profile-deck {
+    margin-top: 1rem;
+  }
+  .swipe-discovery .deck-intro h2 {
+    font-size: 1.15rem;
+  }
+  .swipe-discovery .deck-intro {
+    margin-bottom: 1rem;
+  }
+}
+
+body .view-switch button {
+  color: #425e4a;
+}

@@ -1,0 +1,58 @@
+async (page) => {
+  const assert = (value, message) => { if (!value) throw new Error(message); };
+  const report = [];
+  const response = await page.request.get('https://unpkg.com/axe-core@4.10.3/axe.min.js');
+  const axeScript = await response.text();
+  for (const width of [1440, 390, 320]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.evaluate(() => localStorage.clear()); await page.reload();
+    await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
+    await page.locator('.deck-front').waitFor();
+    assert(await page.getByRole('button', { name: 'Affichage carte par carte' }).getAttribute('aria-pressed') === 'true', 'Cartes pas activées par défaut');
+    let card = page.locator('.deck-front');
+    await card.locator('.talent-art').scrollIntoViewIfNeeded();
+    let bounds = await card.boundingBox();
+    const x = bounds.x + bounds.width / 2, y = bounds.y + 80;
+    await page.mouse.move(x, y); await page.mouse.down(); await page.mouse.move(x + 35, y, { steps: 5 }); await page.mouse.up();
+    assert((await card.innerText()).includes('Sophie'), 'Un petit geste a sélectionné le profil');
+    await page.mouse.move(x, y); await page.mouse.down(); await page.mouse.move(x + 130, y, { steps: 8 });
+    assert(await page.locator('.stamp-select').count() === 1, 'Pas de retour visuel pendant le glissement');
+    await page.mouse.up();
+    await page.locator('.deck-front h3').filter({ hasText: 'Nora' }).waitFor();
+    assert(await page.evaluate(() => JSON.parse(localStorage.getItem('glimlink-prototype-v1')).needs[0].selected.includes('sophie')), 'Swipe droit non enregistré');
+    await page.getByRole('button', { name: 'Annuler le dernier choix' }).click();
+    assert((await page.locator('.deck-front').innerText()).includes('Sophie'), 'Annulation ne restaure pas le profil');
+    card = page.locator('.deck-front'); await card.locator('.talent-art').scrollIntoViewIfNeeded(); bounds = await card.boundingBox();
+    await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + 80); await page.mouse.down(); await page.mouse.move(bounds.x + bounds.width / 2 - 130, bounds.y + 80, { steps: 8 }); await page.mouse.up();
+    await page.locator('.deck-front h3').filter({ hasText: 'Nora' }).waitFor();
+    assert(await page.evaluate(() => JSON.parse(localStorage.getItem('glimlink-prototype-v1')).needs[0].passed.includes('sophie')), 'Swipe gauche non enregistré');
+    await page.locator('.deck-front').focus(); await page.keyboard.press('ArrowRight');
+    await page.locator('.deck-finished').waitFor();
+    await page.getByRole('button', { name: 'Annuler le dernier choix' }).click();
+    await page.locator('.deck-front').waitFor();
+    await page.addScriptTag({ content: axeScript });
+    const axe = await page.evaluate(async () => await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } }));
+    assert(axe.violations.length === 0, 'Accessibilité : ' + axe.violations.map((v) => v.id).join(', '));
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Débordement horizontal');
+    await page.getByRole('button', { name: 'Sélectionner', exact: true }).click();
+    await page.locator('.deck-finished').waitFor();
+    await page.reload();
+    assert(await page.locator('.deck-finished').count() === 1, 'Choix perdus après rechargement');
+    await page.getByRole('button', { name: 'Affichage en grille' }).click();
+    assert(await page.locator('.talent-card').count() > 1, 'Grille indisponible');
+    await page.evaluate(() => localStorage.clear()); await page.reload();
+    await page.getByRole('button', { name: 'Affichage carte par carte' }).click();
+    await page.getByRole('button', { name: 'Voir le profil' }).click();
+    assert(!(await page.getByRole('dialog').innerText()).includes('DURAND'), 'Identité privée exposée');
+    await page.getByRole('button', { name: 'Fermer la fenêtre' }).click();
+    if (await page.getByRole('button', { name: 'Fermer la confirmation' }).count()) await page.getByRole('button', { name: 'Fermer la confirmation' }).click();
+    await page.screenshot({ path: '/home/fjeanne/dev/projets/glimlink/docs/screenshots/swipe-' + width + '.png', fullPage: true });
+    report.push({ width, status: 'pass', violations: [], checks: ['mode par défaut', 'petit geste annulé', 'glissement à droite', 'glissement à gauche', 'annulation', 'clavier', 'fin de pile', 'persistance', 'grille', 'confidentialité'] });
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.getByRole('button', { name: 'Passer', exact: true }).click();
+  await page.locator('.deck-front h3').filter({ hasText: 'Nora' }).waitFor();
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.evaluate(() => localStorage.clear()); await page.reload();
+  return report;
+}

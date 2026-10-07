@@ -1,3 +1,4 @@
+import { applySwipe, undoSwipe } from '../src/domain/swipe.ts';
 import { normalizeSkills, addSkill, skillKey } from '../src/domain/skills.ts';
 import { calendarDay, monthDates, monthSummary } from '../src/domain/calendar.ts';
 import test from 'node:test';
@@ -488,4 +489,43 @@ test('Audit — les références historiques ne révèlent pas un profil hors p�
       !projection.requests[0].snapshot!.students.some((student) => student.id === foreign.id),
     );
   }
+});
+
+test('Swipe — sélectionner avance sans doublon et reste limité au besoin', () => {
+  const store = initialStore();
+  const decision = { needId: 'need-admin', studentId: 'sophie', direction: 'right' as const };
+  const next = applySwipe(store, decision);
+  assert.ok(next.needs[0].selected.includes('sophie'));
+  assert.equal(
+    applySwipe(next, decision).needs[0].selected.filter((id) => id === 'sophie').length,
+    1,
+  );
+  assert.deepEqual(next.needs[1], store.needs[1]);
+});
+test('Swipe — passer un candidat ne retire pas les autres sélections et peut être annulé', () => {
+  const store = initialStore();
+  const decision = { needId: 'need-admin', studentId: 'sophie', direction: 'left' as const };
+  const next = applySwipe(store, decision);
+  assert.ok(next.needs[0].passed.includes('sophie'));
+  assert.deepEqual(next.needs[0].selected, store.needs[0].selected);
+  assert.deepEqual(undoSwipe(next, decision).needs[0], store.needs[0]);
+});
+test('Swipe — annuler une sélection préserve les profils retenus auparavant', () => {
+  const store = initialStore();
+  const decision = { needId: 'need-admin', studentId: 'sophie', direction: 'right' as const };
+  assert.deepEqual(undoSwipe(applySwipe(store, decision), decision).needs[0], store.needs[0]);
+});
+test('Swipe — un profil retiré ou hors vivier ne peut pas être sélectionné', () => {
+  const store = initialStore();
+  store.students[0].status = 'withdrawn';
+  for (const studentId of [
+    'sophie',
+    store.students.find((student) => student.school === 'campus-b')!.id,
+  ])
+    assert.equal(applySwipe(store, { needId: 'need-admin', studentId, direction: 'right' }), store);
+  store.needs[0].status = 'closed';
+  assert.equal(
+    applySwipe(store, { needId: 'need-admin', studentId: 'nora', direction: 'right' }),
+    store,
+  );
 });

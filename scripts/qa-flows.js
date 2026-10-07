@@ -24,11 +24,13 @@ async (page) => {
     );
     await page.locator('#confirm-brief').check();
     await page.getByRole('button', { name: 'C’est exactement ça' }).click();
+    await page.getByRole('button', { name: 'Affichage en grille' }).click();
     await page.locator('.talent-card').first().waitFor();
     assert((await page.locator('.talent-card').count()) === 4, 'Résultats après confirmation');
     report.push({ width, scenario: 'Brief confirmé avant matching', status: 'pass' });
     await reset();
     await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
+    await page.getByRole('button', { name: 'Affichage en grille' }).click();
     await page
       .locator('.talent-card')
       .first()
@@ -63,6 +65,7 @@ async (page) => {
     await page.getByRole('dialog').getByText('Vendredi', { exact: true }).click();
     await page.getByRole('button', { name: 'Enregistrer le calendrier' }).click();
     await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
+    await page.getByRole('button', { name: 'Affichage en grille' }).click();
     await page.getByRole('button', { name: /Conflits identifiés/ }).click();
     for (const name of ['Sophie', 'Inès'])
       assert(
@@ -88,6 +91,7 @@ async (page) => {
     );
     await page.getByRole('button', { name: 'Fermer la fenêtre' }).click();
     await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
+    await page.getByRole('button', { name: 'Affichage en grille' }).click();
     assert(
       (await page.locator('.talent-card').filter({ hasText: 'Alice' }).count()) === 0,
       'Brouillon exposé',

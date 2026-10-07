@@ -1,5 +1,6 @@
 import ValidatedBrief from './ValidatedBrief.tsx';
-import { SkillList } from './Skills.tsx';
+import { TalentCard } from './TalentCard.tsx';
+import SwipeDeck from './SwipeDeck.tsx';
 import { useState } from 'react';
 import { useApp } from '../context.tsx';
 import {
@@ -9,103 +10,11 @@ import {
   requestChanges,
   checkAvailability,
   classifyStudent,
-  scoreFor,
   visibleStudents,
   type Need,
   type Student,
 } from '../domain/model.ts';
-import { Avatar, Badge, Button, Empty, Icon, Week, dateLabel } from './ui.tsx';
-
-export function TalentCard({
-  student,
-  need,
-  compact = false,
-}: {
-  student: Student;
-  need: Need;
-  compact?: boolean;
-}) {
-  const { store, setStore, openModal, notify } = useApp();
-  const data = student.published!;
-  const selected = need.selected.includes(student.id);
-  const calendar = store.calendars.find((c) => c.id === data.trainingId);
-  const checks = checkAvailability(data, calendar, need);
-  const check =
-    checks.find((c) => c.kind === 'conflict') ??
-    checks.find((c) => c.kind === 'unknown') ??
-    checks[0];
-  const toggle = () => {
-    setStore((prev) => ({
-      ...prev,
-      needs: prev.needs.map((n) =>
-        n.id === need.id
-          ? {
-              ...n,
-              selected: selected
-                ? n.selected.filter((id) => id !== student.id)
-                : [...n.selected, student.id],
-            }
-          : n,
-      ),
-    }));
-    notify(
-      selected
-        ? `${data.firstName} retiré de votre sélection`
-        : `${data.firstName} ajouté à votre sélection`,
-    );
-  };
-  return (
-    <article className={`talent-card ${compact ? 'talent-card-compact' : ''}`}>
-      <div className="talent-art">
-        <Avatar variant={student.avatar} />
-        <span className="score">
-          <Icon name="spark" size={14} />
-          {scoreFor(student, need)}
-          <small>%</small>
-        </span>
-        {student.discoveryReason && <span className="art-label">Un autre regard</span>}
-      </div>
-      <div className="talent-content">
-        <div className="talent-name-row">
-          <h3>{data.firstName}</h3>
-          <span>
-            <Icon name="pin" size={14} />
-            {data.location}
-          </span>
-        </div>
-        <p className="training-name">{calendar?.title.split(' · ')[0] ?? 'Formation à vérifier'}</p>
-        <SkillList skills={data.skills} calendars={store.calendars} compact />
-        {student.discoveryReason ? (
-          <p className="discovery-reason">
-            <Icon name="spark" size={16} />
-            {student.discoveryReason}
-          </p>
-        ) : (
-          <p className={`calendar-check check-${check?.kind}`}>
-            <Icon name={check?.kind === 'ok' ? 'check' : 'alert'} size={15} />
-            {check?.text}
-          </p>
-        )}
-        <div className="talent-actions">
-          <button
-            className="text-button"
-            onClick={() => openModal({ kind: 'profile', studentId: student.id, needId: need.id })}
-          >
-            Voir le profil <Icon name="arrow" size={16} />
-          </button>
-          <button
-            className={`select-button ${selected ? 'selected' : ''}`}
-            onClick={toggle}
-            aria-label={`${selected ? 'Retirer' : 'Sélectionner'} ${data.firstName}`}
-            aria-pressed={selected}
-          >
-            <Icon name={selected ? 'check' : 'plus'} size={18} />
-          </button>
-        </div>
-      </div>
-    </article>
-  );
-}
+import { Avatar, Badge, Button, Empty, Icon, dateLabel } from './ui.tsx';
 
 export function AdviserCard() {
   const { openModal } = useApp();
@@ -445,10 +354,8 @@ function Needs() {
 function Discovery() {
   const { store, needId, setStore, openModal, go, notify } = useApp();
   const [tab, setTab] = useState('main');
-  const [mode, setMode] = useState('grid');
-  const [index, setIndex] = useState(0);
+  const [mode, setMode] = useState<'grid' | 'swipe'>('swipe');
   const [showBrief, setShowBrief] = useState(false);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
   const need = store.needs.find((n) => n.id === needId);
   if (!need || need.status === 'closed' || !need.validated)
     return (
@@ -469,27 +376,8 @@ function Discovery() {
         n.id === need.id ? { ...n, passed: [...n.passed, student.id] } : n,
       ),
     }));
-    setIndex(0);
     notify(`${student.published!.firstName} passé. Vous pouvez revoir les profils passés.`);
   };
-  const toggle = (student: Student) => {
-    setStore((prev) => ({
-      ...prev,
-      needs: prev.needs.map((n) =>
-        n.id === need.id
-          ? {
-              ...n,
-              selected: n.selected.includes(student.id)
-                ? n.selected.filter((x) => x !== student.id)
-                : [...n.selected, student.id],
-            }
-          : n,
-      ),
-    }));
-    notify('Sélection mise à jour');
-    setIndex((i) => (current.length > 1 ? (i + 1) % current.length : 0));
-  };
-  const card = current[Math.min(index, current.length - 1)];
   const alternatives = relaxationSuggestions(store, need);
   const blockers = new Map<string, number>();
   for (const student of all)
@@ -500,7 +388,7 @@ function Discovery() {
     ).filter((check) => check.kind !== 'ok'))
       blockers.set(check.text, (blockers.get(check.text) ?? 0) + 1);
   return (
-    <>
+    <div className={mode === 'swipe' ? 'swipe-discovery' : 'grid-discovery'}>
       <a className="back-link" href="#/company/needs">
         ‹ Mes besoins
       </a>
@@ -558,7 +446,6 @@ function Discovery() {
               key={id}
               onClick={() => {
                 setTab(id);
-                setIndex(0);
               }}
               aria-pressed={tab === id}
             >
@@ -574,7 +461,7 @@ function Discovery() {
             className={mode === 'grid' ? 'active' : ''}
             onClick={() => setMode('grid')}
           >
-            <Icon name="grid" size={18} />
+            <Icon name="grid" size={18} /> Grille
           </button>
           <button
             aria-label="Affichage carte par carte"
@@ -582,7 +469,7 @@ function Discovery() {
             className={mode === 'swipe' ? 'active' : ''}
             onClick={() => setMode('swipe')}
           >
-            <Icon name="stack" size={18} />
+            <Icon name="stack" size={18} /> Cartes
           </button>
         </div>
       </div>
@@ -596,7 +483,7 @@ function Discovery() {
               : `${current.length} talents à explorer, à partir des fiches validées par le centre.`}{' '}
         <span>Scores illustratifs de la maquette.</span>
       </p>
-      {current.length ? (
+      {current.length || (mode === 'swipe' && group(tab).length) ? (
         mode === 'grid' ? (
           <div className="talent-grid discovery-grid">
             {current.map((s) => (
@@ -609,45 +496,12 @@ function Discovery() {
             ))}
           </div>
         ) : (
-          <div className="swipe-layout">
-            <div
-              className="swipe-card"
-              onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
-              onTouchEnd={(e) => {
-                if (touchStart !== null && card) {
-                  const delta = e.changedTouches[0].clientX - touchStart;
-                  if (delta < -80) pass(card);
-                  else if (delta > 80) toggle(card);
-                }
-                setTouchStart(null);
-              }}
-            >
-              <TalentCard student={card} need={need} />
-              <div className="swipe-actions">
-                <Button variant="secondary" onClick={() => pass(card)}>
-                  <Icon name="close" /> Passer
-                </Button>
-                <Button onClick={() => toggle(card)}>
-                  <Icon name={need.selected.includes(card.id) ? 'check' : 'heart'} />
-                  {need.selected.includes(card.id) ? 'Retirer' : 'Sélectionner'}
-                </Button>
-              </div>
-              <p className="micro">
-                {Math.min(index + 1, current.length)} / {current.length} · Glissez ou utilisez les
-                boutons.
-              </p>
-            </div>
-            <div className="swipe-context">
-              <h2>Le bon profil, au bon rythme.</h2>
-              <p>Les correspondances sont expliquées. Les points à vérifier aussi.</p>
-              <Week
-                calendar={store.calendars.find((c) => c.id === card.published!.trainingId)}
-                required={need.requiredDays}
-                unavailable={card.published!.unavailableDays}
-              />
-              <AdviserCard />
-            </div>
-          </div>
+          <SwipeDeck
+            key={`${need.id}-${tab}`}
+            students={group(tab)}
+            need={need}
+            onGrid={() => setMode('grid')}
+          />
         )
       ) : (
         <Empty
@@ -774,7 +628,7 @@ function Discovery() {
           </Button>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

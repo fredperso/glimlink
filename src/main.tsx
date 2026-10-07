@@ -8,3 +8,5 @@ import './skills.css';
 createRoot(document.getElementById('root')!).render(<App />);
 
 import './audit-fixes.css';
+
+import './swipe.css';

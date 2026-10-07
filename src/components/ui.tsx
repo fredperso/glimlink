@@ -3,6 +3,12 @@ import { DAYS, type Calendar, type Day } from '../domain/model.ts';
 
 export function Icon({ name, size = 20 }: { name: string; size?: number }) {
   const paths: Record<string, ReactNode> = {
+    undo: (
+      <>
+        <path d="M9 5 4 10l5 5" />
+        <path d="M4 10h9a6 6 0 0 1 0 12" />
+      </>
+    ),
     home: (
       <>
         <path d="m3 10 9-7 9 7v10H3Z" />

@@ -259,7 +259,7 @@ export default function App() {
           </div>
         </header>
         <main id="main" className="main" tabIndex={-1} ref={mainRef}>
-          {current.role === 'company' && (
+          {current.role === 'company' && current.view !== 'discover' && (
             <label className="demo-company-picker">
               Entreprise de démonstration
               <select

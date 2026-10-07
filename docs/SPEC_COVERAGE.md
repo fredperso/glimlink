@@ -60,3 +60,7 @@ La fiche entreprise présente les vues mois/année, les exceptions datées, la d
 L’aide sans résultat explique les contraintes et compte les gains d’assouplissements calculables sur les profils autorisés. Choisir une proposition ouvre le brief en attente de confirmation ; la recherche ne reprend qu’après validation. Ces estimations utilisent les scores fictifs et ne constituent pas un matching sémantique.
 
 Les nouvelles demandes conservent leur contexte initial. Le conseiller voit les modifications de brief, disponibilité, permis, mobilité, retrait ou calendrier intervenues depuis la demande ; les anciennes demandes sans référence invitent à une revérification. Date d’entretien envisagée et compte rendu local complètent l’intermédiation humaine. Le compte rendu est exclu de la projection entreprise. Les états restent illustratifs en attente de l’arbitrage §20.
+
+## Découverte par cartes
+
+L’entreprise découvre les candidats en mode Cartes par défaut : geste à droite pour sélectionner, à gauche pour passer. L’action conserve les listes propres au besoin et peut être annulée dans la session. Les choix persistent localement ; la grille permet de revoir les profils, et les profils passés peuvent être réaffichés. Les cartes utilisent les avatars génériques, le prénom et les données professionnelles publiées. Les informations inconnues et les conflits restent visibles ; une sélection ne déclenche pas une mise en relation automatique. Les gestes ont des alternatives par boutons et clavier, et respectent la préférence de réduction des animations.

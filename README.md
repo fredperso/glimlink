@@ -27,7 +27,7 @@ Le build vérifie TypeScript, génère `dist/` et régénère `maquette.html`. L
 ## Parcours à essayer
 
 1. **Entreprise** : Décrire mon besoin → choisir un exemple → préparer le brief → renseigner le lieu → confirmer → découvrir les talents.
-2. Ouvrir un profil, lire les correspondances et le calendrier ; essayer la grille et les cartes successives.
+2. Explorer les cartes : glisser à droite pour sélectionner, à gauche pour passer ; annuler un choix si nécessaire. Ouvrir la fiche complète pour lire les correspondances et le calendrier. La grille reste disponible.
 3. Sélectionner des talents et demander une mise en relation ; retrouver la demande dans l'espace conseiller.
 4. **Conseiller** : importer un CV fictif → corriger le brouillon → rattacher une formation → contrôler → publier.
 5. Modifier les jours de cours : les profils rattachés héritent du calendrier et leurs contrôles de présence changent.

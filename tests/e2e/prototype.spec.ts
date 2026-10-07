@@ -22,10 +22,12 @@ test('Besoin : confirmer le brief avant de découvrir les profils', async ({ pag
   await expect(
     page.getByRole('heading', { name: 'Accueil & gestion administrative', level: 1 }),
   ).toBeVisible();
+  await page.getByRole('button', { name: 'Affichage en grille' }).click();
   await expect(page.locator('.talent-card')).toHaveCount(4);
 });
 test('Sélection : fiche expliquée et demande transmise à la conseillère', async ({ page }) => {
   await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
+  await page.getByRole('button', { name: 'Affichage en grille' }).click();
   await page
     .locator('.talent-card')
     .first()
@@ -48,12 +50,11 @@ test('Sélection : fiche expliquée et demande transmise à la conseillère', as
 });
 test('V3-05 : modifier un calendrier change le contrôle de deux profils', async ({ page }) => {
   await page.goto('http://glimlink.demo/#/adviser/calendars');
-  await page
-    .getByRole('button', { name: 'Modifier le rythme' })
-    .click();
+  await page.getByRole('button', { name: 'Modifier le rythme' }).click();
   await page.getByRole('dialog').getByText('Vendredi', { exact: true }).click();
   await page.getByRole('button', { name: 'Enregistrer le calendrier' }).click();
   await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
+  await page.getByRole('button', { name: 'Affichage en grille' }).click();
   await page.getByRole('button', { name: /Conflits identifiés/ }).click();
   await expect(page.locator('.talent-card').filter({ hasText: 'Sophie' })).toContainText(
     'Cours le vendredi',
@@ -73,6 +74,7 @@ test('V3-01 : un import reste brouillon avant contrôle et publication', async (
   );
   await page.getByRole('button', { name: 'Fermer la fenêtre' }).click();
   await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
+  await page.getByRole('button', { name: 'Affichage en grille' }).click();
   await expect(page.locator('.talent-card').filter({ hasText: 'Alice' })).toHaveCount(0);
 });
 test('Accessibilité de base : aucun débordement, formulaire et dialog au clavier', async ({

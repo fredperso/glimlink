@@ -1,0 +1,69 @@
+{
+  "domainTests": 38,
+  "desktopAndMobile": [
+    {
+      "width": 1440,
+      "status": "pass",
+      "violations": [],
+      "checks": [
+        "mode par défaut",
+        "petit geste annulé",
+        "glissement à droite",
+        "glissement à gauche",
+        "annulation",
+        "clavier",
+        "fin de pile",
+        "persistance",
+        "grille",
+        "confidentialité"
+      ]
+    },
+    {
+      "width": 390,
+      "status": "pass",
+      "violations": [],
+      "checks": [
+        "mode par défaut",
+        "petit geste annulé",
+        "glissement à droite",
+        "glissement à gauche",
+        "annulation",
+        "clavier",
+        "fin de pile",
+        "persistance",
+        "grille",
+        "confidentialité"
+      ]
+    },
+    {
+      "width": 320,
+      "status": "pass",
+      "violations": [],
+      "checks": [
+        "mode par défaut",
+        "petit geste annulé",
+        "glissement à droite",
+        "glissement à gauche",
+        "annulation",
+        "clavier",
+        "fin de pile",
+        "persistance",
+        "grille",
+        "confidentialité"
+      ]
+    }
+  ],
+  "touch": [
+    {
+      "width": 390,
+      "checks": ["tactile droite", "tactile gauche", "défilement vertical"],
+      "status": "pass"
+    },
+    {
+      "width": 320,
+      "checks": ["tactile droite", "tactile gauche", "défilement vertical"],
+      "status": "pass"
+    }
+  ],
+  "generalJourneys": 10
+}

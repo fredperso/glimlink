@@ -5,7 +5,7 @@ Vérification du 7 octobre 2026, sur les données fictives fournies.
 ## Contrôles
 
 - Compilation TypeScript strict et build Vite : réussis. Génération de `maquette.html` sans dépendance réseau.
-- `rtk npm test` : 34 tests métier réussis, incluant les scénarios V3-01 à V3-12.
+- `rtk npm test` : 38 tests métier réussis, incluant les scénarios V3-01 à V3-12.
 - Navigateur Playwright MCP : 5 parcours testés à 1 440 px et à 390 px, soit 10 exécutions réussies : confirmation du brief ; fiche expliquée, sélection et demande au conseiller ; héritage du calendrier ; import privé et permis inconnu ; navigation clavier, Échap et restauration du focus.
 - Mise en page : 12 vues sur 7 largeurs (320, 360, 390, 600, 768, 1 024 et 1 440 px), soit 84 contrôles sans débordement horizontal.
 - Audit axe-core 4.10.3, règles automatisables WCAG 2 A / AA et WCAG 2.1 AA : 12 vues et 3 fenêtres, sur bureau et mobile, soit 30 audits sans violation détectée après correction des contrastes. Résultats conservés dans `accessibility-report.json`.
@@ -55,3 +55,13 @@ Cinq tests métier supplémentaires vérifient la migration sans niveau inventé
 - Navigation mobile : demandes et partenaires accessibles par « Plus », contrôlé à 390 et 320 px sans réduire la taille des libellés.
 - Les données déjà enregistrées sont migrées sans réinitialisation ; les anciennes demandes sans référence historique affichent une réserve.
 - Le périmètre demeure celui d’une maquette : scores, extraction CV, authentification et e-mails simulés ; décisions §20 conservées comme ouvertes.
+
+## Découverte par swipe
+
+La vue Cartes est le mode par défaut. Les gestes horizontaux déplacent et inclinent la carte, puis sélectionnent à droite ou passent à gauche. Un petit mouvement revient en place ; un mouvement vertical laisse défiler la page. Les profils sélectionnés ou passés quittent la pile. Les boutons, les flèches du clavier, l’annulation de chaque choix et la vue Grille restent disponibles. La consultation des fiches conserve les droits et les champs publics existants.
+
+- 38 tests métier réussis, dont quatre scénarios supplémentaires pour sélection sans doublon, passage réversible, conservation des sélections antérieures et exclusion des profils retirés ou non autorisés.
+- `scripts/qa-swipe.js` : gestes à la souris, aperçu de direction, seuil, boutons, clavier, annulation, fin de pile, rechargement, grille et confidentialité à 1 440, 390 et 320 px ; trois audits axe sans violation. Réduction des animations contrôlée.
+- Événements tactiles Chromium : glissement à droite, à gauche et défilement vertical vérifiés à 390 et 320 px.
+- Les dix parcours généraux ont été rejoués avec succès sur ordinateur et mobile. Les tests de plusieurs profils utilisent explicitement la grille.
+- Captures `docs/screenshots/swipe-*.png` et résultats `swipe-validation-report.json`.
