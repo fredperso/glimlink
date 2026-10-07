@@ -1,3 +1,10 @@
+import {
+  ChoiceSelect,
+  CANDIDATE_MOBILITY,
+  LOCATION_CHOICES,
+  SECTOR_CHOICES,
+  POSITION_CHOICES,
+} from './Choices.tsx';
 import SkillsEditor, { SkillList } from './Skills.tsx';
 import { SKILL_LEVELS, type SkillLevel, addSkill, normalizeSkills } from '../domain/skills.ts';
 import { CalendarExplorer } from './CalendarViews.tsx';
@@ -398,25 +405,28 @@ function StudentEditor({ studentId }: { studentId: string }) {
           </label>
           <label>
             Localisation générale
-            <input
+            <ChoiceSelect
               name="location"
-              autoComplete="off"
               value={draft.location}
-              maxLength={120}
-              onChange={(e) => patch({ location: e.target.value })}
+              options={LOCATION_CHOICES}
+              allowCustom
+              onChange={(location) => patch({ location })}
             />
           </label>
         </div>
         <label>
           Mobilité du candidat
-          <input
+          <ChoiceSelect
             name="mobility"
+            options={CANDIDATE_MOBILITY}
             value={draft.mobility ?? ''}
-            maxLength={160}
-            placeholder="Non renseignée : à vérifier"
-            onChange={(e) => patch({ mobility: e.target.value })}
+            placeholder="À vérifier"
+            onChange={(mobility) => patch({ mobility })}
           />
-          <small>Renseigner uniquement une mobilité confirmée avec le candidat.</small>
+          <small>
+            Distance acceptée depuis le domicile. Choisir uniquement une mobilité confirmée avec le
+            candidat ; le permis reste une information distincte.
+          </small>
         </label>
         {student.published && JSON.stringify(draft) !== JSON.stringify(student.published) && (
           <details className="pending-comparison" open>
@@ -1052,12 +1062,7 @@ function Invitation({
             <div className="form-grid">
               <label>
                 Secteur d’activité
-                <input
-                  name="sector"
-                  autoComplete="off"
-                  required
-                  placeholder="Services aux entreprises…"
-                />
+                <ChoiceSelect name="sector" options={SECTOR_CHOICES} required allowCustom />
               </label>
               <label>
                 Contact principal
@@ -1070,12 +1075,7 @@ function Invitation({
               </label>
               <label>
                 Fonction
-                <input
-                  name="position"
-                  autoComplete="organization-title"
-                  required
-                  placeholder="Responsable d’entreprise…"
-                />
+                <ChoiceSelect name="position" options={POSITION_CHOICES} required allowCustom />
               </label>
               <label>
                 Téléphone

@@ -7,16 +7,17 @@ async (page) => {
  for(const width of [1440,390,320]){
   await page.setViewportSize({width,height:width===1440?1000:844});await page.evaluate(()=>localStorage.clear());await page.reload();await open();
   const dialog=page.getByRole('dialog');
-  await dialog.getByLabel('Nom de la compétence',{exact:true}).fill('Power BI');
+  await dialog.locator('select[name="skillName"]').selectOption('__custom__');
+  await dialog.getByLabel('Préciser un autre choix').fill('Power BI');
   await dialog.getByLabel('Niveau actuel',{exact:true}).selectOption('intermediate');
   await dialog.getByLabel('État d’acquisition',{exact:true}).selectOption('learning');
   await dialog.getByLabel('Associer à la formation actuelle').check();
   await dialog.getByRole('button',{name:'Ajouter la compétence',exact:true}).click();
   assert(await dialog.getByLabel('Niveau de Power BI',{exact:true}).inputValue()==='intermediate','Niveau non attribué');
-  await dialog.getByLabel('Nom de la compétence',{exact:true}).fill('POWER BI');
+  await dialog.getByLabel('Préciser un autre choix').fill('POWER BI');
   await dialog.getByRole('button',{name:'Ajouter la compétence',exact:true}).click();
   assert((await dialog.getByRole('alert').innerText()).includes('déjà présente'),'Doublon accepté');
-  await dialog.getByLabel('Nom de la compétence',{exact:true}).fill('');
+  await dialog.getByLabel('Préciser un autre choix').fill('');
   await dialog.getByRole('button',{name:'Supprimer la compétence Organisation',exact:true}).click();
   assert(await dialog.getByLabel('Niveau de Organisation',{exact:true}).count()===0,'Suppression échouée');
   await dialog.getByRole('button',{name:'Annuler la suppression',exact:true}).click();

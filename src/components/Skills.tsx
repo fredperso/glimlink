@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { ChoiceSelect, SKILL_CHOICES } from './Choices.tsx';
+import { useState } from 'react';
 import type { Calendar } from '../domain/model.ts';
 import { createId } from '../domain/model.ts';
 import {
@@ -81,20 +82,17 @@ export default function SkillsEditor({
   const [linked, setLinked] = useState(false);
   const [error, setError] = useState('');
   const [removed, setRemoved] = useState<{ skill: StudentSkill; index: number } | null>(null);
-  const input = useRef<HTMLInputElement>(null);
   const training = calendars.find((calendar) => calendar.id === trainingId);
   const suggestions = (training?.learningSkills ?? []).filter(
     (item) => !skills.some((skill) => skillKey(skill.name) === skillKey(item.name)),
   );
   function add() {
     if (!name.trim()) {
-      setError('Indiquez le nom de la compétence.');
-      input.current?.focus();
+      setError('Choisissez une compétence ou précisez un autre choix.');
       return;
     }
     if (skills.some((skill) => skillKey(skill.name) === skillKey(name))) {
       setError('Cette compétence est déjà présente. Modifiez son niveau ou son statut.');
-      input.current?.focus();
       return;
     }
     onChange(
@@ -108,7 +106,6 @@ export default function SkillsEditor({
     );
     setName('');
     setError('');
-    input.current?.focus();
   }
   function patch(id: string, values: Partial<StudentSkill>) {
     onChange(skills.map((skill) => (skill.id === id ? { ...skill, ...values } : skill)));
@@ -131,21 +128,21 @@ export default function SkillsEditor({
         <div className="skill-add-fields">
           <label>
             Nom de la compétence
-            <input
-              ref={input}
+            <ChoiceSelect
               name="skillName"
               value={name}
-              maxLength={100}
-              placeholder="Ex. Excel, relation client…"
-              onChange={(event) => {
-                setName(event.target.value);
+              options={[
+                ...SKILL_CHOICES,
+                ...calendars.flatMap((calendar) =>
+                  (calendar.learningSkills ?? []).map((skill) => skill.name),
+                ),
+              ].filter(
+                (option) => !skills.some((skill) => skillKey(skill.name) === skillKey(option)),
+              )}
+              allowCustom
+              onChange={(value) => {
+                setName(value);
                 setError('');
-              }}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  add();
-                }
               }}
             />
           </label>

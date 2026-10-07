@@ -65,3 +65,11 @@ La vue Cartes est le mode par défaut. Les gestes horizontaux déplacent et incl
 - Événements tactiles Chromium : glissement à droite, à gauche et défilement vertical vérifiés à 390 et 320 px.
 - Les dix parcours généraux ont été rejoués avec succès sur ordinateur et mobile. Les tests de plusieurs profils utilisent explicitement la grille.
 - Captures `docs/screenshots/swipe-*.png` et résultats `swipe-validation-report.json`.
+
+## Sélections dans les formulaires — 7 octobre 2026
+
+La mobilité candidat utilise exclusivement une liste : information à vérifier, rayon de 15/30/50 km du domicile, région ou France entière. Le brief entreprise distingue les déplacements locaux, régionaux et nationaux d’un site fixe. Ces choix décrivent une information confirmée, sans ajouter une règle automatique d’éligibilité. Les anciennes valeurs sont conservées comme options existantes, sans conversion approximative.
+
+Les compétences, domaines, secteurs, fonctions et villes proposent des choix. Les listes non exhaustives autorisent un choix personnalisé ; la mobilité ne propose pas cette saisie. Les villes de la maquette sont des suggestions locales, pas un référentiel national. Les domaines et compétences du brief sont repliables et affichent les valeurs sélectionnées. Les descriptions, coordonnées et commentaires restent libres lorsque nécessaire.
+
+Validation : compilation TypeScript et build autonome réussis, 38 tests domaine réussis. `scripts/qa-choices.js` vérifie sélection, ajout d’une compétence, persistance du brouillon, choix multiples, autre ville et absence de débordement à 1440/390/320 px ; aucun problème détecté par axe WCAG A/AA sur ces écrans. Les 30 parcours `qa-audit.js` et les parcours `qa-skills.js` passent également. La séparation brouillon/publication et les permissions entreprise/conseiller sont conservées.

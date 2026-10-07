@@ -1,3 +1,11 @@
+import {
+  ChoiceSelect,
+  MultiChoice,
+  REQUIRED_MOBILITY,
+  LOCATION_CHOICES,
+  SKILL_CHOICES,
+  DOMAIN_CHOICES,
+} from './Choices.tsx';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useApp } from '../context.tsx';
 import { DAYS, createId, type Day, type Need } from '../domain/model.ts';
@@ -257,46 +265,29 @@ export default function NeedBuilder() {
                       Une mission par ligne. Toute mission suggérée doit être confirmée.
                     </small>
                   </label>
-                  <div className="form-grid">
-                    <label>
-                      Compétences proposées à confirmer
-                      <textarea
-                        name="proposedSkills"
-                        rows={3}
-                        value={(brief.proposedSkills ?? []).join('\n')}
-                        onChange={(e) =>
-                          patch({
-                            proposedSkills: e.target.value.split('\n').filter((v) => v.trim()),
-                          })
-                        }
-                      />
-                      <small>
-                        Une compétence par ligne ; propositions liées aux missions, à corriger.
-                      </small>
-                    </label>
-                    <label>
-                      Domaines envisagés
-                      <textarea
-                        name="proposedDomains"
-                        rows={3}
-                        value={(brief.proposedDomains ?? []).join('\n')}
-                        onChange={(e) =>
-                          patch({
-                            proposedDomains: e.target.value.split('\n').filter((v) => v.trim()),
-                          })
-                        }
-                      />
-                      <small>Suggestions facultatives ; la recherche reste transversale.</small>
-                    </label>
-                  </div>
+                  <MultiChoice
+                    label="Compétences proposées à confirmer"
+                    options={SKILL_CHOICES}
+                    values={brief.proposedSkills ?? []}
+                    onChange={(proposedSkills) => patch({ proposedSkills })}
+                  />
+                  <MultiChoice
+                    label="Domaines envisagés"
+                    options={DOMAIN_CHOICES}
+                    values={brief.proposedDomains ?? []}
+                    onChange={(proposedDomains) => patch({ proposedDomains })}
+                  />
+                  <p className="micro">
+                    Suggestions facultatives à confirmer ; la recherche reste transversale.
+                  </p>
                   <label>
                     Mobilité demandée
-                    <input
+                    <ChoiceSelect
                       name="mobility"
+                      options={REQUIRED_MOBILITY}
                       value={brief.mobility ?? ''}
-                      maxLength={160}
-                      placeholder="Ex. déplacements autour de Montpellier, à préciser"
-                      onChange={(e) => patch({ mobility: e.target.value })}
+                      placeholder="À préciser"
+                      onChange={(mobility) => patch({ mobility })}
                     />
                   </label>
                   <div className="form-grid">
@@ -311,15 +302,14 @@ export default function NeedBuilder() {
                         <option>Stage</option>
                       </select>
                     </label>
-                    <label htmlFor="brief-location">
+                    <label>
                       Lieu des missions
-                      <input
-                        id="brief-location"
+                      <ChoiceSelect
                         name="location"
-                        autoComplete="off"
                         value={brief.location}
-                        onChange={(e) => patch({ location: e.target.value })}
-                        placeholder="Ville ou secteur…"
+                        options={LOCATION_CHOICES}
+                        allowCustom
+                        onChange={(location) => patch({ location })}
                       />
                     </label>
                     <label>
