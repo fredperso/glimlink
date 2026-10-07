@@ -231,8 +231,8 @@ export default function App() {
                 value={current.role}
                 onChange={(e) => go('home', undefined, e.target.value as Role)}
               >
-                <option value="company">Espace entreprise</option>
-                <option value="adviser">Espace conseiller</option>
+                <option value="company">Entreprise</option>
+                <option value="adviser">Conseiller</option>
               </select>
             </label>
             <a

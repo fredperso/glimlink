@@ -46,6 +46,8 @@ async (page) => {
     assert(!(await page.getByRole('dialog').innerText()).includes('DURAND'), 'Identité privée exposée');
     await page.getByRole('button', { name: 'Fermer la fenêtre' }).click();
     if (await page.getByRole('button', { name: 'Fermer la confirmation' }).count()) await page.getByRole('button', { name: 'Fermer la confirmation' }).click();
+    await page.evaluate(() => document.activeElement?.blur());
+    await page.waitForTimeout(150);
     await page.screenshot({ path: '/home/fjeanne/dev/projets/glimlink/docs/screenshots/swipe-' + width + '.png', fullPage: true });
     report.push({ width, status: 'pass', violations: [], checks: ['mode par défaut', 'petit geste annulé', 'glissement à droite', 'glissement à gauche', 'annulation', 'clavier', 'fin de pile', 'persistance', 'grille', 'confidentialité'] });
   }
