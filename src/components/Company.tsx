@@ -71,14 +71,42 @@ function NeedRow({ need }: { need: Need }) {
   );
 }
 
+function DiscoveryViewSwitch({
+  mode,
+  onChange,
+}: {
+  mode: 'grid' | 'swipe';
+  onChange: (mode: 'grid' | 'swipe') => void;
+}) {
+  return (
+    <div className="view-switch" aria-label="Affichage des candidats">
+      <button
+        aria-label="Affichage carte par carte"
+        aria-pressed={mode === 'swipe'}
+        className={mode === 'swipe' ? 'active' : ''}
+        onClick={() => onChange('swipe')}
+      >
+        <Icon name="stack" size={18} /> Swipe
+      </button>
+      <button
+        aria-label="Affichage en grille"
+        aria-pressed={mode === 'grid'}
+        className={mode === 'grid' ? 'active' : ''}
+        onClick={() => onChange('grid')}
+      >
+        <Icon name="grid" size={18} /> Grille
+      </button>
+    </div>
+  );
+}
+
 function Home() {
   const { store, go, openModal } = useApp();
+  const [mode, setMode] = useState<'grid' | 'swipe'>('swipe');
   const needs = store.needs.filter((n) => n.status === 'active');
   const need = needs[0];
   const candidates = need
-    ? visibleStudents(store, need)
-        .filter((s) => classifyStudent(store, s, need) === 'main')
-        .slice(0, 3)
+    ? visibleStudents(store, need).filter((s) => classifyStudent(store, s, need) === 'main')
     : [];
   const alerts = store.alerts.filter(
     (a) => !a.read && store.needs.some((n) => n.id === a.needId && n.status === 'active'),
@@ -242,11 +270,21 @@ function Home() {
               Explorer les talents <Icon name="arrow" size={16} />
             </a>
           </div>
-          <div className="talent-grid">
-            {candidates.map((s) => (
-              <TalentCard key={s.id} student={s} need={need} compact />
-            ))}
-          </div>
+          <DiscoveryViewSwitch mode={mode} onChange={setMode} />
+          {mode === 'swipe' ? (
+            <SwipeDeck
+              key={need.id}
+              students={candidates}
+              need={need}
+              onGrid={() => setMode('grid')}
+            />
+          ) : (
+            <div className="talent-grid">
+              {candidates.map((s) => (
+                <TalentCard key={s.id} student={s} need={need} compact />
+              ))}
+            </div>
+          )}
         </section>
       )}
       <div className="confidence-line">
@@ -454,24 +492,7 @@ function Discovery() {
             </button>
           ))}
         </div>
-        <div className="view-switch">
-          <button
-            aria-label="Affichage en grille"
-            aria-pressed={mode === 'grid'}
-            className={mode === 'grid' ? 'active' : ''}
-            onClick={() => setMode('grid')}
-          >
-            <Icon name="grid" size={18} /> Grille
-          </button>
-          <button
-            aria-label="Affichage carte par carte"
-            aria-pressed={mode === 'swipe'}
-            className={mode === 'swipe' ? 'active' : ''}
-            onClick={() => setMode('swipe')}
-          >
-            <Icon name="stack" size={18} /> Cartes
-          </button>
-        </div>
+        <DiscoveryViewSwitch mode={mode} onChange={setMode} />
       </div>
       <p className="result-explanation">
         {tab === 'discover'
@@ -984,7 +1005,7 @@ export function RequestList({ adviser: requestedAdviser = false }: { adviser?: b
 }
 
 export default function Company() {
-  const { view } = useApp();
+  const { view, store } = useApp();
   switch (view) {
     case 'needs':
       return <Needs />;
@@ -1007,6 +1028,6 @@ export default function Company() {
         </>
       );
     default:
-      return <Home />;
+      return <Home key={store.activeCompanyId} />;
   }
 }
