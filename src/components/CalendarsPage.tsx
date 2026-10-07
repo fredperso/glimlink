@@ -1,3 +1,4 @@
+import Select from './Select.tsx';
 import { SKILL_LEVELS } from '../domain/skills.ts';
 import { useState } from 'react';
 import { useApp } from '../context.tsx';
@@ -34,13 +35,13 @@ export default function CalendarsPage() {
       <div className="training-calendar-layout">
         <label className="mobile-training-picker">
           Formation
-          <select value={calendar.id} onChange={(event) => setSelected(event.target.value)}>
+          <Select value={calendar.id} onChange={(event) => setSelected(event.target.value)}>
             {calendars.map((item) => (
               <option key={item.id} value={item.id}>
                 {item.title}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
         <aside className="panel training-picker">
           <h2>Formations</h2>

@@ -1,3 +1,4 @@
+import Select from './Select.tsx';
 import { readNotifications } from '../domain/notifications.ts';
 import ValidatedBrief from './ValidatedBrief.tsx';
 import { TalentCard } from './TalentCard.tsx';
@@ -672,13 +673,13 @@ function Selections() {
       </div>
       <label className="need-select">
         Pour le besoin
-        <select value={need?.id ?? ''} onChange={(e) => go('selections', e.target.value)}>
+        <Select value={need?.id ?? ''} onChange={(e) => go('selections', e.target.value)}>
           {needs.map((n) => (
             <option key={n.id} value={n.id}>
               {n.title}
             </option>
           ))}
-        </select>
+        </Select>
       </label>
       {selected.length ? (
         <>
@@ -968,7 +969,7 @@ export function RequestList({ adviser: requestedAdviser = false }: { adviser?: b
                 </div>
                 <label className="inline-label">
                   Suivi de la demande
-                  <select
+                  <Select
                     value={request.status}
                     onChange={(e) => {
                       const status = e.target.value as typeof request.status;
@@ -986,7 +987,7 @@ export function RequestList({ adviser: requestedAdviser = false }: { adviser?: b
                         {text}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </label>
               </>
             )}

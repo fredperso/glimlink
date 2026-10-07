@@ -1,3 +1,4 @@
+import Select from './components/Select.tsx';
 import { notifications } from './domain/notifications.ts';
 import { useEffect, useRef, useState } from 'react';
 import { AppContext, type ModalState } from './context.tsx';
@@ -229,13 +230,13 @@ export default function App() {
             <label className="role-select">
               <Icon name="grid" size={16} />
               <span className="sr-only">Choisir l’espace de démonstration</span>
-              <select
+              <Select
                 value={current.role}
                 onChange={(e) => go('home', undefined, e.target.value as Role)}
               >
                 <option value="company">Entreprise</option>
                 <option value="adviser">Conseiller</option>
-              </select>
+              </Select>
             </label>
             <button
               type="button"
@@ -266,7 +267,7 @@ export default function App() {
           {current.role === 'company' && current.view !== 'discover' && (
             <label className="demo-company-picker">
               Entreprise de démonstration
-              <select
+              <Select
                 aria-label="Entreprise de démonstration"
                 value={store.activeCompanyId ?? 'maison-alba'}
                 onChange={(e) => {
@@ -282,7 +283,7 @@ export default function App() {
                       {company.name}
                     </option>
                   ))}
-              </select>
+              </Select>
             </label>
           )}
 

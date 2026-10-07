@@ -1,3 +1,4 @@
+import Select from './Select.tsx';
 import {
   ChoiceSelect,
   MultiChoice,
@@ -293,14 +294,14 @@ export default function NeedBuilder() {
                   <div className="form-grid">
                     <label>
                       Type de contrat
-                      <select
+                      <Select
                         name="contract"
                         value={brief.contract}
                         onChange={(e) => patch({ contract: e.target.value })}
                       >
                         <option>Alternance</option>
                         <option>Stage</option>
-                      </select>
+                      </Select>
                     </label>
                     <label>
                       Lieu des missions

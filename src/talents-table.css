@@ -1,0 +1,181 @@
+.talents-table-panel {
+  border: 1px solid #d9e2da;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+.talent-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 14px;
+}
+.talent-table th {
+  text-align: left;
+  background: #eef4ed;
+  color: #385044;
+  font-weight: 650;
+  padding: 16px 12px;
+}
+.talent-table th:nth-child(1) {
+  width: 19%;
+}
+.talent-table th:nth-child(2) {
+  width: 23%;
+}
+.talent-table th:nth-child(3) {
+  width: 25%;
+}
+.talent-table th:nth-child(4) {
+  width: 15%;
+}
+.talent-table th:nth-child(5) {
+  width: 18%;
+}
+body .talent-table .student-row {
+  display: table-row;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.talent-table td {
+  padding: 18px 12px;
+  border-top: 1px solid #e3e9e1;
+  vertical-align: middle;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.talent-table tbody tr:hover {
+  background: #f8fbf6;
+}
+.talent-name > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.talent-name strong {
+  font-size: 14px;
+  font-weight: 650;
+}
+.talent-name .avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+}
+body .talent-table .student-row .badge {
+  margin: 0;
+  grid-column: auto;
+  grid-row: auto;
+  justify-self: start;
+  white-space: normal;
+  font-size: 12px;
+  line-height: 1.5;
+  max-width: 100%;
+}
+body .talent-table .student-row .button {
+  display: inline-flex;
+  white-space: normal;
+  max-width: 100%;
+  width: auto;
+  margin: 0;
+  min-height: 44px;
+  font-size: 13px;
+  padding: 9px 10px;
+}
+.talents-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  font-size: 14px;
+}
+.talents-pagination p {
+  margin: 0;
+  color: #52655a;
+}
+.talents-pagination > label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.talents-pagination .select-field {
+  width: 80px;
+  margin: 0;
+}
+.talents-pagination nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.talents-pagination nav span {
+  white-space: nowrap;
+  font-size: 13px;
+}
+@media (max-width: 760px) {
+  .talent-table,
+  .talent-table tbody {
+    display: block;
+  }
+  .talent-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  body .talent-table .student-row {
+    display: block;
+    padding: 18px 16px;
+    border-top: 1px solid #d9e2da;
+  }
+  body .talent-table .student-row:first-child {
+    border-top: 0;
+  }
+  .talent-table td {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 10px;
+    border: 0;
+    padding: 7px 0;
+  }
+  .talent-table td[data-label]::before {
+    content: attr(data-label);
+    font-size: 12px;
+    font-weight: 600;
+    color: #52655a;
+  }
+  .talent-table .talent-name,
+  .talent-table .talent-action {
+    display: block;
+  }
+  .talent-name strong {
+    font-size: 16px;
+  }
+  .talent-table .talent-name {
+    padding: 0 0 12px;
+  }
+  body .talent-table .talent-action .button {
+    width: 100%;
+    margin-top: 8px;
+  }
+  .talents-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .talents-pagination > label {
+    justify-content: space-between;
+  }
+  .talents-pagination nav {
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .talents-pagination nav .button {
+    padding-inline: 12px;
+    font-size: 13px;
+  }
+}

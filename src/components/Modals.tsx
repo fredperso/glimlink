@@ -1,3 +1,4 @@
+import Select from './Select.tsx';
 import Notifications from './Notifications.tsx';
 import {
   ChoiceSelect,
@@ -484,7 +485,7 @@ function StudentEditor({ studentId }: { studentId: string }) {
         )}
         <label>
           Formation / promotion
-          <select
+          <Select
             name="trainingId"
             value={draft.trainingId}
             onChange={(e) => patch({ trainingId: e.target.value })}
@@ -497,7 +498,7 @@ function StudentEditor({ studentId }: { studentId: string }) {
                   {c.title}
                 </option>
               ))}
-          </select>
+          </Select>
         </label>
         <section className="inherited-calendar">
           <div>
@@ -521,7 +522,7 @@ function StudentEditor({ studentId }: { studentId: string }) {
           </label>
           <label>
             Permis B
-            <select
+            <Select
               name="license"
               aria-label="Permis B"
               value={draft.license}
@@ -530,7 +531,7 @@ function StudentEditor({ studentId }: { studentId: string }) {
               <option value="unknown">Non renseigné</option>
               <option value="yes">Oui, vérifié</option>
               <option value="no">Non détenu</option>
-            </select>
+            </Select>
           </label>
         </div>
         <fieldset>
@@ -948,9 +949,9 @@ function Invitation({
               </label>
               <label>
                 Vivier autorisé
-                <select name="school">
+                <Select name="school">
                   <option>Atelier Campus · Montpellier</option>
-                </select>
+                </Select>
               </label>
               <p className="micro">
                 Un utilisateur par entreprise en V1. Invitation de démonstration, sans envoi.

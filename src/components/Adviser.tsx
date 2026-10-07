@@ -1,3 +1,5 @@
+import TalentsTable from './TalentsTable.tsx';
+import Select from './Select.tsx';
 import Calendars from './CalendarsPage.tsx';
 import { useState } from 'react';
 import { useApp } from '../context.tsx';
@@ -59,17 +61,17 @@ function Students({ preview = false }: { preview?: boolean }) {
             </label>
             <label>
               <span className="sr-only">Statut des profils</span>
-              <select name="status" value={status} onChange={(e) => setStatus(e.target.value)}>
+              <Select name="status" value={status} onChange={(e) => setStatus(e.target.value)}>
                 <option value="all">Tous les statuts</option>
                 <option value="pending">Toutes les corrections à valider</option>
                 <option value="draft">Nouveaux brouillons</option>
                 <option value="published">Profils publiés</option>
                 <option value="withdrawn">Profils retirés</option>
-              </select>
+              </Select>
             </label>
             <label>
               <span className="sr-only">Formation des profils</span>
-              <select
+              <Select
                 name="training"
                 value={training}
                 onChange={(e) => setTraining(e.target.value)}
@@ -82,63 +84,67 @@ function Students({ preview = false }: { preview?: boolean }) {
                       {c.title}
                     </option>
                   ))}
-              </select>
+              </Select>
             </label>
           </div>
         </>
       )}
-      <div className="student-list">
-        {(preview ? list.filter(pendingCorrections).slice(0, 3) : list).map((student) => (
-          <article key={student.id} className="student-row">
-            <Avatar variant={student.avatar} small />
-            <div className="student-row-info">
-              <h3>
-                {student.draft.firstName} {student.personalDetails?.lastName}
-              </h3>
-              <p>
-                {store.calendars.find((c) => c.id === student.draft.trainingId)?.title ??
-                  'Formation à renseigner'}
-              </p>
-              <span>
-                {student.draft.skills
-                  .map(
-                    (skill) => `${skill.name}${skill.status === 'learning' ? ' (en cours)' : ''}`,
-                  )
-                  .join(' · ')}
-              </span>
-            </div>
-            <Badge
-              tone={
-                student.status === 'published'
-                  ? 'green'
+      {!preview ? (
+        <TalentsTable students={list} filterKey={JSON.stringify([query, status, training])} />
+      ) : (
+        <div className="student-list">
+          {(preview ? list.filter(pendingCorrections).slice(0, 3) : list).map((student) => (
+            <article key={student.id} className="student-row">
+              <Avatar variant={student.avatar} small />
+              <div className="student-row-info">
+                <h3>
+                  {student.draft.firstName} {student.personalDetails?.lastName}
+                </h3>
+                <p>
+                  {store.calendars.find((c) => c.id === student.draft.trainingId)?.title ??
+                    'Formation à renseigner'}
+                </p>
+                <span>
+                  {student.draft.skills
+                    .map(
+                      (skill) => `${skill.name}${skill.status === 'learning' ? ' (en cours)' : ''}`,
+                    )
+                    .join(' · ')}
+                </span>
+              </div>
+              <Badge
+                tone={
+                  student.status === 'published'
+                    ? 'green'
+                    : student.status === 'draft'
+                      ? 'warning'
+                      : 'neutral'
+                }
+              >
+                {student.status === 'published'
+                  ? pendingCorrections(student)
+                    ? 'Corrections à valider'
+                    : 'Publié'
                   : student.status === 'draft'
-                    ? 'warning'
-                    : 'neutral'
-              }
-            >
-              {student.status === 'published'
-                ? pendingCorrections(student)
-                  ? 'Corrections à valider'
-                  : 'Publié'
-                : student.status === 'draft'
-                  ? 'À valider'
-                  : 'Retiré'}
-            </Badge>
-            <button
-              className="button button-secondary"
-              onClick={() => openModal({ kind: 'student', studentId: student.id })}
-            >
-              {student.status === 'draft' ? 'Vérifier la fiche' : 'Ouvrir la fiche'}
-              <Icon name="arrow" size={16} />
-            </button>
-          </article>
-        ))}
-        {!list.length && (
-          <Empty title="Aucun talent avec ces filtres">
-            Essayez un autre prénom, une autre compétence ou un autre statut.
-          </Empty>
-        )}
-      </div>
+                    ? 'À valider'
+                    : 'Retiré'}
+              </Badge>
+              <button
+                className="button button-secondary"
+                onClick={() => openModal({ kind: 'student', studentId: student.id })}
+              >
+                {student.status === 'draft' ? 'Vérifier la fiche' : 'Ouvrir la fiche'}
+                <Icon name="arrow" size={16} />
+              </button>
+            </article>
+          ))}
+          {!list.length && (
+            <Empty title="Aucun talent avec ces filtres">
+              Essayez un autre prénom, une autre compétence ou un autre statut.
+            </Empty>
+          )}
+        </div>
+      )}
     </>
   );
 }

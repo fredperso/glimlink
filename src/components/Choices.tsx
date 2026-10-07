@@ -1,3 +1,4 @@
+import Select from './Select.tsx';
 import { useId, useState } from 'react';
 
 export const LOCATION_CHOICES = [
@@ -103,7 +104,7 @@ export function ChoiceSelect({
   };
   return (
     <span className="choice-control">
-      <select
+      <Select
         name={custom ? undefined : name}
         value={custom ? '__custom__' : selected}
         required={required}
@@ -124,7 +125,7 @@ export function ChoiceSelect({
           </option>
         ))}
         {allowCustom && <option value="__custom__">Autre…</option>}
-      </select>
+      </Select>
       {custom && (
         <input
           aria-label="Préciser un autre choix"

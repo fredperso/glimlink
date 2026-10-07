@@ -10,3 +10,7 @@ createRoot(document.getElementById('root')!).render(<App />);
 import './audit-fixes.css';
 
 import './swipe.css';
+
+import './selects.css';
+
+import './talents-table.css';

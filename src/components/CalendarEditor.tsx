@@ -1,3 +1,4 @@
+import Select from './Select.tsx';
 import { useState, type FormEvent } from 'react';
 import { useApp } from '../context.tsx';
 import { DAYS, createId, type Calendar, type CalendarException } from '../domain/model.ts';
@@ -86,7 +87,7 @@ export default function CalendarEditor({ calendarId }: { calendarId: string }) {
             <h4>1. Le rythme de référence</h4>
             <label>
               Granularité du rythme
-              <select
+              <Select
                 name="mode"
                 value={draft.mode}
                 onChange={(e) => setDraft({ ...draft, mode: e.target.value as Calendar['mode'] })}
@@ -94,7 +95,7 @@ export default function CalendarEditor({ calendarId }: { calendarId: string }) {
                 <option value="weekly">Rythme hebdomadaire stable</option>
                 <option value="variable">Rythme variable — vérification nécessaire</option>
                 <option value="unknown">Calendrier non renseigné</option>
-              </select>
+              </Select>
             </label>
             {draft.mode === 'weekly' ? (
               <fieldset>
@@ -246,7 +247,7 @@ export default function CalendarEditor({ calendarId }: { calendarId: string }) {
                 </div>
                 <label>
                   Type de période
-                  <select
+                  <Select
                     value={exception.kind}
                     onChange={(e) =>
                       setException({
@@ -258,7 +259,7 @@ export default function CalendarEditor({ calendarId }: { calendarId: string }) {
                     <option value="course">Cours au centre</option>
                     <option value="potential">Sans cours · présence potentielle</option>
                     <option value="unknown">Planning à vérifier</option>
-                  </select>
+                  </Select>
                 </label>
                 <div className="exception-actions">
                   <Button

@@ -1,3 +1,4 @@
+import Select from './Select.tsx';
 import { ChoiceSelect, SKILL_CHOICES } from './Choices.tsx';
 import { useState } from 'react';
 import type { Calendar } from '../domain/model.ts';
@@ -148,7 +149,7 @@ export default function SkillsEditor({
           </label>
           <label>
             Niveau actuel
-            <select
+            <Select
               aria-label="Niveau actuel"
               value={level}
               onChange={(event) => setLevel(event.target.value as SkillLevel)}
@@ -158,18 +159,18 @@ export default function SkillsEditor({
                   {label}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
           <label>
             État d’acquisition
-            <select
+            <Select
               aria-label="État d’acquisition"
               value={status}
               onChange={(event) => setStatus(event.target.value as StudentSkill['status'])}
             >
               <option value="acquired">Acquise</option>
               <option value="learning">En cours d’acquisition</option>
-            </select>
+            </Select>
           </label>
         </div>
         <div className="skill-add-actions">
@@ -255,7 +256,7 @@ export default function SkillsEditor({
                 <div className="skill-edit-fields">
                   <label>
                     Niveau de {skill.name}
-                    <select
+                    <Select
                       aria-label={`Niveau de ${skill.name}`}
                       value={skill.level}
                       onChange={(event) =>
@@ -267,11 +268,11 @@ export default function SkillsEditor({
                           {label}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </label>
                   <label>
                     État de {skill.name}
-                    <select
+                    <Select
                       aria-label={`État de ${skill.name}`}
                       value={skill.status}
                       onChange={(event) =>
@@ -280,11 +281,11 @@ export default function SkillsEditor({
                     >
                       <option value="acquired">Acquise</option>
                       <option value="learning">En cours d’acquisition</option>
-                    </select>
+                    </Select>
                   </label>
                   <label>
                     Formation associée à {skill.name}
-                    <select
+                    <Select
                       aria-label={`Formation associée à ${skill.name}`}
                       value={skill.trainingId ?? ''}
                       onChange={(event) =>
@@ -297,7 +298,7 @@ export default function SkillsEditor({
                           {calendar.title}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </label>
                 </div>
               </article>

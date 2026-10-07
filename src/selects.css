@@ -1,0 +1,118 @@
+/* Un choix entier reste visible, quelle que soit la longueur de son intitulé. */
+.select-field {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin-top: 8px;
+  border: 1px solid #cbd5cc;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--ink);
+}
+.select-caption {
+  display: block;
+  min-height: 44px;
+  padding: 11px 38px 11px 14px;
+  font-size: var(--text-body, 16px);
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.select-chevron {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+body .select-field > select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.select-field:has(select:focus-visible) {
+  outline: 3px solid #176c43;
+  outline-offset: 3px;
+}
+.select-field:has(select:disabled) {
+  background: #f3f5f1;
+  color: #69756c;
+}
+.select-field:has(select:disabled) > select {
+  cursor: default;
+}
+.select-field:has(select:user-invalid) {
+  border-color: #b33b28;
+}
+.role-select .select-field {
+  width: auto;
+  min-width: 120px;
+  margin-top: 0;
+}
+.role-select .select-caption {
+  font-size: 14px;
+  padding-left: 10px;
+}
+.demo-company-picker .select-field {
+  width: min(100%, 260px);
+  margin-top: 0;
+}
+.need-select .select-field {
+  flex: 1;
+  margin-top: 0;
+}
+.filter-bar .select-field {
+  margin-top: 0;
+}
+.mobile-training-picker .select-field {
+  margin-top: 0;
+}
+.form-grid > label,
+.skill-add-fields > label,
+.skill-edit-fields > label {
+  min-width: 0;
+}
+.skill-add-fields {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+}
+.skill-edit-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .select-caption,
+  .role-select .select-caption {
+    font-size: 16px;
+  }
+  .role-select .select-field {
+    min-width: 0;
+  }
+  .role-select .select-caption {
+    padding-left: 6px;
+    padding-right: 26px;
+  }
+  .role-select .select-chevron {
+    right: 10px;
+  }
+  .demo-company-picker .select-field {
+    width: 100%;
+  }
+  .skill-add-fields,
+  .skill-edit-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
