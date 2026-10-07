@@ -1,0 +1,439 @@
+/* La lisibilité des données métier prime sur la densité du tableau de bord. */
+.partner-company-list {
+  display: grid;
+  gap: 18px;
+}
+.nav-link {
+  font-size: 13px;
+}
+.breadcrumb,
+.role-select select {
+  font-size: 12px;
+}
+.welcome-copy p,
+.page-heading p {
+  font-size: 14px;
+}
+.welcome-footnote,
+.greeting {
+  font-size: 12px;
+}
+.section-heading h2 {
+  font-size: 19px;
+}
+.section-heading p,
+.section-heading .text-button {
+  font-size: 12px;
+}
+.need-row h3 {
+  font-size: 14px;
+}
+.need-row p,
+.need-meta {
+  font-size: 12px;
+}
+.adviser-card-heading strong {
+  font-size: 14px;
+}
+.adviser-card-heading small,
+.adviser-school {
+  font-size: 11px;
+}
+.adviser-card p {
+  font-size: 13px;
+}
+.adviser-card .button {
+  font-size: 12px;
+}
+.steps-mini strong {
+  font-size: 12px;
+}
+.steps-mini p {
+  font-size: 11px;
+}
+.alert-strip strong {
+  font-size: 14px;
+}
+.alert-strip p,
+.alert-strip .text-button {
+  font-size: 12px;
+}
+.talent-name-row > span {
+  font-size: 11px;
+}
+.training-name {
+  font-size: 12px;
+}
+.skill-tags > span {
+  font-size: 11px;
+}
+.calendar-check {
+  font-size: 11px;
+}
+.talent-actions .text-button {
+  font-size: 12px;
+}
+.text-button,
+.icon-button,
+.select-button {
+  min-height: 44px;
+}
+.select-button {
+  min-width: 44px;
+}
+.micro {
+  font-size: 12px;
+}
+.confidence-line {
+  font-size: 12px;
+}
+.badge {
+  font-size: 11px;
+}
+.student-row p,
+.student-row-info > span {
+  font-size: 12px;
+}
+.week-day > span:first-child {
+  font-size: 12px;
+}
+.week-day > strong {
+  font-size: 11px;
+}
+.required-label {
+  font-size: 10px;
+}
+.page-footer,
+.page-footer button {
+  font-size: 11px;
+}
+.week-day.unknown > strong,
+.week-day.off > strong {
+  color: #845021;
+}
+.week-day.course > strong {
+  color: #5e6859;
+}
+.badge-neutral {
+  color: #536151;
+}
+.modal-body .match-explanation p,
+.modal-body .counsellor-note p,
+.modal-body .notice,
+.confirmation-box small,
+.private-fields summary {
+  color: #53634a;
+}
+.modal-body .notice-warning {
+  color: #8b5a34;
+}
+.profile-score {
+  color: #406c38;
+}
+.progress-steps,
+.selection-next p {
+  color: #58654f;
+}
+.alert-item span:not(.badge):not(.avatar-dot):not(.avatar-line) {
+  color: #5b6b51;
+}
+h1,
+h2,
+h3,
+p,
+blockquote,
+.skill-tags > span {
+  overflow-wrap: anywhere;
+}
+.skill-tags > span {
+  max-width: 100%;
+}
+.welcome-footnote {
+  color: #56654c;
+}
+.floating-talent i {
+  color: #47713b;
+}
+.alert-strip p {
+  color: #58674d;
+}
+.adviser-avatar {
+  color: #665640;
+}
+.adviser-school,
+.confidence-line,
+.confidence-line .text-button,
+.page-footer,
+.page-footer button,
+.back-link,
+.result-explanation > span,
+.pass-link,
+.calendar-card-footer {
+  color: #5b6b51;
+}
+.brief-summary span {
+  color: #54634c;
+}
+.week-day > span:first-child {
+  color: #5b6653;
+}
+.mobile-nav a {
+  color: #5a6b51;
+}
+.builder-help > p,
+.help-rule,
+.adviser-banner p {
+  color: #536547;
+}
+.prototype-label,
+.student-row-info > span,
+.training-row small,
+.profile-facts span,
+.counsellor-note small {
+  color: #5b6b51;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #66705f;
+}
+.talent-card-compact .select-button {
+  background: #f1f5e8;
+  border: 1px solid #d7e3c9;
+}
+@media (max-width: 1200px) and (min-width: 761px) {
+  .dashboard-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dashboard-rail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .dashboard-rail .adviser-card {
+    margin-bottom: 28px;
+  }
+  .steps-mini {
+    padding: 16px;
+  }
+  .talent-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .role-select select {
+    font-size: 11px;
+  }
+  .week-day > strong {
+    font-size: 10px;
+  }
+}
+@media (max-width: 600px) {
+  .desktop-only {
+    display: none;
+  }
+  .dashboard-rail {
+    display: block;
+  }
+  .dashboard-rail .steps-mini {
+    display: none;
+  }
+  .dashboard-rail .adviser-card {
+    margin-bottom: 27px;
+  }
+  .dashboard-rail .adviser-card-heading strong {
+    font-size: 14px;
+  }
+  .dashboard-rail .adviser-card-heading small {
+    font-size: 12px;
+  }
+  .dashboard-rail .adviser-card p {
+    font-size: 13px;
+  }
+  .dashboard-rail .adviser-card .button {
+    font-size: 12px;
+  }
+  .dashboard-rail .adviser-school {
+    font-size: 11px;
+  }
+  input:not([type='checkbox']):not([type='file']),
+  select,
+  textarea,
+  .modal-body input:not([type='checkbox']):not([type='file']),
+  .modal-body select,
+  .modal-body textarea {
+    font-size: 16px;
+  }
+  .role-select select {
+    font-size: 11px;
+    max-width: 151px;
+  }
+  .greeting {
+    font-size: 11px;
+  }
+  .page-heading p,
+  .welcome-copy p {
+    font-size: 14px;
+  }
+  .welcome-footnote {
+    font-size: 11px;
+  }
+  .welcome-banner {
+    min-height: 355px;
+    padding-bottom: 27px;
+  }
+  .section-heading h2 {
+    font-size: 18px;
+  }
+  .section-heading p {
+    font-size: 12px;
+  }
+  .section-heading .text-button {
+    font-size: 11px;
+    min-height: 44px;
+  }
+  .need-row h3 {
+    font-size: 14px;
+  }
+  .need-row p,
+  .need-meta {
+    font-size: 11px;
+  }
+  .need-row .badge {
+    font-size: 10px;
+  }
+  .need-row p {
+    display: block;
+  }
+  .need-row p > span {
+    padding: 0 4px;
+  }
+  .alert-strip strong {
+    font-size: 12px;
+  }
+  .alert-strip p {
+    font-size: 11px;
+  }
+  .alert-strip > .text-button {
+    font-size: 11px;
+  }
+  .talent-card-compact {
+    grid-template-columns: 93px minmax(0, 1fr);
+    min-height: 240px;
+  }
+  .talent-card-compact .talent-art {
+    min-height: 240px;
+  }
+  .talent-card-compact .talent-art .avatar {
+    width: 74px;
+    height: 74px;
+  }
+  .talent-card-compact .talent-content {
+    padding: 17px 14px 12px;
+  }
+  .talent-card-compact .talent-name-row {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .talent-card-compact .talent-name-row > span {
+    font-size: 10px;
+  }
+  .talent-card-compact .training-name {
+    font-size: 12px;
+    margin: 8px 0 12px;
+  }
+  .talent-card-compact .skill-tags > span {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+  .talent-card-compact .calendar-check {
+    font-size: 11px;
+    margin: 5px 0 12px;
+  }
+  .talent-card-compact .talent-actions .text-button {
+    font-size: 12px;
+  }
+  .talent-card-compact .select-button {
+    width: 44px;
+  }
+  .talent-card-compact .score {
+    font-size: 12px;
+    padding: 6px;
+    right: 10px;
+  }
+  .calendar-card-footer {
+    font-size: 11px;
+  }
+  .student-row p {
+    font-size: 12px;
+  }
+  .filter-bar select {
+    font-size: 12px;
+  }
+  .modal-body .micro,
+  .modal-footer > span {
+    font-size: 12px;
+  }
+  .modal-body .form-grid label {
+    font-size: 12px;
+  }
+  .check-list li {
+    font-size: 12px;
+  }
+  .profile-header p,
+  .profile-header > div > span {
+    font-size: 12px;
+  }
+  .check-list li > .badge,
+  .profile-title .badge {
+    font-size: 10px;
+  }
+  .inherited-calendar strong {
+    font-size: 12px;
+  }
+  .inherited-calendar .badge {
+    font-size: 10px;
+  }
+  .confirmation-box strong {
+    font-size: 12px;
+  }
+  .confirmation-box small {
+    font-size: 12px;
+  }
+  .day-toggles > label {
+    font-size: 12px;
+  }
+  .week {
+    gap: 4px;
+  }
+  .week-day > strong {
+    font-size: 9px;
+  }
+  .required-label {
+    font-size: 9px;
+  }
+  .confidence-line {
+    font-size: 11px;
+  }
+}
+@media (max-width: 370px) {
+  .role-select select {
+    max-width: 137px;
+    font-size: 10px;
+  }
+  .talent-card-compact {
+    grid-template-columns: 83px minmax(0, 1fr);
+  }
+  .talent-card-compact .talent-content {
+    padding: 15px 12px;
+  }
+  .talent-card-compact .talent-art .avatar {
+    width: 66px;
+    height: 66px;
+  }
+  .alert-strip {
+    flex-wrap: wrap;
+  }
+  .alert-strip > .text-button {
+    margin-left: 44px;
+  }
+}

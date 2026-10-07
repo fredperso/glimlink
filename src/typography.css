@@ -1,0 +1,514 @@
+/* Échelle commune : texte 16 px, détails 14 px, éléments compacts 12 px.
+   Les rem suivent les préférences de taille de texte du navigateur. */
+:root {
+  --text-body: 1rem;
+  --text-detail: 0.875rem;
+  --text-compact: 0.75rem;
+  --title-card: 1.25rem;
+  --title-section: 1.5rem;
+  --title-page: clamp(1.5rem, 1.25rem + 1vw, 1.875rem);
+}
+body {
+  font-size: var(--text-body);
+  line-height: 1.5;
+}
+body .page-heading h1,
+body .builder-layout .page-heading h1 {
+  font-size: var(--title-page);
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+body .welcome-copy h2 {
+  font-size: clamp(1.75rem, 1.4rem + 1vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+body .adviser-banner h2 {
+  font-size: var(--title-section);
+  line-height: 1.3;
+}
+body .section-heading h2,
+body .panel > h2,
+body .training-picker h2 {
+  font-size: var(--title-card);
+  line-height: 1.35;
+}
+body .training-calendar h2,
+body .profile-title h3 {
+  font-size: clamp(1.25rem, 1rem + 0.7vw, 1.5rem);
+  line-height: 1.3;
+}
+body .talent-name-row h3,
+body .need-row h3,
+body .student-row h3 {
+  font-size: 1.125rem;
+  line-height: 1.35;
+}
+body .metrics strong,
+body .profile-score {
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+body .page-heading p,
+body .welcome-copy p,
+body .adviser-card p,
+body .dashboard-rail .adviser-card p,
+body .company-card p,
+body .modal-body p,
+body .check-list li,
+body .confirmation-box strong {
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+body .button,
+body .text-button,
+body .section-heading .text-button,
+body .talent-actions .text-button,
+body .talent-card-compact .talent-actions .text-button,
+body .adviser-card .button,
+body .dashboard-rail .adviser-card .button,
+body .student-row .button,
+body .company-card > .button,
+body .calendar-card-footer .button {
+  font-size: var(--text-detail);
+  line-height: 1.4;
+}
+body .nav-link,
+body .role-select select,
+body .breadcrumb {
+  font-size: var(--text-detail);
+  line-height: 1.4;
+}
+body .sidebar-account strong,
+body .sidebar-account small,
+body .workspace small,
+body .prototype-label {
+  font-size: var(--text-compact);
+  line-height: 1.5;
+}
+body .training-name,
+body .talent-card-compact .training-name,
+body .student-row p,
+body .student-row-info > span,
+body .need-row p,
+body .need-meta,
+body .standalone .need-row p,
+body .standalone .need-meta,
+body .training-row small,
+body .alert-item p,
+body .discovery-reason {
+  font-size: var(--text-detail);
+  line-height: 1.5;
+}
+body .calendar-check,
+body .talent-card-compact .calendar-check,
+body .alert-strip strong,
+body .alert-strip p,
+body .alert-strip .text-button,
+body .steps-mini strong,
+body .brief-summary strong,
+body .section-heading p {
+  font-size: var(--text-detail);
+  line-height: 1.5;
+}
+body .skill-tags > span,
+body .talent-card-compact .skill-tags > span,
+body .discovery-grid .skill-tags > span,
+body .swipe-card .skill-tags > span,
+body .badge,
+body .need-row .badge,
+body .student-row .badge,
+body .check-list li > .badge,
+body .profile-title .badge,
+body .profile-header p,
+body .profile-header > div > span,
+body .talent-name-row > span,
+body .talent-card-compact .talent-name-row > span {
+  font-size: var(--text-compact);
+  line-height: 1.5;
+}
+body .micro,
+body .modal-body .micro,
+body .welcome-footnote,
+body .greeting,
+body .confidence-line,
+body .confidence-line .text-button,
+body .page-footer,
+body .page-footer > span,
+body .page-footer button,
+body .adviser-school,
+body .dashboard-rail .adviser-school,
+body .adviser-card-heading small,
+body .dashboard-rail .adviser-card-heading small,
+body .steps-mini p,
+body .result-explanation > span,
+body .brief-summary span,
+body .selection-dock small,
+body .form-footer > span,
+body .modal-footer > span,
+body .metrics small,
+body .metrics span,
+body .score small,
+body .profile-score small,
+body .counsellor-note small,
+body .guide-links small,
+body .modal-body .editor-header p,
+body .confirmation-box small {
+  font-size: var(--text-detail);
+  line-height: 1.5;
+}
+body .adviser-card-heading strong,
+body .dashboard-rail .adviser-card-heading strong {
+  font-size: var(--text-body);
+  line-height: 1.4;
+}
+body .tabs > button,
+body .discovery-tabs > button,
+body .progress-steps,
+body .examples button,
+body .day-toggles > label,
+body .modal-body .form-grid label,
+body label,
+body legend,
+body .inherited-calendar strong {
+  font-size: var(--text-detail);
+  line-height: 1.5;
+}
+body .tabs > button > span,
+body .discovery-tabs > button > span,
+body .progress-steps li > span,
+body .inherited-calendar .badge,
+body .editor-header .badge,
+body .art-label,
+body .floating-talent small,
+body .float-three small,
+body .button-count {
+  font-size: var(--text-compact);
+  line-height: 1.5;
+}
+body input:not([type='checkbox']):not([type='file']),
+body select,
+body textarea,
+body .modal-body input:not([type='checkbox']):not([type='file']),
+body .modal-body select,
+body .modal-body textarea,
+body .filter-bar select,
+body .mobile-training-picker select {
+  font-size: var(--text-body);
+  line-height: 1.5;
+}
+body .role-select select {
+  font-size: var(--text-detail);
+  max-width: 180px;
+}
+body .week-day > span:first-child,
+body .week-day > strong,
+body .required-label {
+  font-size: var(--text-compact);
+  line-height: 1.35;
+}
+body .week-day > strong {
+  overflow-wrap: normal;
+}
+body .week-day {
+  min-height: 80px;
+  gap: 8px;
+}
+body .mobile-nav a small {
+  font-size: var(--text-compact);
+  line-height: 1.3;
+}
+body .mobile-nav a i {
+  font-size: var(--text-compact);
+}
+/* Les cartes compactes gagnent de la place plutôt que de réduire les lettres. */
+body .talent-card-compact .talent-name-row {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+body .talent-card-compact .talent-content {
+  min-width: 0;
+}
+body .training-picker span,
+body .calendar-detail-heading p,
+body .calendar-student-count,
+body .month-summary,
+body .calendar-legend,
+body .exception-row,
+body .exception-row span,
+body .exception-empty {
+  font-size: var(--text-detail);
+  line-height: 1.5;
+}
+body .training-picker strong {
+  font-size: var(--text-detail);
+  line-height: 1.4;
+}
+body .calendar-navigation h3 {
+  font-size: var(--title-card);
+  line-height: 1.3;
+}
+body .weekday-label {
+  font-size: var(--text-compact);
+}
+body .date-cell strong {
+  font-size: var(--text-body);
+  line-height: 1.25;
+}
+body .date-cell .date-status-text {
+  font-size: var(--text-compact);
+  line-height: 1.35;
+}
+body .date-cell {
+  min-height: 76px;
+}
+body .calendar-live-preview .date-cell {
+  min-height: 68px;
+}
+body .compact .date-cell,
+body .calendar-live-preview .compact .date-cell {
+  min-height: 24px;
+  padding: 1px;
+}
+body .compact .date-cell strong,
+body .compact .weekday-label {
+  font-size: var(--text-compact);
+  line-height: 1.25;
+}
+body .year-month h4 {
+  font-size: var(--text-detail);
+}
+body .year-month-summary {
+  font-size: var(--text-compact);
+  line-height: 1.5;
+}
+body .year-month {
+  padding: 14px 8px;
+}
+body .calendar-legend {
+  border-top: 0;
+  border-bottom: 1px solid #d9e2da;
+  padding: 0 0 16px;
+  margin-bottom: 18px;
+}
+.date-status-symbol {
+  display: none;
+}
+@media (max-width: 760px) {
+  body .role-select select {
+    max-width: 170px;
+  }
+  body .week {
+    gap: 4px;
+  }
+  body .week-day {
+    padding: 10px 2px;
+  }
+  body .mobile-nav a {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+}
+@media (max-width: 600px) {
+  body .page-heading h1,
+  body .builder-layout .page-heading h1 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+  body .welcome-copy h2 {
+    font-size: 1.75rem;
+  }
+  body .page-heading p,
+  body .welcome-copy p {
+    font-size: var(--text-body);
+  }
+  body .talent-card-compact {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  body .talent-card-compact .talent-art {
+    min-height: 120px;
+  }
+  body .talent-card-compact .talent-content {
+    padding: 18px;
+  }
+  body .talent-card-compact .talent-art .avatar {
+    width: 88px;
+    height: 88px;
+  }
+  body .mobile-nav a small {
+    font-size: var(--text-compact);
+  }
+  body .calendar-legend {
+    gap: 10px 14px;
+    font-size: var(--text-detail);
+  }
+  body .calendar-live-preview .calendar-navigation h3 {
+    font-size: 1.125rem;
+  }
+  body .date-cell .date-status-text {
+    display: none;
+  }
+  body .date-status-symbol {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  body .date-cell,
+  body .calendar-live-preview .date-cell {
+    min-height: 64px;
+    gap: 8px;
+    padding: 8px 2px;
+  }
+  body .compact .date-cell,
+  body .calendar-live-preview .compact .date-cell {
+    min-height: 24px;
+    gap: 0;
+    padding: 1px;
+  }
+  body .year-month {
+    padding: 12px 5px;
+  }
+  body .month-summary {
+    gap: 10px 18px;
+  }
+  body .modal-header h2 {
+    font-size: 1.125rem;
+    line-height: 1.4;
+  }
+  body .role-select select {
+    max-width: 165px;
+    font-size: var(--text-compact);
+  }
+  body .training-calendar-layout {
+    gap: 16px;
+  }
+}
+@media (max-width: 370px) {
+  body .role-select select {
+    max-width: 130px;
+  }
+  body .year-grid,
+  body .calendar-live-preview .year-grid {
+    gap: 6px;
+  }
+  body .compact {
+    gap: 1px;
+  }
+}
+
+body .round-count {
+  font-size: var(--text-compact);
+}
+body .pass-link,
+body .examples strong,
+body .training-row strong,
+body .partner-need p,
+body .builder-help > p {
+  font-size: var(--text-detail);
+  line-height: 1.5;
+}
+body .adviser-banner p {
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+
+/* Deux périmètres visibles dans la fiche conseiller. */
+.personal-details-editor {
+  padding: 22px;
+  margin: 24px 0;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+}
+.personal-details-editor .section-heading {
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.personal-details-editor h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+.personal-details-editor form {
+  margin-top: 18px;
+}
+.personal-details-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+.personal-details-actions > span {
+  font-size: var(--text-detail);
+  color: #166534;
+}
+body .public-details-title {
+  font-size: var(--title-card);
+  margin: 28px 0 14px;
+}
+body .personal-details-editor .micro {
+  margin: 8px 0;
+  font-size: var(--text-detail);
+}
+body .personal-details-editor .form-grid {
+  gap: 16px;
+}
+body .requested-students .text-button {
+  white-space: normal;
+  text-align: left;
+}
+@media (max-width: 600px) {
+  .personal-details-editor {
+    padding: 16px;
+  }
+  body .personal-details-editor .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .personal-details-actions .button {
+    width: 100%;
+  }
+}
+
+body .editor-header {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+body .editor-header > .avatar-small {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  flex: none;
+}
+body .editor-header > div:not(.avatar) {
+  min-width: 0;
+}
+body .editor-header h3 {
+  font-size: var(--title-card);
+  line-height: 1.35;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+body .editor-header p {
+  font-size: var(--text-detail);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+@media (max-width: 600px) {
+  body .editor-header {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+  body .editor-header > .badge {
+    grid-column: 2;
+    justify-self: start;
+    white-space: normal;
+  }
+  body .editor-header > .avatar-small {
+    align-self: start;
+  }
+}

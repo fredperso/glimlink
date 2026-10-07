@@ -1,0 +1,322 @@
+.skills-editor {
+  padding: 24px;
+  border: 1px solid #d9e2da;
+  border-radius: 16px;
+  margin: 24px 0;
+  background: #fff;
+}
+body .skills-editor h3 {
+  font-size: var(--title-card);
+  line-height: 1.4;
+  margin: 0;
+}
+.skills-editor > .section-heading {
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+body .skills-editor .section-heading p {
+  font-size: var(--text-detail);
+  margin-top: 8px;
+}
+body .skills-editor h4,
+.competency-group h4,
+.formation-learning-skills h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-body);
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+.skill-add-panel {
+  padding: 20px;
+  background: #f5f8f4;
+  border: 1px solid #d9e2da;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+.skill-add-fields {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 14px;
+}
+.skill-add-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.skill-training-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-detail);
+}
+.skill-level-help {
+  padding: 14px 0;
+  margin: 4px 0 18px;
+  border-bottom: 1px solid #d9e2da;
+}
+.skill-level-help summary {
+  cursor: pointer;
+  font-size: var(--text-detail);
+  font-weight: 600;
+  min-height: 36px;
+}
+.skill-level-help ul {
+  font-size: var(--text-detail);
+  line-height: 1.6;
+  padding-left: 20px;
+}
+.skills-editor-group {
+  margin-top: 24px;
+}
+.skill-edit-row {
+  padding: 16px;
+  border: 1px solid #d9e2da;
+  border-left: 4px solid #15803d;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  background: #f9fcf9;
+}
+.competency-learning .skill-edit-row {
+  border-left-color: #2563eb;
+  background: #f8faff;
+}
+.skill-edit-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.skill-edit-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.skill-edit-fields label:last-child {
+  grid-column: 1/-1;
+}
+.skill-undo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: var(--text-detail);
+}
+.training-skill-suggestions {
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  background: #eff6ff;
+}
+.training-skill-suggestions h4 {
+  color: #1e40af;
+}
+.training-skill-suggestions > p {
+  margin: 8px 0;
+}
+.training-skill-suggestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid #bfdbfe;
+  margin-top: 12px;
+}
+.training-skill-suggestion > div {
+  min-width: 0;
+}
+.training-skill-suggestion strong,
+.training-skill-suggestion span {
+  display: block;
+}
+.training-skill-suggestion span {
+  font-size: var(--text-detail);
+  margin-top: 4px;
+  color: #475569;
+}
+.training-skill-suggestion .button {
+  flex-shrink: 0;
+  max-width: 55%;
+  white-space: normal;
+  text-align: left;
+}
+.competency-display {
+  display: grid;
+  gap: 18px;
+  margin: 18px 0;
+}
+.competency-group h4 {
+  font-size: var(--text-detail);
+  margin-bottom: 10px;
+}
+.competency-acquired h4 {
+  color: #166534;
+}
+.competency-learning h4 {
+  color: #1e40af;
+}
+.competency-group h4 > span {
+  margin-left: auto;
+  color: #52635a;
+  font-size: var(--text-compact);
+}
+.competency-group ul {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.competency-group li {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 9px;
+  padding: 10px 12px;
+  min-width: 0;
+}
+.competency-learning li {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+.competency-group li > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.competency-group strong {
+  font-size: var(--text-body);
+  overflow-wrap: anywhere;
+}
+.competency-group li span {
+  font-size: var(--text-detail);
+  color: #475569;
+  flex-shrink: 0;
+}
+.competency-group small {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-compact);
+  color: #475569;
+  margin-top: 5px;
+  line-height: 1.5;
+}
+.competency-compact {
+  gap: 14px;
+  margin: 14px 0;
+}
+.competency-compact .competency-group li {
+  padding: 7px 9px;
+}
+.competency-compact .competency-group h4 {
+  font-size: var(--text-compact);
+}
+.competency-compact .competency-group strong {
+  font-size: var(--text-detail);
+}
+.formation-learning-skills {
+  padding: 20px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  margin-top: 24px;
+}
+.formation-learning-skills p {
+  font-size: var(--text-detail);
+  line-height: 1.5;
+}
+.formation-learning-skills ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0;
+  margin: 16px 0 0;
+  list-style: none;
+}
+.formation-learning-skills li {
+  flex: 1 1 160px;
+  background: #fff;
+  border-radius: 9px;
+  padding: 12px;
+  border: 1px solid #bfdbfe;
+}
+.formation-learning-skills li strong,
+.formation-learning-skills li span {
+  display: block;
+  font-size: var(--text-detail);
+}
+.formation-learning-skills li span {
+  margin-top: 6px;
+  color: #475569;
+  font-size: var(--text-compact);
+}
+.editor-section-shortcuts {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0 24px;
+}
+#skills-title,
+#personal-details-title {
+  scroll-margin-top: 110px;
+}
+@media (max-width: 600px) {
+  .skills-editor {
+    padding: 16px;
+  }
+  .skill-add-panel,
+  .training-skill-suggestions {
+    padding: 16px;
+  }
+  .skill-add-fields,
+  .skill-edit-fields {
+    grid-template-columns: 1fr;
+  }
+  .skill-add-actions .button {
+    width: 100%;
+  }
+  .skill-edit-row {
+    padding: 14px;
+  }
+  .training-skill-suggestion {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .training-skill-suggestion .button {
+    width: 100%;
+    max-width: 100%;
+  }
+  .competency-group li > div {
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+  .skill-undo .button {
+    width: 100%;
+  }
+  .formation-learning-skills {
+    padding: 16px;
+  }
+  .editor-section-shortcuts .button {
+    flex: 1;
+    white-space: normal;
+  }
+}
+
+.competency-compact .competency-group li span {
+  font-size: var(--text-compact);
+}

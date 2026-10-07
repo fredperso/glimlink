@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Éditeur de compétences",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "Compétences sur le profil entreprise",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "width": 1440,
+    "name": "Ajout, niveau, doublon, suppression, annulation, formation et publication",
+    "status": "pass"
+  },
+  {
+    "name": "Éditeur de compétences",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "Compétences sur le profil entreprise",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "width": 390,
+    "name": "Ajout, niveau, doublon, suppression, annulation, formation et publication",
+    "status": "pass"
+  },
+  {
+    "name": "Éditeur de compétences",
+    "width": 320,
+    "violations": []
+  },
+  {
+    "name": "Compétences sur le profil entreprise",
+    "width": 320,
+    "violations": []
+  },
+  {
+    "width": 320,
+    "name": "Ajout, niveau, doublon, suppression, annulation, formation et publication",
+    "status": "pass"
+  }
+]

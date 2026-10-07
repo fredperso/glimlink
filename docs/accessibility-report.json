@@ -1,0 +1,152 @@
+[
+  {
+    "name": "/company/home",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/company/needs",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/company/discover?need=need-admin",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/company/selections",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/company/requests",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/company/alerts",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/company/new-need",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/adviser/home",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/adviser/students",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/adviser/calendars",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/adviser/needs",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/adviser/companies",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "Profil détaillé",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "Fiche conseiller",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "Guide de la maquette",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "/company/home",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/company/needs",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/company/discover?need=need-admin",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/company/selections",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/company/requests",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/company/alerts",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/company/new-need",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/adviser/home",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/adviser/students",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/adviser/calendars",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/adviser/needs",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "/adviser/companies",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "Profil détaillé",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "Fiche conseiller",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "Guide de la maquette",
+    "width": 390,
+    "violations": []
+  }
+]

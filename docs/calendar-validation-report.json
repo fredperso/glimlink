@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Calendrier mois",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "Calendrier année",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "Éditeur avec exception",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "name": "Navigation, exception, chevauchement, persistance et héritage",
+    "width": 1440,
+    "status": "pass"
+  },
+  {
+    "name": "Calendrier mois",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "Calendrier année",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "Éditeur avec exception",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "name": "Navigation, exception, chevauchement, persistance et héritage",
+    "width": 390,
+    "status": "pass"
+  },
+  {
+    "name": "Calendrier mois",
+    "width": 320,
+    "violations": []
+  },
+  {
+    "name": "Calendrier année",
+    "width": 320,
+    "violations": []
+  },
+  {
+    "name": "Éditeur avec exception",
+    "width": 320,
+    "violations": []
+  },
+  {
+    "name": "Navigation, exception, chevauchement, persistance et héritage",
+    "width": 320,
+    "status": "pass"
+  }
+]

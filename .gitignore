@@ -1,0 +1,13 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+*.local
+*.local.*
+.playwright-mcp/
+.agents/
+.codex/
+.aws/
+.env
+.env.*
+!.env.example

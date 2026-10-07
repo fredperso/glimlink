@@ -1,0 +1,65 @@
+async (page) => {
+ const assert=(value,message)=>{if(!value)throw new Error(message);};
+ const report=[];
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:width===1440?1000:844});
+  await page.evaluate(()=>localStorage.clear());await page.reload();
+  await page.goto('http://glimlink.demo/#/adviser/students');
+  await page.locator('.student-row').filter({hasText:'Sophie'}).getByRole('button',{name:'Ouvrir la fiche'}).click();
+  let dialog=page.getByRole('dialog');
+  assert(await dialog.getByLabel('Nom de famille').inputValue()==='DURAND','Nom inaccessible au conseiller');
+  await dialog.getByLabel('Nom de famille').fill('CONFIDENTIEL-TEST');
+  await dialog.getByLabel('E-mail du candidat').fill('contact-confidentiel@example.com');
+  await dialog.getByLabel('Téléphone du candidat').fill('+33 0 99 99 99 99');
+  await dialog.getByLabel('Adresse personnelle').fill('99 voie confidentielle');
+  await dialog.getByLabel('Prénom',{exact:true}).fill('Correction non publiée');
+  await dialog.getByRole('button',{name:'Enregistrer les données personnelles'}).click();
+  await dialog.getByRole('button',{name:'Fermer la fenêtre'}).click();
+  await page.reload();
+  await page.locator('.student-row').filter({hasText:'Sophie'}).getByRole('button',{name:'Ouvrir la fiche'}).click();
+  dialog=page.getByRole('dialog');
+  assert(await dialog.getByLabel('Nom de famille').inputValue()==='CONFIDENTIEL-TEST','Nom non conservé');
+  assert(await dialog.getByLabel('E-mail du candidat').inputValue()==='contact-confidentiel@example.com','E-mail non conservé');
+  assert(await dialog.getByLabel('Prénom',{exact:true}).inputValue()==='Sophie','Le privé a enregistré des corrections non validées');
+  assert(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth),'Débordement fiche conseiller');
+  await dialog.evaluate(el=>el.scrollTop=0);
+  await page.screenshot({path:'/home/fjeanne/dev/projets/glimlink/docs/screenshots/personal-details'+(width===390?'-mobile':'')+'.png',fullPage:false});
+  await dialog.getByRole('button',{name:'Fermer la fenêtre'}).click();
+  await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
+  await page.locator('.talent-card').filter({hasText:'Sophie'}).getByRole('button',{name:'Voir le profil'}).click();
+  dialog=page.getByRole('dialog');
+  await dialog.getByRole('button',{name:'Consulter le CV de démonstration'}).click();
+  let text=await page.locator('body').innerText();
+  for(const secret of ['CONFIDENTIEL-TEST','contact-confidentiel@example.com','99 voie confidentielle','+33 0 99 99 99 99','Correction non publiée'])assert(!text.includes(secret),'Donnée privée côté entreprise : '+secret);
+  assert(await page.getByLabel('Nom de famille').count()===0,'Formulaire privé côté entreprise');
+  await dialog.getByRole('button',{name:'Ajouter à ma sélection'}).click();
+  await dialog.getByRole('button',{name:'Fermer la fenêtre'}).click();
+  await page.goto('http://glimlink.demo/#/company/selections');
+  await page.getByRole('button',{name:'Demander une mise en relation'}).click();
+  await page.getByRole('dialog').getByRole('button',{name:'Demander une mise en relation'}).click();
+  await page.goto('http://glimlink.demo/#/adviser/requests');
+  await page.getByRole('button',{name:/Sophie CONFIDENTIEL-TEST/}).click();
+  assert(await page.getByLabel('E-mail du candidat').inputValue()==='contact-confidentiel@example.com','Fiche inaccessible depuis une demande');
+  await page.getByRole('button',{name:'Fermer la fenêtre'}).click();
+  await page.goto('http://glimlink.demo/#/adviser/needs');
+  await page.getByRole('button',{name:'Préparer un échange'}).first().click();
+  assert((await page.getByRole('dialog').innerText()).includes('Camille Martin'),'Le conseiller contacte sa propre conseillère');
+  assert(!(await page.getByRole('dialog').innerText()).includes('Mathilde JEANNE'),'Contact incorrect');
+  await page.getByRole('button',{name:'Fermer la fenêtre'}).click();
+  await page.goto('http://glimlink.demo/#/adviser/companies');
+  await page.locator('.company-card').filter({hasText:'Atelier Rivage'}).getByRole('button',{name:'Contacter l’entreprise'}).click();
+  assert((await page.getByRole('dialog').innerText()).includes('Élodie Fabre'),'Mauvais contact partenaire');
+  await page.getByRole('button',{name:'Fermer la fenêtre'}).click();
+  report.push({width,scenario:'Coordonnées privées : modification, persistance, séparation et contacts par rôle',status:'pass'});
+ }
+ // Migration d’une sauvegarde existante sans effacer les corrections.
+ await page.evaluate(()=>{const key='glimlink-prototype-v1';const saved=JSON.parse(localStorage.getItem(key));for(const student of saved.students)delete student.personalDetails;saved.students[0].draft.skills=['Correction conservée'];localStorage.setItem(key,JSON.stringify(saved));});
+ await page.reload();await page.goto('http://glimlink.demo/#/adviser/students');
+ await page.locator('.student-row').filter({hasText:'Sophie'}).getByRole('button',{name:'Ouvrir la fiche'}).click();
+ assert(await page.getByLabel('Nom de famille').inputValue()==='DURAND','Ancienne démo sans coordonnées');
+ assert((await page.locator('.skills-editor').innerText()).includes('Correction conservée'),'Migration a perdu une correction');
+ await page.getByRole('button',{name:'Fermer la fenêtre'}).click();
+ await page.evaluate(()=>localStorage.clear());await page.reload();
+ report.push({scenario:'Migration des données locales sans perte des corrections',status:'pass'});
+ return report;
+}
