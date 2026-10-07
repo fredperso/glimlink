@@ -16,7 +16,7 @@ async (page) => {
     await page.getByRole('button', { name: 'Accueil & administratif', exact: true }).click();
     await page.getByRole('button', { name: 'Préparer mon brief' }).click();
     await page.getByRole('heading', { name: 'Est-ce bien votre besoin ?' }).waitFor();
-    await page.locator('#brief-location').fill('Montpellier');
+    await page.locator('select[name="location"]').selectOption('Montpellier');
     await page.getByRole('button', { name: 'C’est exactement ça' }).click();
     assert(
       (await page.getByRole('alert').textContent()).includes('Confirmez le brief'),
@@ -52,7 +52,8 @@ async (page) => {
       (await page.locator('.request-card').textContent()).includes('Demande reçue'),
       'Demande absente',
     );
-    await page.getByLabel('Choisir l’espace de démonstration').selectOption('adviser');
+    await page.getByRole('button', { name: /^Choisir l’espace de démonstration/ }).click();
+    await page.getByRole('menuitemradio', { name: 'Espace conseiller', exact: true }).click();
     await page.goto('http://glimlink.demo/#/adviser/requests');
     assert(
       (await page.locator('.request-card').textContent()).includes('Maison Alba'),

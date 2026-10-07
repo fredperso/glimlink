@@ -1,0 +1,85 @@
+.role-picker {
+  position: relative;
+  flex-shrink: 0;
+}
+.role-picker-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5cc;
+  border-radius: 9px;
+  background: white;
+  color: #263c35;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.role-picker-trigger svg {
+  flex-shrink: 0;
+}
+.role-picker-short {
+  display: none;
+}
+.role-picker-menu {
+  position: fixed;
+  z-index: 100;
+  padding: 6px;
+  border: 1px solid #cbd5cc;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 12px 32px #173a2429;
+}
+.role-picker-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px;
+  border: 0;
+  border-radius: 8px;
+  background: white;
+  color: #263c35;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+}
+.role-picker-menu button span {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.role-picker-menu button svg {
+  flex-shrink: 0;
+}
+.role-picker-menu button[aria-checked='true'] {
+  background: #e7f3e9;
+  color: #145b39;
+  font-weight: 650;
+}
+.role-picker-menu button:hover {
+  background: #f1f6ef;
+}
+.role-picker-menu button:focus-visible,
+.role-picker-trigger:focus-visible {
+  outline: 3px solid #176c43;
+  outline-offset: 2px;
+}
+@media (max-width: 760px) {
+  .role-picker-full {
+    display: none;
+  }
+  .role-picker-short {
+    display: inline;
+  }
+  .role-picker-trigger {
+    padding-inline: 8px;
+    gap: 6px;
+  }
+}

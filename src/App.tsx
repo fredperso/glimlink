@@ -1,3 +1,4 @@
+import RolePicker from './components/RolePicker.tsx';
 import Select from './components/Select.tsx';
 import { notifications } from './domain/notifications.ts';
 import { useEffect, useRef, useState } from 'react';
@@ -227,17 +228,7 @@ export default function App() {
           </div>
           <div className="topbar-actions">
             <span className="prototype-label">Maquette interactive</span>
-            <label className="role-select">
-              <Icon name="grid" size={16} />
-              <span className="sr-only">Choisir l’espace de démonstration</span>
-              <Select
-                value={current.role}
-                onChange={(e) => go('home', undefined, e.target.value as Role)}
-              >
-                <option value="company">Entreprise</option>
-                <option value="adviser">Conseiller</option>
-              </Select>
-            </label>
+            <RolePicker />
             <button
               type="button"
               className="icon-button notification-button"

@@ -107,3 +107,9 @@ La coupure du niveau « Pratique accompagnée » est reproduite dans l’éditeu
 Le vivier conseiller utilise un tableau avec candidat, formation, compétences, statut et action de fiche. La pagination propose 5/10/20 lignes, un compteur de résultats et Précédent/Suivant avec limites désactivées. Recherche et filtres s’appliquent avant pagination et reviennent à la première page. Le tableau devient des lignes empilées avec intitulés de colonnes visibles sur téléphone. Le résumé de talents à vérifier du tableau de bord conserve son format compact.
 
 Validation : build TypeScript/autonome réussi. `qa-selects.js` et `qa-talents-table.js` passent à 1920/1366/1024/390/320 px, y compris textes longs, absence de recouvrement, ouverture native à la souris, choix au clavier, dernière page, recherche, filtres, taille de page, état vide et ouverture d’une fiche. Aucun problème axe WCAG A/AA détecté sur les écrans contrôlés. Les 30 parcours `qa-audit.js` et les parcours compétences passent également après remplacement des sélecteurs.
+
+## Menu de choix d’espace — 7 octobre 2026
+
+Le choix Entreprise/Conseiller de l’en-tête utilise désormais un menu dédié : deux options avec leurs intitulés complets, indication de l’espace courant et position bornée à la fenêtre. Le bouton affiche « Espace entreprise » ou « Espace conseiller » sur PC et un libellé court sur téléphone. Le menu se ferme après sélection, clic extérieur, Tab ou Échap. Il conserve les valeurs de rôle et les routes existantes. Les autres sélecteurs de formulaire restent natifs.
+
+`qa-role-picker.js` passe à 1920×1080, 1366×900, 1024×768, 390×844, 320×740 et 740×390 : options lisibles, limites de fenêtre respectées, sélection à la souris, flèches/Home/End/Entrée, fermeture et restauration du focus, sans violation axe WCAG A/AA sur les écrans testés. Les parcours de bascule d’espace de `qa-flows.js` et le test E2E ont été adaptés au nouveau menu. Les vérifications générales mobiles passent également.

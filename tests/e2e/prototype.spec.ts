@@ -14,7 +14,7 @@ test('Besoin : confirmer le brief avant de découvrir les profils', async ({ pag
   await page.getByRole('button', { name: 'Accueil & administratif', exact: true }).click();
   await page.getByRole('button', { name: 'Préparer mon brief' }).click();
   await expect(page.getByRole('heading', { name: 'Est-ce bien votre besoin ?' })).toBeVisible();
-  await page.locator('#brief-location').fill('Montpellier');
+  await page.locator('select[name="location"]').selectOption('Montpellier');
   await page.getByRole('button', { name: 'C’est exactement ça' }).click();
   await expect(page.getByRole('alert')).toContainText('Confirmez le brief');
   await page.locator('#confirm-brief').check();
@@ -44,7 +44,8 @@ test('Sélection : fiche expliquée et demande transmise à la conseillère', as
     .click();
   await expect(page.getByRole('heading', { name: 'Du talent à la rencontre.' })).toBeVisible();
   await expect(page.locator('.request-card')).toContainText('Demande reçue');
-  await page.getByLabel('Choisir l’espace de démonstration').selectOption('adviser');
+  await page.getByRole('button', { name: /^Choisir l’espace de démonstration/ }).click();
+  await page.getByRole('menuitemradio', { name: 'Espace conseiller', exact: true }).click();
   await page.goto('http://glimlink.demo/#/adviser/requests');
   await expect(page.locator('.request-card')).toContainText('Maison Alba');
 });

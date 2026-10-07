@@ -14,3 +14,5 @@ import './swipe.css';
 import './selects.css';
 
 import './talents-table.css';
+
+import './role-picker.css';
