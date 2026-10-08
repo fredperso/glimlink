@@ -374,7 +374,7 @@ export default function App() {
             key={id}
             href={`#/${current.role}/${id}`}
             onClick={(event) => navigate(event, id)}
-            className={activeView === id ? 'active' : ''}
+            className={!mobileMore && activeView === id ? 'active' : ''}
             aria-current={activeView === id ? 'page' : undefined}
           >
             <span>
@@ -411,7 +411,7 @@ export default function App() {
           <>
             <button
               type="button"
-              className={`mobile-more-button ${['requests', 'companies'].includes(activeView) ? 'active' : ''}`}
+              className={`mobile-more-button ${mobileMore || ['requests', 'companies'].includes(activeView) ? 'active' : ''}`}
               aria-expanded={mobileMore}
               aria-controls="mobile-more-links"
               onClick={() => setMobileMore((open) => !open)}

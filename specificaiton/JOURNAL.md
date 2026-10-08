@@ -78,3 +78,15 @@ Pour la date et un identifiant unique, consigner : demande ; sources/impact ; d�
 - **Décision** : pousser le commit 729fcc3 et cette entrée de journal sur origin/main du dépôt fredperso/glimlink avec --force-with-lease. La récupération des références confirme que 729fcc3 prolonge origin/main : aucun commit distant n’est à supprimer. Les fichiers locaux .serena/ restent exclus.
 - **Fichiers / exigences** : JOURNAL.md pour cette demande ; aucune nouvelle exigence fonctionnelle. Le contenu applicatif et les validations de USR-17 sont inchangés.
 - **Validation** : lecture du README des spécifications, vérification de l’état Git, fetch origin et comparaison des historiques ; spec:check avant commit. Le résultat du push et l’égalité des références locale/distante sont vérifiés dans la réponse de livraison.
+
+
+## 2026-10-08 — USR-18 — Sélection mobile Besoins → Plus
+
+- **Demande** : « si j’appuie de Besoins à Plus sur la version mobile alors Besoins reste sélectionné ».
+- **Impact** : correction de présentation de la navigation mobile conseiller ; aucun changement de règle métier ni de données.
+- **Cause** : le menu ouvert colorait Plus via aria-expanded mais l’onglet de la page courante conservait sa classe active, créant deux sélections visuelles.
+- **Décision** : Plus seul sélectionné pendant l’ouverture ; fermeture sans navigation restaure la page courante. Demandes/Entreprises restent représentées par Plus. URL et aria-current décrivent toujours la page réellement affichée.
+- **Révision examinée** : travail local USR-18, base publiée 915cbb3.
+- **Fichiers / exigences** : App.tsx et maquette générée ; tests/e2e/mobile-navigation.spec.ts ; ergonomie UX-004/AC-UX-007, conseiller, recette, traçabilité et journal.
+- **Validation exécutée** : build TypeScript/Vite et régénération maquette.html réussis ; deux tests CLI Playwright mobile réussis, dont la régression à 320/390 px et en paysage 740×390 ; vérification MCP sur la maquette rechargée avec Plus seul sélectionné et URL Besoins conservée ; capture docs/screenshots/mobile-more-selected-390.png ; spec:check et git diff --check réussis. Aucun nouveau test métier requis pour ce changement de présentation.
+- **Livraison** : correction préparée pour origin/main dans la continuité de la livraison GitHub autorisée ; résultat du push vérifié dans la réponse finale.

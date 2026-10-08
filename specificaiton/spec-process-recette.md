@@ -78,6 +78,8 @@ Ajouts de session : AC-ENT-001–007, AC-REL-001–006, AC-NOT-001–006, AC-UX-
 
 - **AC-REC-ADM** : exécuter AC-ADM-001–006 de [l’administration](spec-design-espace-administrateur.md), incluant création, édition, persistance, coordonnées et consultation conseiller. V3-05 se joue désormais en administrateur pour l’édition.
 
+- **AC-REC-NAV** : exécuter AC-UX-007 de [l’ergonomie mobile](spec-design-ergonomie-mobile.md) : Besoins → Plus, fermeture, réactivation de Besoins et passage aux demandes, avec une seule sélection visuelle.
+
 ## 6. Stratégie de test
 
 Niveaux : tests métier deterministes, scénarios navigateur PC/mobile, analyse d’accessibilité et future intégration serveur/documentaire. Pas de seuil de couverture chiffré imposé. Recette mobile avec gestes réels émule hasTouch/isMobile ; une largeur réduite seule ne teste pas le toucher. Prévoir navigateurs/appareils réels avant production.

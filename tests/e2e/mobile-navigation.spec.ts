@@ -50,3 +50,45 @@ test('Mobile — un appui change la vue et Accueil revient en haut', async ({ pa
     }
   }
 });
+
+
+test('USR-18 — Plus remplace la sélection visuelle de Besoins puis la restaure', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'Parcours tactile');
+  const html = await readFile('maquette.html', 'utf8');
+  await page.route('http://glimlink.demo/**', (route) =>
+    route.fulfill({ status: 200, contentType: 'text/html', body: html }),
+  );
+  for (const width of [320, 390, 740]) {
+    await page.setViewportSize({ width, height: width === 740 ? 390 : 844 });
+    await page.goto('http://glimlink.demo/#/adviser/needs');
+    const needs = page.locator('.mobile-nav > a[href="#/adviser/needs"]');
+    const more = page.locator('.mobile-more-button');
+    const selected = page.locator('.mobile-nav > .active');
+    await expect(needs).toHaveClass('active');
+    await more.tap();
+    await expect(more).toHaveAttribute('aria-expanded', 'true');
+    await expect(more).toHaveClass(/active/);
+    await expect(needs).not.toHaveClass('active');
+    await expect(selected).toHaveCount(1);
+    await expect(page).toHaveURL(/#\/adviser\/needs$/);
+    // La page reste courante ; seule la sélection visuelle reflète le menu ouvert.
+    await expect(needs).toHaveAttribute('aria-current', 'page');
+    await more.tap();
+    await expect(more).toHaveAttribute('aria-expanded', 'false');
+    await expect(needs).toHaveClass('active');
+    await expect(selected).toHaveCount(1);
+    await more.tap();
+    await needs.tap();
+    await expect(page.locator('#mobile-more-links')).toHaveCount(0);
+    await expect(needs).toHaveClass('active');
+    await more.tap();
+    await page.locator('#mobile-more-links a[href="#/adviser/requests"]').tap();
+    await expect(page).toHaveURL(/#\/adviser\/requests$/);
+    await expect(more).toHaveAttribute('aria-expanded', 'false');
+    await expect(more).toHaveClass(/active/);
+    await expect(selected).toHaveCount(1);
+    await needs.tap();
+    await expect(needs).toHaveClass('active');
+    await expect(more).not.toHaveClass(/active/);
+  }
+});

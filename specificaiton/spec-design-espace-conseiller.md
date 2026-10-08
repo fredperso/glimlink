@@ -8,7 +8,7 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [2, 6, 10, 13, 14, 15]
-maquette_revision: travail-local-USR-17
+maquette_revision: travail-local-USR-18
 tags: [specification, design, glimlink]
 ---
 
@@ -39,7 +39,7 @@ Permettre au conseiller de gérer le vivier, vérifier les fiches, consulter les
 
 ## 4. Interfaces et contrats de données
 
-Navigation : `home`, `students`, `calendars`, `needs`, `requests`, `companies` sous `#/adviser/`. Sur mobile, les quatre premières vues sont dans la barre inférieure ; « Plus » donne accès aux demandes et partenaires.
+Navigation : `home`, `students`, `calendars`, `needs`, `requests`, `companies` sous `#/adviser/`. Sur mobile, les quatre premières vues sont dans la barre inférieure ; « Plus » donne accès aux demandes et partenaires. USR-18 : quand ce menu est ouvert, lui seul est sélectionné visuellement ; à sa fermeture, la sélection correspond à nouveau à la vue courante (AC-UX-007).
 
 Le tableau Talents affiche identité autorisée, formation, compétences, statut et ouverture de fiche. La pagination de maquette propose 5/10/20 lignes, 5 par défaut ; une recherche ou un filtre réinitialise la page, la taille aussi. Après réduction du résultat, la page effective reste valide. Les boutons précédent/suivant sont désactivés aux bornes. Le tableau devient des lignes empilées sur mobile, avec libellés de colonnes.
 

@@ -155,3 +155,8 @@ Création de `specificaiton/` : 19 fichiers Markdown dont 15 spécifications th�
 - Captures : [accueil desktop](screenshots/admin-home-1366.png), [accueil mobile](screenshots/admin-home-390.png), [formation desktop](screenshots/admin-formation-1366.png), [formation mobile](screenshots/admin-formation-390.png).
 
 Ajouts locaux uniquement ; création de comptes, authentification, invitations et routage multi-conseillers restent simulés ou ouverts. Voir [spécification administrateur](../specificaiton/spec-design-espace-administrateur.md).
+
+
+## USR-18 — Sélection Besoins / Plus sur mobile (8 octobre 2026)
+
+Build et génération autonome réussis. Deux tests Playwright CLI mobile réussis : navigation existante et régression Besoins → Plus, fermeture, réactivation de Besoins et passage aux demandes à 320/390 pixels et en paysage 740×390. MCP confirme Plus seul sélectionné à l’ouverture, avec URL Besoins conservée. [Capture mobile](screenshots/mobile-more-selected-390.png). Contrôle documentaire spec:check et git diff --check réussis. Spécifications ergonomie, conseiller, recette et traçabilité mises à jour ; aucune règle métier modifiée.

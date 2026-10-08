@@ -58,6 +58,8 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md). Les décisions ci-dess
 
 | USR-17 | Espace administrateur : formations/plannings/compétences transférés, utilisateurs et entreprises avec coordonnées | ADM-001–008, CON-008, ACC-004 ; administration, calendriers, droits, données | Administrator, CalendarEditor, administration.ts ; copie de travail locale |
 
+| USR-18 | Sur mobile, Plus ouvert ne doit pas laisser Besoins sélectionné | UX-004, AC-UX-007 ; ergonomie, conseiller, recette | App.tsx, tests/e2e/mobile-navigation.spec.ts ; copie de travail USR-18 |
+
 USR-14 traduit la demande de clôture dans un état explicite confirmé par le conseiller ; elle ne signifie pas clôture dès l’envoi d’une demande. Les règles de réouverture restent ouvertes. Les premières demandes évoquant un « espace candidat » n’ajoutent pas de compte étudiant : aucun écran de ce rôle n’existe dans la V1 actuelle.
 
 ## Points d’entrée du code et des preuves
