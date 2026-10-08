@@ -14,6 +14,9 @@ export type PartnerCompany = {
   phone?: string;
   siret?: string;
   address?: string;
+  adviserId?: string;
+  registeredAt?: string;
+  registrationNotificationRead?: boolean;
 };
 export const partnerCompanies: PartnerCompany[] = [
   {

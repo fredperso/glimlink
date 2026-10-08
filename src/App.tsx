@@ -1,3 +1,4 @@
+import { talentAlerts } from './domain/company-experience.ts';
 import RolePicker from './components/RolePicker.tsx';
 import Select from './components/Select.tsx';
 import { notifications } from './domain/notifications.ts';
@@ -26,6 +27,7 @@ function route() {
     role: (role === 'adviser' ? 'adviser' : 'company') as Role,
     view: view || 'home',
     needId: params.get('need') || 'need-admin',
+    description: params.get('description') || undefined,
   };
 }
 export default function App() {
@@ -46,7 +48,8 @@ export default function App() {
       setCurrent((previous) =>
         previous.role === next.role &&
         previous.view === next.view &&
-        previous.needId === next.needId
+        previous.needId === next.needId &&
+        previous.description === next.description
           ? previous
           : next,
       );
@@ -70,8 +73,11 @@ export default function App() {
       return () => clearTimeout(timer);
     }
   }, [toast]);
-  const go = (view: string, needId?: string, role: Role = current.role) => {
-    location.hash = `/${role}/${view}${needId ? `?need=${encodeURIComponent(needId)}` : ''}`;
+  const go = (view: string, needId?: string, role: Role = current.role, description?: string) => {
+    const query = new URLSearchParams();
+    if (needId) query.set('need', needId);
+    if (description) query.set('description', description);
+    location.hash = `/${role}/${view}${query.size ? `?${query}` : ''}`;
     // La vue change dès l’activation, y compris si l’URL est déjà celle de l’accueil.
     setCurrent(route());
     setModal(null);
@@ -85,7 +91,7 @@ export default function App() {
   };
   const notify = (message: string) => setToast(message);
   const companyView = companyStore(store);
-  const unread = companyView.alerts.filter((a) => !a.read).length;
+  const unread = talentAlerts(companyView).length;
   const selections = companyView.needs.reduce(
     (n, need) => n + (need.status === 'active' ? need.selected.length : 0),
     0,
@@ -100,7 +106,7 @@ export default function App() {
       'Mes besoins',
       companyView.needs.filter((n) => n.status === 'active').length,
     ],
-    ['selections', 'heart', 'Mes sélections', selections],
+    ['selections', 'heart', 'Ma sélection', selections],
     ['requests', 'users', 'Mises en relation', companyView.requests.length],
     ['alerts', 'bell', 'Talent Alerts', unread],
   ] as const;

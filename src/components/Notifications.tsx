@@ -51,7 +51,8 @@ export default function Notifications() {
                   closeModal();
                   if (role === 'company' && item.studentId)
                     openModal({ kind: 'profile', studentId: item.studentId, needId: item.needId! });
-                  else go(role === 'company' ? 'alerts' : 'requests');
+                  else
+                    go(role === 'company' ? 'alerts' : item.companyId ? 'companies' : 'requests');
                 }}
               >
                 {item.welcome
@@ -60,7 +61,9 @@ export default function Notifications() {
                     ? item.studentId
                       ? 'Voir le profil'
                       : 'Voir les alertes'
-                    : 'Voir les demandes'}
+                    : item.companyId
+                      ? 'Contacter l’entreprise'
+                      : 'Voir les demandes'}
                 <Icon name="arrow" size={16} />
               </Button>
               {!item.read && (

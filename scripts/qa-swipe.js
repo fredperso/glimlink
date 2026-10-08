@@ -7,14 +7,7 @@ async (page) => {
     await page.setViewportSize({ width, height: 1000 });
     await page.evaluate(() => localStorage.clear()); await page.reload();
     await page.goto('http://glimlink.demo/#/company/home');
-    await page.locator('.deck-front').waitFor();
-    assert(await page.getByRole('button', { name: 'Affichage carte par carte' }).getAttribute('aria-pressed') === 'true', 'Accueil pas en swipe par défaut');
-    await page.getByRole('button', { name: 'Sélectionner', exact: true }).click();
-    await page.locator('.deck-front h3').filter({ hasText: 'Nora' }).waitFor();
-    await page.getByRole('button', { name: 'Annuler le dernier choix' }).click();
-    assert((await page.locator('.deck-front').innerText()).includes('Sophie'), 'Swipe accueil non réversible');
-    await page.getByRole('button', { name: 'Affichage en grille' }).click();
-    assert(await page.locator('.talent-grid .talent-card').count() > 1, 'Grille accueil indisponible');
+    assert(await page.locator('.profile-deck,.talent-card').count()===0,'Profils présents sur l’accueil');
     await page.goto('http://glimlink.demo/#/company/needs');
     await page.locator('.need-row').first().click();
     await page.locator('.deck-front').waitFor();
@@ -23,8 +16,7 @@ async (page) => {
     await page.goto('http://glimlink.demo/#/company/discover?need=need-sales');
     assert(await page.getByRole('button', { name: 'Affichage carte par carte' }).getAttribute('aria-pressed') === 'true', 'Changement de besoin conserve la grille');
     await page.goto('http://glimlink.demo/#/company/home');
-    await page.locator('.deck-front').waitFor();
-    assert(await page.getByRole('button', { name: 'Affichage carte par carte' }).getAttribute('aria-pressed') === 'true', 'Retour accueil pas en swipe');
+    assert(await page.locator('.profile-deck,.talent-card').count()===0,'Suggestions sur l’accueil');
     await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
     await page.locator('.deck-front').waitFor();
     assert(await page.getByRole('button', { name: 'Affichage carte par carte' }).getAttribute('aria-pressed') === 'true', 'Cartes pas activées par défaut');
@@ -68,7 +60,7 @@ async (page) => {
     await page.evaluate(() => document.activeElement?.blur());
     await page.waitForTimeout(150);
     await page.screenshot({ path: '/home/fjeanne/dev/projets/glimlink/docs/screenshots/swipe-' + width + '.png', fullPage: true });
-    report.push({ width, status: 'pass', violations: [], checks: ['swipe accueil par défaut', 'choix et annulation accueil', 'grille sur choix explicite', 'ouverture depuis un besoin', 'changement de besoin', 'retour accueil', 'mode par défaut', 'petit geste annulé', 'glissement à droite', 'glissement à gauche', 'annulation', 'clavier', 'fin de pile', 'persistance', 'grille', 'confidentialité'] });
+    report.push({ width, status: 'pass', violations: [], checks: ['accueil sans talents', 'grille sur choix explicite', 'ouverture depuis un besoin', 'changement de besoin', 'retour accueil', 'mode par défaut', 'petit geste annulé', 'glissement à droite', 'glissement à gauche', 'annulation', 'clavier', 'fin de pile', 'persistance', 'grille', 'confidentialité'] });
   }
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.getByRole('button', { name: 'Passer', exact: true }).click();

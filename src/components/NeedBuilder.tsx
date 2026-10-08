@@ -27,12 +27,12 @@ const examples = [
   ],
 ];
 export default function NeedBuilder() {
-  const { store, setStore, needId, go, notify } = useApp();
+  const { store, setStore, needId, go, notify, description: initialDescription } = useApp();
   const editing = location.hash.includes('need=')
     ? store.needs.find((n) => n.id === needId)
     : undefined;
   const [step, setStep] = useState(editing ? 2 : 1);
-  const [description, setDescription] = useState(editing?.description ?? '');
+  const [description, setDescription] = useState(editing?.description ?? initialDescription ?? '');
   const [brief, setBrief] = useState<Need | null>(editing ?? null);
   const [error, setError] = useState('');
   const [confirmed, setConfirmed] = useState(false);

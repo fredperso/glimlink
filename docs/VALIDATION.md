@@ -129,3 +129,11 @@ La navigation principale actualise la vue dès le clic/tap, sans attendre l’é
 `qa-mobile-navigation.js` passe avec `isMobile: true` et `hasTouch: true` à 320×740, 390×844 et 740×390 dans les deux espaces : appui unique sur chaque onglet, accueil déjà actif après défilement, menu « Plus » et même destination, premier appui avec sélecteur ouvert, historique précédent/suivant. Le test de régression est aussi enregistré dans `tests/e2e/mobile-navigation.spec.ts`. Exécution via navigateur MCP Chromium ; ces essais ne constituent pas une validation sur un iPhone physique ni une exécution de la suite CLI.
 
 Les 10 parcours de `qa-flows.js`, les 13 pages et 3 fenêtres sur 5 formats de `qa-mobile.js`, les menus/formulaires de `qa-selects.js` et la compilation TypeScript/build passent.
+
+## Parcours entreprise recentré — 8 octobre 2026
+
+Accueil sans profils/suggestions, recherche simple conservée au passage au brief, compteurs distincts, suivi et alertes par besoin, swipe dans le besoin, sélection résumée et suggestions excluant les Talent Alerts. La confirmation « Mise en relation effectuée » par le conseiller clôture le besoin et recalcule les compteurs ; l’invitation puis l’activation d’une entreprise produisent une notification d’inscription avec accès au premier appel.
+
+Validation : build TypeScript/Vite et 48 tests métier réussis. `qa-company-experience.js` passe à 1366, 390 et 320 px pour le parcours complet, plus invitation/inscription/premier appel. Axe WCAG A/AA ne rapporte aucune violation sur l’accueil et la sélection testés. `qa-flows.js` (10 parcours), `qa-swipe.js` (3 formats), `qa-mobile.js` (13 pages/3 fenêtres sur 5 formats) et `qa-mobile-navigation.js` (3 formats tactiles/deux espaces) passent via navigateur MCP Chromium. La suite CLI Playwright n’a pas été exécutée dans ce sandbox.
+
+Captures : `company-home-1366.png`, `company-home-390.png`, `company-needs-1366.png`, `company-needs-390.png`, `company-selection-1366.png`, `company-selection-390.png` dans `docs/screenshots/`. Le parcours de swipe de validation a été adapté à son retrait de l’accueil.

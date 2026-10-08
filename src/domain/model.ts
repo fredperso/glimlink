@@ -101,7 +101,7 @@ export type Request = {
   studentIds: string[];
   message: string;
   date: string;
-  status: 'received' | 'contacting' | 'meeting';
+  status: 'received' | 'contacting' | 'meeting' | 'completed';
   snapshot?: {
     need: Need;
     students: { id: string; details: StudentDetails; calendar?: Calendar }[];

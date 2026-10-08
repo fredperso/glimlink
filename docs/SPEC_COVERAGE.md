@@ -64,3 +64,13 @@ Les nouvelles demandes conservent leur contexte initial. Le conseiller voit les 
 ## Découverte par cartes
 
 L’entreprise découvre les candidats en mode Cartes par défaut : geste à droite pour sélectionner, à gauche pour passer. L’action conserve les listes propres au besoin et peut être annulée dans la session. Les choix persistent localement ; la grille permet de revoir les profils, et les profils passés peuvent être réaffichés. Les cartes utilisent les avatars génériques, le prénom et les données professionnelles publiées. Les informations inconnues et les conflits restent visibles ; une sélection ne déclenche pas une mise en relation automatique. Les gestes ont des alternatives par boutons et clavier, et respectent la préférence de réduction des animations.
+
+## Évolution demandée par l’utilisateur — 8 octobre 2026
+
+Cette demande actualise le parcours entreprise de la maquette : l’accueil conserve le message de bienvenue, une recherche en langage naturel, trois boutons chiffrés (besoins actifs, mises en relation effectuées, nouveaux profils compatibles) et la conseillère référente. Les profils, cartes de swipe et suggestions sont retirés de l’accueil. La recherche simple initie un nouveau besoin ; les modifications de besoins existants se font dans la rubrique Besoins.
+
+Les besoins affichent leur avancement et leurs Talent Alerts propres. Leur ouverture conduit aux cartes de profils, avec les pourcentages illustratifs existants, sans modifier le moteur de critères. La rubrique Ma sélection utilise un résumé avatar/prénom/formation par besoin, ouvre la fiche publiée et permet de demander une mise en relation. Ses suggestions proviennent des profils déjà disponibles et excluent les profils retenus, passés et ceux associés aux Talent Alerts du besoin.
+
+Un nouveau statut « Mise en relation effectuée », confirmé par le conseiller, clôture automatiquement le besoin. Une simple demande ou une prise de contact le laisse actif. Le compteur de l’accueil porte sur les demandes ainsi confirmées, et non sur toutes les demandes reçues. Les besoins clôturés conservent leur brief et leur historique de demandes. Le compteur global Talent Alerts porte sur les profils compatibles non lus distincts pour les besoins actifs ; chaque besoin affiche son propre nombre.
+
+L’invitation associe l’entreprise à Mathilde JEANNE, conseillère référente de la démonstration. La création du profil et la vérification simulée de l’e-mail produisent une notification d’inscription pour elle, avec un accès au contact téléphonique. La notification est conservée, lisible et non dupliquée après activation. Ce parcours demeure local : aucun lien sécurisé réel ni e-mail n’est envoyé par la maquette.

@@ -1,3 +1,4 @@
+import { activatePartner } from '../domain/company-experience.ts';
 import Select from './Select.tsx';
 import Notifications from './Notifications.tsx';
 import {
@@ -906,6 +907,7 @@ function Invitation({
                   contact: 'À compléter',
                   position: 'À compléter',
                   school: 'campus-a',
+                  adviserId: 'mathilde-jeanne',
                   status: 'invited',
                 },
               ],
@@ -972,7 +974,10 @@ function Invitation({
         <div className="success-panel">
           <Icon name="shield" size={32} />
           <h3>Bienvenue dans votre espace partenaire.</h3>
-          <p>Le parcours d’activation est terminé dans cette simulation.</p>
+          <p>
+            Votre conseiller référent est informé de votre inscription et pourra vous appeler pour
+            vous présenter Glimlink.
+          </p>
           <Button onClick={closeModal}>Fermer l’aperçu</Button>
         </div>
       ) : step === 1 ? (
@@ -985,12 +990,7 @@ function Invitation({
           </p>
           <Button
             onClick={() => {
-              setStore((prev) => ({
-                ...prev,
-                companies: getCompanies(prev).map((c) =>
-                  c.id === invitedId ? { ...c, status: 'active' } : c,
-                ),
-              }));
+              setStore((prev) => activatePartner(prev, invitedId));
               setStep(2);
             }}
           >

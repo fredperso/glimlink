@@ -4,6 +4,7 @@ import {
   classifyStudent,
   createId,
   getCompany,
+  getCompanies,
   requestSelection,
   visibleStudents,
   type Role,
@@ -16,6 +17,7 @@ export type NotificationItem = {
   date: string;
   read: boolean;
   needId?: string;
+  companyId?: string;
   welcome?: boolean;
   studentId?: string;
   simulated?: boolean;
@@ -69,7 +71,21 @@ export function notifications(store: Store, role: Role): NotificationItem[] {
             simulated: request.message.startsWith('[Simulation]'),
           };
         });
-  return [...events, welcome].sort((a, b) => b.date.localeCompare(a.date));
+  const registrations: NotificationItem[] =
+    role === 'adviser'
+      ? getCompanies(scoped)
+          .filter((company) => company.registeredAt && company.adviserId === 'mathilde-jeanne')
+          .map((company) => ({
+            id: `registration-${company.id}`,
+            companyId: company.id,
+            title: 'Nouvelle entreprise inscrite',
+            message: `${company.name} · ${company.contact}. Appelez ce contact pour présenter Glimlink.`,
+            date: company.registeredAt!,
+            read: company.registrationNotificationRead ?? false,
+            simulated: true,
+          }))
+      : [];
+  return [...events, ...registrations, welcome].sort((a, b) => b.date.localeCompare(a.date));
 }
 export function readNotifications(store: Store, role: Role, ids: string[]): Store {
   const allowed = new Set(
@@ -97,6 +113,11 @@ export function readNotifications(store: Store, role: Role, ids: string[]): Stor
     : {
         ...store,
         notificationWelcomeRead: welcomeRead,
+        companies: getCompanies(store).map((company) =>
+          allowed.has(`registration-${company.id}`)
+            ? { ...company, registrationNotificationRead: true }
+            : company,
+        ),
         requests: store.requests.map((request) =>
           allowed.has(request.id) ? { ...request, adviserNotificationRead: true } : request,
         ),

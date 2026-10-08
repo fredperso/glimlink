@@ -14,7 +14,8 @@ export type AppContextValue = {
   role: Role;
   view: string;
   needId: string;
-  go: (view: string, needId?: string, role?: Role) => void;
+  description?: string;
+  go: (view: string, needId?: string, role?: Role, description?: string) => void;
   openModal: (modal: ModalState) => void;
   closeModal: () => void;
   notify: (text: string) => void;

@@ -1,4 +1,11 @@
 import {
+  activatePartner,
+  needProgress,
+  suggestedStudents,
+  talentAlerts,
+  updateRequestStatus,
+} from '../src/domain/company-experience.ts';
+import {
   notifications,
   readNotifications,
   simulateNotification,
@@ -643,4 +650,91 @@ test('Notifications — la lecture de bienvenue est indépendante par entreprise
   assert.deepEqual(read.requests, store.requests);
   assert.equal(companyStore(read).notificationWelcomeRead?.adviser, undefined);
   assert.equal(adviserStore(read).notificationWelcomeRead?.companies, undefined);
+});
+
+test('Entreprise — Talent Alerts compte les nouveaux profils compatibles sans doublon', () => {
+  const store = initialStore();
+  const original = store.alerts[0];
+  store.alerts.push(
+    { ...original, id: 'duplicate' },
+    { ...original, id: 'conflict', studentId: 'adam' },
+    { ...original, id: 'draft', studentId: 'draft-zoe' },
+  );
+  assert.equal(talentAlerts(companyStore(store)).length, 1);
+  store.alerts.forEach((alert) => {
+    if (alert.studentId === original.studentId) alert.read = true;
+  });
+  assert.equal(talentAlerts(companyStore(store)).length, 0);
+  assert.equal(
+    talentAlerts(companyStore({ ...initialStore(), activeCompanyId: 'bloom-studio' })).length,
+    0,
+  );
+});
+test('Entreprise — les suggestions excluent les alertes, les profils retenus et passés', () => {
+  const store = companyStore(initialStore());
+  const need = store.needs[0];
+  const suggestions = suggestedStudents(store, need);
+  assert.ok(suggestions.length > 0);
+  for (const student of suggestions) {
+    assert.ok(!need.selected.includes(student.id));
+    assert.ok(
+      !store.alerts.some((alert) => alert.studentId === student.id && alert.needId === need.id),
+    );
+    assert.equal(classifyStudent(store, student, need), 'main');
+    assert.equal(student.personalDetails, undefined);
+  }
+  need.passed.push(suggestions[0].id);
+  assert.ok(!suggestedStudents(store, need).some((student) => student.id === suggestions[0].id));
+  need.status = 'closed';
+  assert.deepEqual(suggestedStudents(store, need), []);
+});
+test('Entreprise — seule la confirmation de mise en relation clôture le besoin', () => {
+  const store = initialStore();
+  const requested = requestSelection(store, 'need-admin', 'Premier contact');
+  const request = requested.requests[0];
+  assert.equal(requested.needs[0].status, 'active');
+  const contacting = updateRequestStatus(requested, request.id, 'contacting');
+  assert.equal(contacting.needs[0].status, 'active');
+  assert.equal(needProgress(contacting, contacting.needs[0]), 'Prise de contact en cours');
+  const done = updateRequestStatus(contacting, request.id, 'completed');
+  assert.equal(done.requests[0].status, 'completed');
+  assert.equal(done.needs[0].status, 'closed');
+  assert.equal(done.needs[1].status, 'active');
+  assert.equal(needProgress(done, done.needs[0]), 'Mise en relation effectuée');
+  assert.deepEqual(talentAlerts(companyStore(done)), []);
+  assert.equal(updateRequestStatus(done, request.id, 'received'), done);
+});
+test('Inscription — la vérification alerte le conseiller référent une seule fois', () => {
+  const store = initialStore();
+  store.companies!.push({
+    id: 'new-company',
+    name: 'Entreprise invitée',
+    email: 'new@example.com',
+    mark: 'ne.',
+    sector: 'Services',
+    location: 'Montpellier',
+    contact: 'Alex',
+    position: 'Direction',
+    school: 'campus-a',
+    adviserId: 'mathilde-jeanne',
+    status: 'verification',
+    phone: '0100000000',
+  });
+  const next = activatePartner(store, 'new-company');
+  const alert = notifications(next, 'adviser').find((item) => item.companyId === 'new-company');
+  assert.ok(alert);
+  assert.equal(alert.read, false);
+  assert.equal(
+    notifications(next, 'company').some((item) => item.companyId === 'new-company'),
+    false,
+  );
+  assert.equal(activatePartner(next, 'new-company'), next);
+  const read = readNotifications(next, 'adviser', [alert.id]);
+  assert.equal(notifications(read, 'adviser').find((item) => item.id === alert.id)?.read, true);
+  const other = structuredClone(next);
+  other.companies!.find((company) => company.id === 'new-company')!.school = 'campus-other';
+  assert.equal(
+    notifications(other, 'adviser').some((item) => item.companyId === 'new-company'),
+    false,
+  );
 });

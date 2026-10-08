@@ -384,6 +384,16 @@ function Companies() {
                     : 'Compte activé'}
               </Badge>
               <h2>{company.name}</h2>
+              {company.registeredAt && !company.registrationNotificationRead && (
+                <Badge tone="green">Nouvelle inscription · premier appel à prévoir</Badge>
+              )}
+              {company.registeredAt && company.phone && (
+                <p>
+                  <a className="text-button" href={`tel:${company.phone}`}>
+                    Appeler {company.contact} · {company.phone}
+                  </a>
+                </p>
+              )}
               <p>
                 {company.sector} · {company.location}
               </p>

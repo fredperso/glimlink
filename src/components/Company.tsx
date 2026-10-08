@@ -1,3 +1,9 @@
+import {
+  needProgress,
+  suggestedStudents,
+  talentAlerts,
+  updateRequestStatus,
+} from '../domain/company-experience.ts';
 import Select from './Select.tsx';
 import { readNotifications } from '../domain/notifications.ts';
 import ValidatedBrief from './ValidatedBrief.tsx';
@@ -29,25 +35,33 @@ export function AdviserCard() {
         </span>
         <div>
           <strong>Mathilde JEANNE</strong>
-          <small>Votre conseillère formation</small>
+          <small>Votre conseillère référente</small>
         </div>
       </div>
       <p>Du premier talent à l’entretien, je vous accompagne pour trouver la bonne personne.</p>
       <button className="button button-secondary" onClick={() => openModal({ kind: 'contact' })}>
         <Icon name="message" size={17} /> Échanger avec Mathilde
       </button>
-      <span className="adviser-school">Atelier Campus · Montpellier</span>
+      <span className="adviser-school">
+        Atelier Campus · Montpellier
+        <br />
+        Votre contact pour l’inscription et le suivi.
+      </span>
     </aside>
   );
 }
 
 function NeedRow({ need }: { need: Need }) {
   const { store } = useApp();
+  const alerts = talentAlerts(store, need.id).length;
   const count = visibleStudents(store, need).filter(
     (s) => classifyStudent(store, s, need) === 'main',
   ).length;
   return (
-    <a className="need-row" href={`#/company/discover?need=${need.id}`}>
+    <a
+      className="need-row"
+      href={`#/company/${need.status === 'closed' ? 'requests' : need.validated ? 'discover' : 'new-need'}?need=${need.id}`}
+    >
       <span className="need-icon">
         <Icon name="brief" />
       </span>
@@ -55,7 +69,7 @@ function NeedRow({ need }: { need: Need }) {
         <div>
           <h3>{need.title}</h3>
           <Badge tone={need.status === 'active' ? 'green' : 'neutral'}>
-            {need.status === 'active' ? 'Actif' : 'Fermé'}
+            {need.status === 'active' ? 'Actif' : 'Clôturé'}
           </Badge>
         </div>
         <p>
@@ -64,8 +78,16 @@ function NeedRow({ need }: { need: Need }) {
           {need.location}
           <span>·</span>À partir du {dateLabel(need.start)}
         </p>
+        <span className="need-progress">{needProgress(store, need)}</span>
         <span className="need-meta">
-          {count} talents à explorer <i /> {need.selected.length} dans votre sélection
+          {need.status === 'active'
+            ? `${count} profils compatibles · ${need.selected.length} retenus`
+            : 'Historique conservé'}
+          {alerts > 0 && (
+            <Badge tone="green">
+              {alerts} nouveau{alerts > 1 ? 'x' : ''} profil{alerts > 1 ? 's' : ''}
+            </Badge>
+          )}
         </span>
       </div>
       <Icon name="arrow" />
@@ -103,37 +125,25 @@ function DiscoveryViewSwitch({
 }
 
 function Home() {
-  const { store, go, openModal } = useApp();
-  const [mode, setMode] = useState<'grid' | 'swipe'>('swipe');
-  const needs = store.needs.filter((n) => n.status === 'active');
-  const need = needs[0];
-  const candidates = need
-    ? visibleStudents(store, need).filter((s) => classifyStudent(store, s, need) === 'main')
-    : [];
-  const alerts = store.alerts.filter(
-    (a) => !a.read && store.needs.some((n) => n.id === a.needId && n.status === 'active'),
-  );
+  const { store, go } = useApp();
+  const [description, setDescription] = useState('');
+  const needs = store.needs.filter((need) => need.status === 'active').length;
+  const completed = store.requests.filter((request) => request.status === 'completed').length;
+  const alerts = talentAlerts(store).length;
   return (
     <>
       <div className="page-heading">
         <div>
-          <div className="greeting">
-            <span className="greeting-dot" /> Votre prochaine rencontre commence ici
-          </div>
           <h1>
-            Bonjour {getCompany(store, store.activeCompanyId).contact.split(' ')[0]}
+            Bonjour {getCompany(store, store.activeCompanyId).contact.split(' ')[0]}{' '}
             <span className="wave" aria-hidden="true">
-              {' '}
               ✳
             </span>
           </h1>
-          <p>Des talents à découvrir. Une conseillère pour vous accompagner.</p>
+          <p>Votre recrutement commence ici. Mathilde vous accompagne.</p>
         </div>
-        <span className="date-chip">
-          <Icon name="calendar" size={16} /> {dateLabel('2026-10-07')}
-        </span>
       </div>
-      <section className="welcome-banner">
+      <section className="welcome-banner company-welcome">
         <div className="welcome-copy">
           <Badge tone="forest">
             <Icon name="spark" size={14} /> Recruter, plus simplement
@@ -143,160 +153,55 @@ function Home() {
             <br />
             Ils ont le potentiel.
           </h2>
-          <p>
-            Parlez-nous de votre besoin. Découvrez les talents
-            <br className="desktop-only" /> qui pourraient faire grandir votre équipe.
-          </p>
-          <Button onClick={() => go('new-need')}>
-            <Icon name="plus" size={18} /> Décrire mon besoin <Icon name="arrow" size={18} />
-          </Button>
+          <p>Décrivez simplement les missions que vous souhaitez confier.</p>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              go('new-need', undefined, undefined, description.trim());
+            }}
+          >
+            <label htmlFor="home-search" className="sr-only">
+              Décrivez votre besoin
+            </label>
+            <textarea
+              id="home-search"
+              rows={2}
+              maxLength={2000}
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Ex. : accueillir mes clients et gérer des devis, le vendredi à Montpellier…"
+            />
+            <Button type="submit">
+              <Icon name="spark" size={18} /> Décrire mon besoin <Icon name="arrow" size={18} />
+            </Button>
+          </form>
           <span className="welcome-footnote">Pas besoin de rédiger une offre d’emploi.</span>
         </div>
-        <div className="constellation" aria-hidden="true">
-          <span className="orbit orbit-one" />
-          <span className="orbit orbit-two" />
-          <span className="orbit orbit-three" />
-          <div className="floating-talent float-one">
-            <Avatar variant={0} small />
-            <span>
-              Sophie<small>Gestion de la PME</small>
-            </span>
-            <i>92%</i>
-          </div>
-          <div className="connection-line" />
-          <div className="floating-center">
-            <Icon name="spark" size={32} />
-          </div>
-          <div className="floating-talent float-two">
-            <Avatar variant={1} small />
-            <span>
-              Lucas<small>Relation client</small>
-            </span>
-            <i>86%</i>
-          </div>
-          <div className="floating-talent float-three">
-            <Avatar variant={2} small />
-            <span>
-              Inès<small>Administration</small>
-            </span>
-            <Icon name="check" size={18} />
-          </div>
-          <span className="constellation-dot dot-one" />
-          <span className="constellation-dot dot-two" />
-        </div>
       </section>
-      <div className="dashboard-layout">
-        <div>
-          <section className="section">
-            <div className="section-heading">
-              <h2>
-                Vos recrutements en cours <span className="round-count">{needs.length}</span>
-              </h2>
-              <a href="#/company/needs" className="text-button">
-                Tous mes besoins <Icon name="arrow" size={16} />
-              </a>
-            </div>
-            <div className="need-list">
-              {needs.length ? (
-                needs.map((n) => <NeedRow key={n.id} need={n} />)
-              ) : (
-                <Empty
-                  title="Votre premier besoin commence ici"
-                  action={<Button onClick={() => go('new-need')}>Décrire mon besoin</Button>}
-                >
-                  Racontez les missions que vous souhaitez confier.
-                </Empty>
-              )}
-            </div>
-          </section>
-          {alerts.length > 0 && (
-            <a className="alert-strip" href="#/company/alerts">
-              <span className="alert-strip-icon">
-                <Icon name="bell" />
-              </span>
-              <div>
-                <strong>Une nouvelle rencontre en vue</strong>
-                <p>
-                  {alerts.length} nouveau{alerts.length > 1 ? 'x' : ''} talent
-                  {alerts.length > 1 ? 's' : ''} pour vos besoins actifs.
-                </p>
-              </div>
-              <span className="text-button">
-                Découvrir <Icon name="arrow" size={18} />
-              </span>
-            </a>
-          )}
-        </div>
-        <div className="dashboard-rail">
-          <AdviserCard />
-          <div className="steps-mini">
-            <h3>
-              Vous choisissez.
-              <br />
-              Nous faisons le lien.
-            </h3>
-            <ol>
-              <li>
-                <span>1</span>
-                <div>
-                  <strong>Décrivez votre besoin</strong>
-                  <p>Avec vos mots, tout simplement.</p>
-                </div>
-              </li>
-              <li>
-                <span>2</span>
-                <div>
-                  <strong>Découvrez les talents</strong>
-                  <p>Comprenez chaque correspondance.</p>
-                </div>
-              </li>
-              <li>
-                <span>3</span>
-                <div>
-                  <strong>Faites la rencontre</strong>
-                  <p>Votre conseillère organise la suite.</p>
-                </div>
-              </li>
-            </ol>
-          </div>
-        </div>
-      </div>
-      {candidates.length > 0 && (
-        <section className="section">
-          <div className="section-heading">
-            <div>
-              <h2>Ils pourraient rejoindre votre équipe</h2>
-              <p>Pour votre besoin « {need.title} »</p>
-            </div>
-            <a className="text-button" href={`#/company/discover?need=${need.id}`}>
-              Explorer les talents <Icon name="arrow" size={16} />
-            </a>
-          </div>
-          <DiscoveryViewSwitch mode={mode} onChange={setMode} />
-          {mode === 'swipe' ? (
-            <SwipeDeck
-              key={need.id}
-              students={candidates}
-              need={need}
-              onGrid={() => setMode('grid')}
-            />
-          ) : (
-            <div className="talent-grid">
-              {candidates.map((s) => (
-                <TalentCard key={s.id} student={s} need={need} compact />
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-      <div className="confidence-line">
-        <Icon name="shield" size={18} />
-        <span>
-          Des profils vérifiés par le centre. Des coordonnées protégées. Une relation humaine.
-        </span>
-        <button className="text-button" onClick={() => openModal({ kind: 'help' })}>
-          En savoir plus
+      <section className="home-shortcuts" aria-label="Votre activité">
+        <button onClick={() => go('needs')}>
+          <Icon name="brief" />
+          <span>Besoins en cours</span>
+          <strong>{needs}</strong>
+          <Icon name="arrow" size={18} />
         </button>
+        <button onClick={() => go('requests')}>
+          <Icon name="users" />
+          <span>Mises en relation effectuées</span>
+          <strong>{completed}</strong>
+          <Icon name="arrow" size={18} />
+        </button>
+        <button onClick={() => go('alerts')}>
+          <Icon name="bell" />
+          <span>
+            Talent Alerts<small>Nouveaux profils compatibles</small>
+          </span>
+          <strong>{alerts}</strong>
+          <Icon name="arrow" size={18} />
+        </button>
+      </section>
+      <div className="home-adviser">
+        <AdviserCard />
       </div>
     </>
   );
@@ -321,7 +226,7 @@ function Needs() {
       <div className="tabs" aria-label="État des besoins">
         {[
           ['active', 'Besoins actifs'],
-          ['closed', 'Besoins fermés'],
+          ['closed', 'Besoins clôturés'],
         ].map(([id, label]) => (
           <button
             key={id}
@@ -338,6 +243,19 @@ function Needs() {
           <div key={need.id}>
             <NeedRow need={need} />
             <div className="need-management">
+              {need.status === 'active' && (
+                <>
+                  <button className="text-button" onClick={() => go('new-need', need.id)}>
+                    <Icon name="brief" size={16} /> Modifier ma recherche
+                  </button>
+                  {talentAlerts(store, need.id).length > 0 && (
+                    <button className="text-button" onClick={() => go('alerts', need.id)}>
+                      <Icon name="bell" size={16} /> Talent Alerts ·{' '}
+                      {talentAlerts(store, need.id).length}
+                    </button>
+                  )}
+                </>
+              )}
               {need.status === 'active' ? (
                 confirm === need.id ? (
                   <>
@@ -372,11 +290,19 @@ function Needs() {
                 </span>
               )}
             </div>
+            {need.status === 'closed' && (
+              <details className="closed-brief">
+                <summary>Voir le détail du besoin clôturé</summary>
+                <ValidatedBrief need={need} />
+              </details>
+            )}
           </div>
         ))}
         {!list.length && (
           <Empty
-            title={filter === 'active' ? 'Quel est votre prochain projet ?' : 'Aucun besoin fermé'}
+            title={
+              filter === 'active' ? 'Quel est votre prochain projet ?' : 'Aucun besoin clôturé'
+            }
             action={
               filter === 'active' ? (
                 <Button onClick={() => go('new-need')}>Décrire mon besoin</Button>
@@ -655,71 +581,125 @@ function Discovery() {
   );
 }
 
+function SelectionSummary({
+  student,
+  need,
+  suggestion = false,
+}: {
+  student: Student;
+  need: Need;
+  suggestion?: boolean;
+}) {
+  const { store, openModal, setStore, notify } = useApp();
+  const data = student.published!;
+  const training = store.calendars.find((calendar) => calendar.id === data.trainingId);
+  function toggle() {
+    setStore((previous) => ({
+      ...previous,
+      needs: previous.needs.map((item) =>
+        item.id === need.id
+          ? {
+              ...item,
+              selected: suggestion
+                ? [...new Set([...item.selected, student.id])]
+                : item.selected.filter((id) => id !== student.id),
+            }
+          : item,
+      ),
+    }));
+    notify(
+      suggestion
+        ? `${data.firstName} ajouté à votre sélection`
+        : `${data.firstName} retiré de votre sélection`,
+    );
+  }
+  return (
+    <article className="selection-summary">
+      <button
+        className="selection-profile"
+        onClick={() => openModal({ kind: 'profile', studentId: student.id, needId: need.id })}
+      >
+        <Avatar variant={student.avatar} small />
+        <span>
+          <strong>{data.firstName}</strong>
+          <small>{training?.title.split(' · ')[0] ?? 'Formation à vérifier'}</small>
+        </span>
+        <Icon name="arrow" size={18} />
+      </button>
+      <button className="text-button" onClick={toggle}>
+        <Icon name={suggestion ? 'plus' : 'close'} size={16} />
+        {suggestion ? 'Ajouter à ma sélection' : 'Retirer de ma sélection'}
+      </button>
+    </article>
+  );
+}
 function Selections() {
-  const { store, needId, go, openModal, setStore, notify } = useApp();
-  const needs = store.needs.filter((n) => n.status === 'active');
-  const need = needs.find((n) => n.id === needId) ?? needs[0];
+  const { store, needId, go, openModal, setStore } = useApp();
+  const needs = store.needs.filter((need) => need.status === 'active');
+  const need = needs.find((item) => item.id === needId) ?? needs[0];
   const selected =
     need?.selected
-      .map((id) => store.students.find((s) => s.id === id))
-      .filter((s): s is Student => !!s) ?? [];
+      .map((id) => store.students.find((student) => student.id === id))
+      .filter((student): student is Student => !!student) ?? [];
+  const suggestions = need ? suggestedStudents(store, need) : [];
   return (
     <>
       <div className="page-heading">
         <div>
           <h1>Vos talents à rencontrer.</h1>
-          <p>Une sélection par besoin. Votre conseillère organise la suite.</p>
+          <p>Ma sélection, organisée par besoin. Cliquez sur un profil pour consulter sa fiche.</p>
         </div>
       </div>
-      <label className="need-select">
-        Pour le besoin
-        <Select value={need?.id ?? ''} onChange={(e) => go('selections', e.target.value)}>
-          {needs.map((n) => (
-            <option key={n.id} value={n.id}>
-              {n.title}
-            </option>
-          ))}
-        </Select>
-      </label>
-      {selected.length ? (
+      {needs.length > 0 && (
+        <label className="need-select">
+          Pour le besoin
+          <Select value={need?.id ?? ''} onChange={(event) => go('selections', event.target.value)}>
+            {needs.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.title} · {item.selected.length} retenu(s)
+              </option>
+            ))}
+          </Select>
+        </label>
+      )}
+      {selected.length > 0 ? (
         <>
-          <div className="talent-grid">
-            {selected.map((s) =>
-              s.status === 'published' ? (
-                <TalentCard key={s.id} student={s} need={need} />
+          <div className="selection-summaries">
+            {selected.map((student) =>
+              student.status === 'published' && student.published ? (
+                <SelectionSummary key={student.id} student={student} need={need} />
               ) : (
-                <article key={s.id} className="panel">
+                <article className="panel" key={student.id}>
                   <Badge tone="warning">Profil retiré du vivier</Badge>
-                  <h2>{s.published?.firstName}</h2>
-                  <p>Ce talent n’est plus disponible pour une nouvelle mise en relation.</p>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setStore((prev) => ({
-                        ...prev,
-                        needs: prev.needs.map((n) =>
-                          n.id === need.id
-                            ? { ...n, selected: n.selected.filter((id) => id !== s.id) }
-                            : n,
+                  <p>Ce profil n’est plus disponible pour une nouvelle mise en relation.</p>
+                  <button
+                    className="text-button"
+                    onClick={() =>
+                      setStore((previous) => ({
+                        ...previous,
+                        needs: previous.needs.map((item) =>
+                          item.id === need.id
+                            ? { ...item, selected: item.selected.filter((id) => id !== student.id) }
+                            : item,
                         ),
-                      }));
-                      notify('Profil retiré de la sélection');
-                    }}
+                      }))
+                    }
                   >
-                    Retirer de la sélection
-                  </Button>
+                    Retirer de ma sélection
+                  </button>
                 </article>
               ),
             )}
           </div>
           <div className="selection-next">
             <div>
-              <h2>La prochaine étape est humaine.</h2>
-              <p>
-                Mathilde échange avec vous, vérifie les disponibilités et contacte les étudiants.
-              </p>
+              <h2>Faites le lien avec Mathilde.</h2>
+              <p>Votre conseillère échange avec vous et contacte les talents retenus.</p>
             </div>
-            <Button onClick={() => openModal({ kind: 'request', needId: need.id })}>
+            <Button
+              disabled={!selected.some((student) => student.status === 'published')}
+              onClick={() => openModal({ kind: 'request', needId: need.id })}
+            >
               Demander une mise en relation <Icon name="arrow" />
             </Button>
           </div>
@@ -727,21 +707,42 @@ function Selections() {
       ) : (
         <Empty
           title="Votre sélection prend forme ici"
-          action={
-            <Button onClick={() => (need ? go('discover', need.id) : go('new-need'))}>
-              {need ? 'Découvrir les talents' : 'Décrire mon besoin'}
-            </Button>
-          }
+          action={<Button onClick={() => go('needs')}>Voir mes besoins</Button>}
         >
-          Ajoutez les profils que vous souhaitez rencontrer depuis la découverte.
+          Retenez des profils depuis les cartes de chaque besoin.
         </Empty>
+      )}
+      {need && (
+        <section className="selection-suggestions">
+          <div className="section-heading">
+            <div>
+              <h2>D’autres profils pour ce besoin</h2>
+              <p>Des suggestions du vivier existant, en complément de vos profils retenus.</p>
+            </div>
+          </div>
+          {suggestions.length > 0 ? (
+            <div className="selection-summaries">
+              {suggestions.map((student) => (
+                <SelectionSummary key={student.id} student={student} need={need} suggestion />
+              ))}
+            </div>
+          ) : (
+            <p className="notice">
+              Aucune autre suggestion compatible pour le moment. Les nouveaux profils arrivent dans
+              Talent Alerts.
+            </p>
+          )}
+        </section>
       )}
     </>
   );
 }
 
 function Alerts() {
-  const { store, setStore, openModal } = useApp();
+  const { store, setStore, openModal, needId } = useApp();
+  const scopedAlerts = location.hash.includes('need=')
+    ? store.alerts.filter((alert) => alert.needId === needId)
+    : store.alerts;
   return (
     <>
       <div className="page-heading">
@@ -756,7 +757,7 @@ function Alerts() {
               readNotifications(
                 prev,
                 'company',
-                store.alerts.map((alert) => alert.id),
+                scopedAlerts.map((alert) => alert.id),
               ),
             )
           }
@@ -765,11 +766,14 @@ function Alerts() {
         </Button>
       </div>
       <div className="alert-list">
-        {store.alerts.map((alert) => {
+        {scopedAlerts.map((alert) => {
           const need = store.needs.find((n) => n.id === alert.needId);
           const student = store.students.find((s) => s.id === alert.studentId);
           const available =
-            !!need && visibleStudents(store, need).some((s) => s.id === student?.id);
+            !!need &&
+            visibleStudents(store, need).some(
+              (s) => s.id === student?.id && classifyStudent(store, s, need) === 'main',
+            );
           return (
             <article className={`alert-item ${alert.read ? '' : 'unread'}`} key={alert.id}>
               <Avatar variant={student?.avatar} small />
@@ -780,7 +784,7 @@ function Alerts() {
                       ? `${student!.published!.firstName} rejoint votre vivier`
                       : 'Une alerte de votre historique'}
                   </h2>
-                  {!alert.read && <Badge tone="green">Nouveau</Badge>}
+                  {!alert.read && available && <Badge tone="green">Nouveau</Badge>}
                 </div>
                 <p>
                   {need?.title ?? 'Besoin fermé'} · {dateLabel(alert.date)}
@@ -810,7 +814,7 @@ function Alerts() {
             </article>
           );
         })}
-        {!store.alerts.length && (
+        {!scopedAlerts.length && (
           <Empty title="Les prochaines rencontres se préparent">
             Vous serez informé lorsqu’un nouveau talent validé correspondra à votre besoin.
           </Empty>
@@ -825,16 +829,20 @@ function Alerts() {
 }
 
 export function RequestList({ adviser: requestedAdviser = false }: { adviser?: boolean }) {
-  const { store, setStore, notify, openModal, role } = useApp();
+  const { store, setStore, notify, openModal, role, needId } = useApp();
   const adviser = requestedAdviser && role === 'adviser';
   const statuses = {
     received: 'Demande reçue',
     contacting: 'Prise de contact en cours',
     meeting: 'Entretien à organiser',
+    completed: 'Mise en relation effectuée',
   };
+  const requests = (adviser ? adviserRequests(store) : store.requests).filter(
+    (request) => adviser || !location.hash.includes('need=') || request.needId === needId,
+  );
   return (
     <div className="request-list">
-      {(adviser ? adviserRequests(store) : store.requests).map((request) => {
+      {requests.map((request) => {
         const need = store.needs.find((n) => n.id === request.needId);
         const students = request.studentIds
           .map((id) => store.students.find((s) => s.id === id))
@@ -971,15 +979,15 @@ export function RequestList({ adviser: requestedAdviser = false }: { adviser?: b
                   Suivi de la demande
                   <Select
                     value={request.status}
+                    disabled={request.status === 'completed'}
                     onChange={(e) => {
                       const status = e.target.value as typeof request.status;
-                      setStore((prev) => ({
-                        ...prev,
-                        requests: prev.requests.map((r) =>
-                          r.id === request.id ? { ...r, status } : r,
-                        ),
-                      }));
-                      notify('Suivi de la demande mis à jour');
+                      setStore((prev) => updateRequestStatus(prev, request.id, status));
+                      notify(
+                        status === 'completed'
+                          ? 'Mise en relation effectuée. Le besoin est clôturé.'
+                          : 'Suivi de la demande mis à jour',
+                      );
                     }}
                   >
                     {Object.entries(statuses).map(([id, text]) => (
@@ -994,7 +1002,7 @@ export function RequestList({ adviser: requestedAdviser = false }: { adviser?: b
           </article>
         );
       })}
-      {!store.requests.length && (
+      {!requests.length && (
         <Empty
           title={
             adviser
