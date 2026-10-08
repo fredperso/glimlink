@@ -10,7 +10,7 @@ Le sélecteur en haut permet de passer de l'espace entreprise à l'espace consei
 
 ## Développer et vérifier
 
-Prérequis : Node.js 24 et npm.
+Prérequis : Node.js 24 et npm ; Python 3 pour le contrôle documentaire `spec:check`.
 
 ```sh
 rtk npm ci
@@ -18,6 +18,7 @@ rtk npm run dev
 rtk npm run build
 rtk npm test
 rtk npm run test:e2e
+rtk npm run spec:check
 ```
 
 Le serveur de développement est accessible sur `http://localhost:5173`. Pour consulter la maquette sur un téléphone connecté au même réseau, utiliser l'adresse IP de la machine et le port 5173.
@@ -35,6 +36,8 @@ Le build vérifie TypeScript, génère `dist/` et régénère `maquette.html`. L
 7. Explorer l'invitation et la vérification simulée d'e-mail depuis le guide.
 
 ## Structure et documentation
+
+La référence fonctionnelle maintenue est [specificaiton/README.md](specificaiton/README.md) : PDF V3 archivé, 15 documents thématiques enrichis par la maquette, traçabilité, recette, arbitrages et journal. La [règle de gouvernance](specificaiton/spec-process-gouvernance.md) exige une vérification et une mise à jour à chaque nouvelle demande ; elle est inscrite dans [AGENTS.md](AGENTS.md). `rtk npm run spec:check` contrôle la structure, les liens et la couverture documentaire.
 
 `src/components/` contient les écrans ; `src/domain/` les règles et les données fictives ; `tests/` les scénarios de recette ; `scripts/` le packaging et les contrôles navigateur ; `tools/skills/` les skills de design récupérés.
 

@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build && node scripts/package-preview.mjs",
     "preview": "vite preview --host 0.0.0.0 --port 4173",
     "test": "node --experimental-strip-types --test --test-isolation=none tests/domain.test.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "spec:check": "python3 scripts/check-specifications.py"
   },
   "dependencies": {
     "react": "19.2.4",

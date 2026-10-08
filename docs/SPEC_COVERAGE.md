@@ -1,5 +1,7 @@
 # Couverture et hypothèses V1
 
+La [référence consolidée maintenue](../specificaiton/README.md) reprend le PDF et les décisions utilisateur. Ce document conserve la couverture et le contexte de réalisation.
+
 | Spécification          | Maquette                                                                                                                     |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | §2–3 Accès / rôles     | Entreprise et conseiller, invitation et vérification e-mail simulées, aucun compte étudiant                                  |
@@ -21,7 +23,7 @@
 - **Brief** : préremplissage par mots-clés, dates proposées et modifiables, confirmation obligatoire ; aucun transfert de préférences entre nouveaux besoins.
 - **Publication** : prénom, formation et compétence vérifiée exigés, plus confirmation du conseiller. Les champs obligatoires définitifs sont ouverts.
 - **Calendrier** : rythme hebdomadaire, période d’application, exceptions datées et vues mois / année. Les dates non renseignées d’un rythme variable restent à vérifier ; un cours connu produit un conflit même si le reste du planning est inconnu. Les demi-journées ne sont pas implémentées. Les jours sans cours restent une présence potentielle et les week-ends ne sont pas évalués.
-- **Cycles de vie** : besoin actif / fermé ; demande reçue / prise de contact / entretien à organiser. États illustratifs ; fermeture arrête découverte et nouvelles alertes, sans réouverture automatique.
+- **Cycles de vie** : besoin actif / clôturé ; demande reçue / prise de contact / entretien à organiser / mise en relation effectuée. La confirmation de mise en relation par le conseiller clôture le besoin, conformément à la demande du 8 octobre. Les transitions de correction et la réouverture restent à arbitrer ; fermeture arrête découverte et nouvelles alertes.
 - **Alertes** : première publication, déduplication profil / besoin, aucune alerte sur sauvegarde d'un brouillon. Effets de republication et d'actualisation à préciser.
 - **Routage** : plusieurs comptes entreprise fictifs avec besoins et demandes séparés ; une conseillère Mathilde JEANNE et un vivier pour les parcours principaux. Pas de gestion des sélections multi-marques.
 - **CV** : aucun vrai fichier lu, extrait ou stocké. Aperçu généré depuis la fiche publiée ; il ne démontre pas l'expurgation d'un PDF réel.
@@ -45,7 +47,7 @@ La maquette autonome contient les deux jeux de vues et les données fictives dan
 
 L’extension demandée ajoute un niveau actuel et un état d’acquisition à chaque compétence, ainsi qu’un lien facultatif vers une formation. Les objectifs de formation sont des exemples fictifs de programme : ils ne représentent pas un référentiel RNCP validé. Ajouter une proposition de programme ne transforme pas un objectif pédagogique en acquis : le conseiller doit confirmer que l’acquisition a commencé, puis renseigner le niveau connu. Le statut et le niveau restent indépendants ; une formation terminée ne valide aucune compétence automatiquement.
 
-Les quatre niveaux et leurs descriptions sont une proposition de maquette à valider avec l’expert métier. Les anciennes compétences textuelles sont migrées avec leur libellé, leur statut acquis hérité de la fiche vérifiée, un niveau « À évaluer » et sans lien formation inventé. Les exemples initiaux affichent des niveaux fictifs et une acquisition en cours pour rendre la lecture visible. La publication conserve statut, niveau et lien ; la sauvegarde du brouillon ne change pas la version entreprise. Les scores restent illustratifs et ne constituent pas un moteur évaluant les niveaux ou confondant les acquisitions avec les acquis.
+Les quatre niveaux connus, l’état « À évaluer » et leurs descriptions sont une proposition de maquette à valider avec l’expert métier. Les anciennes compétences textuelles sont migrées avec leur libellé, leur statut acquis hérité de la fiche vérifiée, un niveau « À évaluer » et sans lien formation inventé. Les exemples initiaux affichent des niveaux fictifs et une acquisition en cours pour rendre la lecture visible. La publication conserve statut, niveau et lien ; la sauvegarde du brouillon ne change pas la version entreprise. Les scores restent illustratifs et ne constituent pas un moteur évaluant les niveaux ou confondant les acquisitions avec les acquis.
 
 ## Corrections issues de l’audit fonctionnel
 
@@ -59,7 +61,7 @@ La fiche entreprise présente les vues mois/année, les exceptions datées, la d
 
 L’aide sans résultat explique les contraintes et compte les gains d’assouplissements calculables sur les profils autorisés. Choisir une proposition ouvre le brief en attente de confirmation ; la recherche ne reprend qu’après validation. Ces estimations utilisent les scores fictifs et ne constituent pas un matching sémantique.
 
-Les nouvelles demandes conservent leur contexte initial. Le conseiller voit les modifications de brief, disponibilité, permis, mobilité, retrait ou calendrier intervenues depuis la demande ; les anciennes demandes sans référence invitent à une revérification. Date d’entretien envisagée et compte rendu local complètent l’intermédiation humaine. Le compte rendu est exclu de la projection entreprise. Les états restent illustratifs en attente de l’arbitrage §20.
+Les nouvelles demandes conservent leur contexte initial. Le conseiller voit les modifications de brief, disponibilité, permis, mobilité, retrait ou calendrier intervenues depuis la demande ; les anciennes demandes sans référence invitent à une revérification. Date d’entretien envisagée et compte rendu local complètent l’intermédiation humaine. Le compte rendu est exclu de la projection entreprise. Le suivi est illustratif ; la relation effectuée et sa clôture automatique sont décidées par l’utilisateur. Les autres précisions de cycle de vie restent ouvertes au §20.
 
 ## Découverte par cartes
 

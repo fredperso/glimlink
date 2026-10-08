@@ -1,5 +1,7 @@
 # Audit de la maquette Glimlink V1
 
+La lecture actuelle des règles est consolidée dans [specificaiton/README.md](../specificaiton/README.md). Cet audit conserve ses constats et corrections historiques ; les décisions plus récentes sont dans les spécifications thématiques.
+
 Audit du 7 octobre 2026, fondé sur `Glimlink_Specifications_Fonctionnelles_Detaillees_V3.pdf`, les composants React, le modèle métier et les tests existants. V3 désigne la révision des spécifications ; la cible reste le MVP/V1.
 
 Cette revue distingue les écarts observables dans la maquette, les fonctions techniques volontairement simulées et les décisions encore ouvertes en §20. Elle ne constitue pas une nouvelle recette visuelle ou un audit de sécurité. Aucun comportement applicatif n’a été modifié.

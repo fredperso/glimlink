@@ -137,3 +137,9 @@ Accueil sans profils/suggestions, recherche simple conservée au passage au brie
 Validation : build TypeScript/Vite et 48 tests métier réussis. `qa-company-experience.js` passe à 1366, 390 et 320 px pour le parcours complet, plus invitation/inscription/premier appel. Axe WCAG A/AA ne rapporte aucune violation sur l’accueil et la sélection testés. `qa-flows.js` (10 parcours), `qa-swipe.js` (3 formats), `qa-mobile.js` (13 pages/3 fenêtres sur 5 formats) et `qa-mobile-navigation.js` (3 formats tactiles/deux espaces) passent via navigateur MCP Chromium. La suite CLI Playwright n’a pas été exécutée dans ce sandbox.
 
 Captures : `company-home-1366.png`, `company-home-390.png`, `company-needs-1366.png`, `company-needs-390.png`, `company-selection-1366.png`, `company-selection-390.png` dans `docs/screenshots/`. Le parcours de swipe de validation a été adapté à son retrait de l’accueil.
+
+## Consolidation documentaire — 8 octobre 2026
+
+Création de `specificaiton/` : 19 fichiers Markdown dont 15 spécifications thématiques, transcription source du PDF, index, matrice de traçabilité et journal. Les 20 sections du PDF, annexes A/B, 124 exigences identifiées et scénarios V3-01 à V3-12 sont couverts. Les décisions de la session et les simulations/écarts de la maquette d6f296f sont distingués des exigences originales. La règle de maintenance à chaque nouvelle demande est inscrite dans AGENTS.md.
+
+`rtk npm run spec:check` passe : métadonnées et dates, 11 rubriques par spécification, index, liens locaux, empreinte PDF, couverture et recette. Relecture de cohérence avec le PDF/code/docs. Aucun changement fonctionnel, aucun rebuild de la maquette ni nouvelle exécution des tests applicatifs pour cette demande documentaire. Les skills create-specification/update-specification de github/awesome-copilot ont été conservés avec leur provenance/licence, le nom exact specifications n’étant pas disponible.
