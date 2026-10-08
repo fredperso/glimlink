@@ -539,5 +539,3 @@ explications à ces décisions. Les objectifs mesurables et les tolérances rest
 
 Source : Glimlink - Spécifications fonctionnelles détaillées V2 (document fourni), complétée par les précisions de
 cadrage sur la fiche étudiant et le calendrier associé à la formation / promotion.
-
-
