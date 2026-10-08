@@ -75,16 +75,19 @@ export default function Select(props: ComponentProps<'select'>) {
     list.showPopover();
     const place = () => {
       const bounds = trigger.current!.getBoundingClientRect();
+      const navigation = document.querySelector('.mobile-nav')?.getBoundingClientRect();
+      const bottom =
+        navigation && navigation.height > 0
+          ? Math.min(window.innerHeight, navigation.top)
+          : window.innerHeight;
       const width = Math.min(Math.max(bounds.width, 280), window.innerWidth - 24);
       list.style.width = `${width}px`;
-      list.style.maxHeight = `${Math.max(48, Math.min(360, window.innerHeight - 24))}px`;
+      list.style.maxHeight = `${Math.max(48, Math.min(360, bottom - 24))}px`;
       const height = list.getBoundingClientRect().height;
       list.style.left = `${Math.max(12, Math.min(bounds.left, window.innerWidth - width - 12))}px`;
       const top =
-        bounds.bottom + 8 + height <= window.innerHeight - 12
-          ? bounds.bottom + 8
-          : bounds.top - height - 8;
-      list.style.top = `${Math.max(12, Math.min(top, window.innerHeight - height - 12))}px`;
+        bounds.bottom + 8 + height <= bottom - 12 ? bounds.bottom + 8 : bounds.top - height - 8;
+      list.style.top = `${Math.max(12, Math.min(top, bottom - height - 12))}px`;
     };
     place();
     const outside = (event: PointerEvent) => {

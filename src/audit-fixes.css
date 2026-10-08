@@ -299,3 +299,18 @@
     width: 100%;
   }
 }
+
+@media (max-width: 1100px) {
+  .mobile-nav > a,
+  .mobile-more-button {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: none;
+  }
+  .mobile-nav > a:active,
+  .mobile-more-button:active {
+    background: #e7f3e9;
+    color: #145b39;
+  }
+}

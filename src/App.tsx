@@ -1,7 +1,7 @@
 import RolePicker from './components/RolePicker.tsx';
 import Select from './components/Select.tsx';
 import { notifications } from './domain/notifications.ts';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
 import { AppContext, type ModalState } from './context.tsx';
 import { loadStore, persistStore } from './domain/storage.ts';
 import {
@@ -42,20 +42,27 @@ export default function App() {
   }, [store]);
   useEffect(() => {
     const handler = () => {
-      setCurrent(route());
+      const next = route();
+      setCurrent((previous) =>
+        previous.role === next.role &&
+        previous.view === next.view &&
+        previous.needId === next.needId
+          ? previous
+          : next,
+      );
       setModal(null);
       setMobileMore(false);
     };
     window.addEventListener('hashchange', handler);
     return () => window.removeEventListener('hashchange', handler);
   }, []);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (initialRoute.current) {
       initialRoute.current = false;
       return;
     }
-    mainRef.current?.focus();
-    window.scrollTo(0, 0);
+    mainRef.current?.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [current]);
   useEffect(() => {
     if (toast) {
@@ -65,6 +72,16 @@ export default function App() {
   }, [toast]);
   const go = (view: string, needId?: string, role: Role = current.role) => {
     location.hash = `/${role}/${view}${needId ? `?need=${encodeURIComponent(needId)}` : ''}`;
+    // La vue change dès l’activation, y compris si l’URL est déjà celle de l’accueil.
+    setCurrent(route());
+    setModal(null);
+    setMobileMore(false);
+  };
+  const navigate = (event: MouseEvent<HTMLAnchorElement>, view: string) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+      return;
+    event.preventDefault();
+    go(view);
   };
   const notify = (message: string) => setToast(message);
   const companyView = companyStore(store);
@@ -122,7 +139,12 @@ export default function App() {
         Aller au contenu
       </a>
       <aside className="sidebar">
-        <a className="brand-link" href={`#/${current.role}/home`} aria-label="Glimlink, accueil">
+        <a
+          className="brand-link"
+          href={`#/${current.role}/home`}
+          aria-label="Glimlink, accueil"
+          onClick={(event) => navigate(event, 'home')}
+        >
           <Logo />
         </a>
         <div className="workspace">
@@ -146,6 +168,7 @@ export default function App() {
             <a
               key={id}
               href={`#/${current.role}/${id}`}
+              onClick={(event) => navigate(event, id)}
               className={`nav-link ${activeView === id ? 'active' : ''}`}
               aria-current={activeView === id ? 'page' : undefined}
             >
@@ -306,6 +329,7 @@ export default function App() {
           <a
             key={id}
             href={`#/${current.role}/${id}`}
+            onClick={(event) => navigate(event, id)}
             className={activeView === id ? 'active' : ''}
             aria-current={activeView === id ? 'page' : undefined}
           >
@@ -348,11 +372,11 @@ export default function App() {
             </button>
             {mobileMore && (
               <div id="mobile-more-links" className="mobile-more-panel">
-                <a href="#/adviser/requests">
+                <a href="#/adviser/requests" onClick={(event) => navigate(event, 'requests')}>
                   <Icon name="message" />
                   Demandes à traiter {pending > 0 && <Badge>{pending}</Badge>}
                 </a>
-                <a href="#/adviser/companies">
+                <a href="#/adviser/companies" onClick={(event) => navigate(event, 'companies')}>
                   <Icon name="brief" />
                   Entreprises partenaires
                 </a>

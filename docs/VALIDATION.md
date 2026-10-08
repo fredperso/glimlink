@@ -121,3 +121,11 @@ Le composant `Select` affiche un bouton de sélection et une liste dans la couch
 `qa-selects.js` passe à 1920, 1366, 1024, 390 et 320 px : sélection souris et clavier, focus, options longues, menu dans les limites de l’écran et aucune violation axe WCAG A/AA sur les écrans testés. La validation d’un champ obligatoire, la valeur FormData et le choix « Autre… » passent également. Les contrôles de menus sur les pages principales passent aussi à 740×390. Captures : `docs/screenshots/selects-1366.png` et `selects-390.png`.
 
 Validation complémentaire : compilation TypeScript et build, 44 tests métier, 10 parcours de `qa-flows.js`, `qa-choices.js` sur 3 formats, et `qa-mobile.js` sur 5 formats (13 pages et 3 fenêtres par format).
+
+## Navigation tactile et retour à l’accueil — 8 octobre 2026
+
+La navigation principale actualise la vue dès le clic/tap, sans attendre l’événement `hashchange`. L’activation de la destination courante ferme aussi le menu « Plus » et remet la page en haut. Le focus du contenu et le défilement sont appliqués avant l’affichage de la nouvelle vue. Les liens conservent leur URL, les clics avec touches modificatrices et l’historique du navigateur. Les listes de sélection restent au-dessus du menu mobile.
+
+`qa-mobile-navigation.js` passe avec `isMobile: true` et `hasTouch: true` à 320×740, 390×844 et 740×390 dans les deux espaces : appui unique sur chaque onglet, accueil déjà actif après défilement, menu « Plus » et même destination, premier appui avec sélecteur ouvert, historique précédent/suivant. Le test de régression est aussi enregistré dans `tests/e2e/mobile-navigation.spec.ts`. Exécution via navigateur MCP Chromium ; ces essais ne constituent pas une validation sur un iPhone physique ni une exécution de la suite CLI.
+
+Les 10 parcours de `qa-flows.js`, les 13 pages et 3 fenêtres sur 5 formats de `qa-mobile.js`, les menus/formulaires de `qa-selects.js` et la compilation TypeScript/build passent.
