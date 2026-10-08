@@ -90,3 +90,12 @@ Pour la date et un identifiant unique, consigner : demande ; sources/impact ; d�
 - **Fichiers / exigences** : App.tsx et maquette générée ; tests/e2e/mobile-navigation.spec.ts ; ergonomie UX-004/AC-UX-007, conseiller, recette, traçabilité et journal.
 - **Validation exécutée** : build TypeScript/Vite et régénération maquette.html réussis ; deux tests CLI Playwright mobile réussis, dont la régression à 320/390 px et en paysage 740×390 ; vérification MCP sur la maquette rechargée avec Plus seul sélectionné et URL Besoins conservée ; capture docs/screenshots/mobile-more-selected-390.png ; spec:check et git diff --check réussis. Aucun nouveau test métier requis pour ce changement de présentation.
 - **Livraison** : correction préparée pour origin/main dans la continuité de la livraison GitHub autorisée ; résultat du push vérifié dans la réponse finale.
+
+
+## 2026-10-08 — LIV-003 — Confirmation du push de la correction mobile
+
+- **Demande** : « oui push », en réponse à la demande de confirmation du push du commit 19bd253 sur origin/main.
+- **Impact** : Aucun changement fonctionnel ; livraison de la correction USR-18 déjà validée.
+- **Contexte / décision** : le contrôle automatique a rejeté le premier push de cette correction, estimant l’autorisation précédente limitée à l’espace administrateur. L’utilisateur confirme explicitement cette nouvelle livraison. Pousser 19bd253 et cette entrée documentaire vers origin/main de fredperso/glimlink, sans forcer ni modifier les commits distants.
+- **Fichiers / exigences** : JOURNAL.md pour la confirmation ; aucune nouvelle exigence produit et aucun changement applicatif depuis USR-18.
+- **Validation** : lecture de l’index des spécifications, état Git, fetch origin et comparaison des historiques ; spec:check. Les deux tests mobiles et le build de USR-18 restent les preuves applicatives. Le résultat du push et la référence GitHub sont vérifiés dans la réponse finale.
