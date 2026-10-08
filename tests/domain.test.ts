@@ -738,3 +738,45 @@ test('Inscription — la vérification alerte le conseiller référent une seule
     false,
   );
 });
+
+
+// USR-17 : administration des référentiels et transfert des calendriers.
+import { addManagedCompany, addManagedUser, getUsers, saveTraining } from '../src/domain/administration.ts';
+test('AC-ADM-001 / V3-05 — création et édition admin, héritage et refus conseiller', () => {
+  const store = initialStore();
+  const training = { ...store.calendars[0], id: 'new-training', title: 'Nouvelle formation' };
+  assert.equal(saveTraining(store, training, 'adviser'), store);
+  assert.equal(saveTraining(store, { ...training, end: '2000-01-01' }, 'admin'), store);
+  assert.equal(saveTraining(store, { ...training, learningSkills: [] }, 'admin'), store);
+  const created = saveTraining(store, training, 'admin');
+  assert.equal(created.calendars.length, store.calendars.length + 1);
+  assert.deepEqual(created.students, store.students);
+  const updated = saveTraining(store, { ...store.calendars[0], courseDays: ['Vendredi'] }, 'admin');
+  for (const id of ['sophie', 'ines']) {
+    const student = updated.students.find((item) => item.id === id)!;
+    assert.ok(checkAvailability(student.published!, updated.calendars.find((item) => item.id === student.published!.trainingId), updated.needs[0]).some((item) => item.kind === 'conflict'));
+  }
+});
+test('AC-ADM-002 — utilisateur avec coordonnées, doublon et projection privée', () => {
+  const store = initialStore();
+  const user = { id: '', firstName: 'Lou', lastName: 'Martin', role: 'adviser' as const, email: 'lou@example.com', phone: '04 00 00 00 00', address: '1 rue du Centre, Montpellier', school: 'campus-a' };
+  assert.equal(addManagedUser(store, user, 'adviser'), store);
+  const next = addManagedUser(store, user, 'admin');
+  assert.equal(getUsers(next).length, getUsers(store).length + 1);
+  assert.equal(addManagedUser(next, { ...user, email: 'LOU@example.com' }, 'admin'), next);
+  assert.equal(addManagedUser(next, { ...user, email: 'other@example.com', role: 'company', companyId: 'missing' }, 'admin'), next);
+  assert.equal(companyStore(next).users, undefined);
+  assert.equal(adviserStore(next).users, undefined);
+});
+test('AC-ADM-003 — entreprise créée sans accès actif ni événement d’inscription', () => {
+  const store = initialStore();
+  const company = { id: '', name: 'Entreprise test', contact: 'Lou Martin', email: 'company@example.com', phone: '04 00 00 00 00', address: '1 rue du Centre', location: 'Montpellier', sector: 'Services', position: 'Direction', mark: 'et.', schools: ['campus-a'] };
+  assert.equal(addManagedCompany(store, company, 'company'), store);
+  const next = addManagedCompany(store, company, 'admin');
+  const added = next.companies!.at(-1)!;
+  assert.equal(added.status, 'invited');
+  assert.equal(added.registeredAt, undefined);
+  assert.equal(companyStore({ ...next, activeCompanyId: added.id }).students.length, 0);
+  assert.equal(addManagedCompany(next, company, 'admin'), next);
+  assert.equal(notifications(next, 'admin').length, 0);
+});

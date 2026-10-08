@@ -23,6 +23,7 @@ export type NotificationItem = {
   simulated?: boolean;
 };
 export function notifications(store: Store, role: Role): NotificationItem[] {
+  if (role === 'admin') return [];
   const scoped = role === 'company' ? companyStore(store) : adviserStore(store);
   const companyId = getCompany(scoped, scoped.activeCompanyId).id;
   const welcome: NotificationItem = {
@@ -128,6 +129,7 @@ function simulationCandidate(
   role: Role,
 ): { needId: string; studentId: string } | undefined {
   const scoped = role === 'company' ? companyStore(store) : adviserStore(store);
+  if (role === 'admin') return undefined;
   for (const need of scoped.needs) {
     const sourceNeed = store.needs.find((item) => item.id === need.id)!;
     const candidate = visibleStudents(store, sourceNeed).find(

@@ -8,7 +8,7 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: ['B', 18, 19, 20]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-17
 tags: [specification, process, glimlink]
 ---
 
@@ -75,6 +75,8 @@ Les scripts MCP utilisent la maquette chargée par `qa-preview.local.js`, géné
 | V3-12   | Pas d’accès au vivier non autorisé                                              |
 
 Ajouts de session : AC-ENT-001–007, AC-REL-001–006, AC-NOT-001–006, AC-UX-001–006 et AC-CMP-001–005 des documents liés. V3-11 et V3-12 ne sont validés actuellement que pour les projections et comportements locaux ; la cible complète reste à recetter.
+
+- **AC-REC-ADM** : exécuter AC-ADM-001–006 de [l’administration](spec-design-espace-administrateur.md), incluant création, édition, persistance, coordonnées et consultation conseiller. V3-05 se joue désormais en administrateur pour l’édition.
 
 ## 6. Stratégie de test
 

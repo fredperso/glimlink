@@ -1,6 +1,6 @@
 ---
 title: 'Vision, périmètre et vocabulaire'
-version: '1.0'
+version: '1.1'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -8,13 +8,13 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [1, 17, 18, 19]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-17
 tags: [specification, design, glimlink]
 ---
 
 # Vision, périmètre et vocabulaire
 
-Référence consolidée du PDF V3 et de la session utilisateur, confrontée au code de la maquette `d6f296f`. Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail locale USR-17 (base `d6f296f`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
 
 ## 1. Objet et périmètre
 
@@ -43,7 +43,9 @@ Glimlink facilite le recrutement d’alternants et de stagiaires pour les entrep
 
 ## 4. Interfaces et contrats de données
 
-Deux espaces interactifs : entreprise et conseiller. La maquette utilise React/HTML/TypeScript, des données fictives et une prévisualisation autonome. Elle illustre les comportements sans serveur. Les scores, l’IA, les CV, l’authentification et les e-mails ne constituent pas des services opérationnels.
+Trois espaces interactifs : entreprise, conseiller et administrateur (demande USR-17). La maquette utilise React/HTML/TypeScript, des données fictives et une prévisualisation autonome. Elle illustre les comportements sans serveur. Les scores, l’IA, les CV, l’authentification et les e-mails ne constituent pas des services opérationnels.
+
+USR-17 ajoute l’administration des formations/plannings, utilisateurs et entreprises, sans compte étudiant. Voir [administration](spec-design-espace-administrateur.md) pour les critères de recette et limites de simulation.
 
 ## 5. Critères d’acceptation
 
@@ -53,7 +55,7 @@ Deux espaces interactifs : entreprise et conseiller. La maquette utilise React/H
 
 ## 6. Stratégie de test
 
-Recette transverse des deux rôles dans `scripts/qa-flows.js`, complétée par les scénarios V3 et les tests des évolutions utilisateur. La validation du pilote et les objectifs chiffrés restent à fixer avec l’expert métier.
+Recette transverse des trois rôles dans `scripts/qa-flows.js`, complétée par les scénarios V3 et les tests des évolutions utilisateur. La validation du pilote et les objectifs chiffrés restent à fixer avec l’expert métier.
 
 ## 7. Justification et contexte
 

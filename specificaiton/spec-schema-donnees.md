@@ -1,6 +1,6 @@
 ---
 title: 'Modèle de données et contrats de visibilité'
-version: '1.0'
+version: '1.1'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -8,13 +8,13 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: ['A', 5, 6, 14, 15]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-17
 tags: [specification, schema, glimlink]
 ---
 
 # Modèle de données et contrats de visibilité
 
-Référence consolidée du PDF V3 et de la session utilisateur, confrontée au code de la maquette `d6f296f`. Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail locale USR-17 (base `d6f296f`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
 
 ## 1. Objet et périmètre
 
@@ -54,9 +54,11 @@ Consolider le modèle logique proposé en annexe A et le modèle TypeScript rée
 | Alerte               | Alert ; notifications dérivées                  | Pas de service e-mail ni file d’événements                    |
 | Compétence           | StudentSkill, TrainingSkill                     | Catalogue/niveaux illustratifs                                |
 
-`Store.version=1` contient students/calendars/needs/requests/alerts et les partenaires/contexte actif. Persistance locale : clé `glimlink-prototype-v1` ; chargement compatible avec anciens champs de compétences/coordonnées. Aucun schéma de BDD ni serveur n’est fourni.
+`Store.version=1` contient students/calendars/needs/requests/alerts et les partenaires/contexte actif ainsi que `users?: ManagedUser[]` (annuaire administrateur USR-17). Persistance locale : clé `glimlink-prototype-v1` ; chargement compatible avec anciens champs de compétences/coordonnées. Aucun schéma de BDD ni serveur n’est fourni.
 
-Contrat entreprise : version professionnelle publiée seulement ; pas `personalDetails`, propositions/brouillons nouveaux, note interne `followUp` ni état de lecture conseiller. Contrat conseiller : objets de son école, coordonnées privées et brouillon. Les données de démonstration des deux rôles sont embarquées dans le même HTML, donc le contrat ne vaut pas isolation physique.
+Contrat entreprise : version professionnelle publiée seulement ; pas `personalDetails`, propositions/brouillons nouveaux, note interne `followUp` ni état de lecture conseiller. Contrat conseiller : objets de son école, coordonnées privées et brouillon. Les données de démonstration des trois rôles sont embarquées dans le même HTML, donc le contrat ne vaut pas isolation physique.
+
+Contrat administrateur USR-17 : annuaire `ManagedUser` avec identité, rôle, coordonnées, campus et entreprise facultative ; accès aux formations et partenaires de démonstration. Projections entreprise/conseiller : `users` absent. Les anciennes sauvegardes restent compatibles. Voir [administration](spec-design-espace-administrateur.md), AC-ADM-002.
 
 ## 5. Critères d’acceptation
 

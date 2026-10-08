@@ -1178,21 +1178,66 @@ function Help() {
             >
               <Icon name="calendar" />
               <span>
-                <strong>Mettre à jour un calendrier partagé</strong>
+                <strong>Consulter les calendriers partagés</strong>
                 <small>Héritage sur les profils et contrôles de présence.</small>
               </span>
               <Icon name="arrow" />
             </button>
           </>
         )}
-        <button onClick={() => openModal({ kind: role === 'adviser' ? 'invite' : 'activation' })}>
-          <Icon name="shield" />
-          <span>
-            <strong>Explorer l’accès sur invitation</strong>
-            <small>Création du compte et vérification d’e-mail simulées.</small>
-          </span>
-          <Icon name="arrow" />
-        </button>
+        {role === 'admin' && (
+          <>
+            <button
+              onClick={() => {
+                closeModal();
+                go('calendars', undefined, 'admin');
+              }}
+            >
+              <Icon name="calendar" />
+              <span>
+                <strong>Gérer les formations et plannings</strong>
+                <small>Création, compétences visées et calendrier partagé.</small>
+              </span>
+              <Icon name="arrow" />
+            </button>
+            <button
+              onClick={() => {
+                closeModal();
+                go('users', undefined, 'admin');
+              }}
+            >
+              <Icon name="users" />
+              <span>
+                <strong>Ajouter des utilisateurs</strong>
+                <small>Rôles, coordonnées et rattachements.</small>
+              </span>
+              <Icon name="arrow" />
+            </button>
+            <button
+              onClick={() => {
+                closeModal();
+                go('companies', undefined, 'admin');
+              }}
+            >
+              <Icon name="brief" />
+              <span>
+                <strong>Ajouter des entreprises</strong>
+                <small>Contacts et coordonnées des partenaires.</small>
+              </span>
+              <Icon name="arrow" />
+            </button>
+          </>
+        )}
+        {role !== 'admin' && (
+          <button onClick={() => openModal({ kind: role === 'adviser' ? 'invite' : 'activation' })}>
+            <Icon name="shield" />
+            <span>
+              <strong>Explorer l’accès sur invitation</strong>
+              <small>Création du compte et vérification d’e-mail simulées.</small>
+            </span>
+            <Icon name="arrow" />
+          </button>
+        )}
       </div>
       <details className="prototype-details">
         <summary>Ce que simule cette maquette</summary>

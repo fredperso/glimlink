@@ -8,7 +8,7 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [5, 14, 20]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-17
 tags: [specification, data, glimlink]
 ---
 
@@ -52,6 +52,8 @@ Décrire l’extension utilisateur permettant d’ajouter/supprimer des compéte
 Le formulaire présente niveau actuel, état d’acquisition et formation liée pour chaque compétence. Les objectifs de programme sont visibles et peuvent fournir une proposition d’acquisition à confirmer. Les exemples pédagogiques ne constituent pas un référentiel RNCP approuvé.
 
 Migration des anciens libellés : garder le nom, état acquis hérité de l’ancienne fiche vérifiée, niveau À évaluer, aucun lien formation inventé. Déduplication sur le nom nettoyé, insensible aux accents, casse et espaces redondants.
+
+USR-17 : l’administrateur crée/édite les compétences visées des formations avec niveau cible ; le conseiller conserve les compétences individuelles des candidats. Aucune acquisition n’est validée automatiquement (AC-ADM-001, AC-ADM-006 de [l’administration](spec-design-espace-administrateur.md)).
 
 ## 5. Critères d’acceptation
 

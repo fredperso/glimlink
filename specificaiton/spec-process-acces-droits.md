@@ -1,6 +1,6 @@
 ---
 title: 'Accès, invitation et droits'
-version: '1.0'
+version: '1.1'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -8,13 +8,13 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [2, 3, 15, 16, 17]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-17
 tags: [specification, process, glimlink]
 ---
 
 # Accès, invitation et droits
 
-Référence consolidée du PDF V3 et de la session utilisateur, confrontée au code de la maquette `d6f296f`. Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail locale USR-17 (base `d6f296f`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
 
 ## 1. Objet et périmètre
 
@@ -31,7 +31,7 @@ Définir les acteurs, l’invitation entreprise et les règles de visibilité en
 | ACC-001     | PDF §3                       | Aucun accès par inscription publique ; invitation sécurisée générée par le conseiller.                                         |
 | ACC-002     | PDF §3                       | Vérifier l’e-mail professionnel et recueillir raison sociale, SIRET, adresse, secteur, contact, fonction, téléphone et e-mail. |
 | ACC-003     | PDF §2                       | Un utilisateur entreprise en V1 ; plusieurs besoins ; aucun compte étudiant.                                                   |
-| ACC-004     | PDF §2, §15                  | Limiter le conseiller à son périmètre pour lecture, correction, publication et calendriers.                                    |
+| ACC-004     | PDF §2, §15                  | Limiter le conseiller à son périmètre pour lecture, correction, publication et consultation des calendriers ; USR-17 transfère leur édition à l’administrateur.                                    |
 | SEC-ACC-001 | PDF §7, §15                  | Ne jamais transmettre à l’entreprise nom de famille étudiant, téléphone, e-mail ou adresse précise, ni brouillon non validé.   |
 | SEC-ACC-002 | PDF §16                      | Authentifier et revérifier autorisation/disponibilité à l’ouverture des liens.                                                 |
 | ACC-005     | Demande utilisateur          | Le conseiller peut voir et modifier les coordonnées personnelles des candidats de son vivier.                                  |
@@ -42,10 +42,12 @@ Définir les acteurs, l’invitation entreprise et les règles de visibilité en
 | Acteur     | Peut consulter                                                        | Peut modifier                                                               | Restrictions                                                                |
 | ---------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | Entreprise | Ses besoins/demandes/alertes ; fiches publiées des viviers autorisés  | Ses besoins et sélections                                                   | Aucun accès aux coordonnées étudiant, brouillons ou notes de suivi internes |
-| Conseiller | Fiches complètes, partenaires, besoins et demandes dans son périmètre | Fiches privées/professionnelles, publication, retrait, calendriers et suivi | Pas de droits automatiques sur une autre marque                             |
+| Conseiller | Fiches complètes, partenaires, besoins et demandes dans son périmètre | Fiches privées/professionnelles, publication, retrait et suivi | Pas de droits automatiques sur une autre marque                             |
 | Étudiant   | Aucun espace V1                                                       | Aucun parcours connecté V1                                                  | Information et exercice des droits à organiser hors compte                  |
 
 Maquette : `companyStore`, `companyStudent` et `adviserStore` projettent les données. Le sélecteur d’entreprise est un outil de démonstration (six partenaires fictifs au départ). Le sélecteur de rôle permet la revue. L’activation est simulée ; `activatePartner` passe `verification` à `active`, conserve `adviserId` et crée `registeredAt` une seule fois. Mathilde JEANNE est l’unique conseillère référente du parcours principal.
+
+USR-17 : l’administrateur gère les formations/plannings et ajoute les utilisateurs/entreprises avec coordonnées. L’annuaire `users` est exclu des projections conseiller/entreprise. Les rôles proposés sont admin, conseiller et entreprise ; aucun compte étudiant. Les véritables identités et la matrice multi-campus restent ouvertes. Voir [administration](spec-design-espace-administrateur.md), AC-ADM-001–006.
 
 ## 5. Critères d’acceptation
 
@@ -69,7 +71,7 @@ Production : identité/session, validation e-mail, gestion des invitations et au
 
 ## 9. Exemples et cas limites
 
-Une entreprise autorisée à une seule marque ne peut élargir ses droits en modifiant `schools` sur un besoin. Un brouillon n’apparaît pas dans les résultats. La démo contient physiquement les deux jeux de données fictives ; elle n’assure pas leur séparation de production.
+Une entreprise autorisée à une seule marque ne peut élargir ses droits en modifiant `schools` sur un besoin. Un brouillon n’apparaît pas dans les résultats. La démo contient physiquement les trois espaces et jeux de données fictives ; elle n’assure pas leur séparation de production.
 
 ## 10. Critères de validation
 

@@ -40,7 +40,7 @@ async (page) => {
   if(width===1366||width===390){await page.getByRole('dialog').screenshot({path:'/home/fjeanne/dev/projets/glimlink/docs/screenshots/selects-'+width+'.png'});}
   await page.keyboard.press('Escape');
   await page.getByRole('button',{name:'Fermer la fenêtre'}).click();
-  await page.goto('http://glimlink.demo/#/adviser/calendars');await page.getByRole('button',{name:'Modifier le rythme'}).click();await check('Éditeur calendrier');await page.getByRole('button',{name:'Fermer la fenêtre'}).click();
+  await page.goto('http://glimlink.demo/#/admin/calendars');await page.getByRole('button',{name:'Modifier la formation'}).click();await check('Éditeur calendrier');await page.getByRole('button',{name:'Fermer la fenêtre'}).click();
   report.push({width,status:'pass',violations:[]});
  }
  await page.goto('http://glimlink.demo/#/adviser/companies');

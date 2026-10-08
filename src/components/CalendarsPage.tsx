@@ -6,14 +6,24 @@ import { Badge, Button, Icon, dateLabel } from './ui.tsx';
 import { CalendarExplorer } from './CalendarViews.tsx';
 
 export default function CalendarsPage() {
-  const { store, openModal } = useApp();
-  const calendars = store.calendars.filter((c) => c.school === 'campus-a');
+  const { store, openModal, role } = useApp();
+  const calendars =
+    role === 'admin' ? store.calendars : store.calendars.filter((c) => c.school === 'campus-a');
   const [selected, setSelected] = useState(calendars[0]?.id);
   const calendar = calendars.find((c) => c.id === selected) ?? calendars[0];
-  if (!calendar) return null;
+  if (!calendar)
+    return (
+      <section className="panel">
+        <h1>Formations & plannings</h1>
+        <p>Aucune formation renseignée.</p>
+        {role === 'admin' && (
+          <Button onClick={() => openModal({ kind: 'calendar' })}>Ajouter une formation</Button>
+        )}
+      </section>
+    );
   const count = store.students.filter(
     (s) =>
-      s.school === 'campus-a' &&
+      s.school === calendar.school &&
       s.status !== 'withdrawn' &&
       (s.draft.trainingId === calendar.id || s.published?.trainingId === calendar.id),
   ).length;
@@ -27,10 +37,18 @@ export default function CalendarsPage() {
             rattachés.
           </p>
         </div>
-        <Button onClick={() => openModal({ kind: 'calendar', calendarId: calendar.id })}>
-          <Icon name="edit" />
-          Modifier le rythme
-        </Button>
+        {role === 'admin' && (
+          <div className="exception-actions">
+            <Button variant="secondary" onClick={() => openModal({ kind: 'calendar' })}>
+              <Icon name="plus" />
+              Ajouter une formation
+            </Button>
+            <Button onClick={() => openModal({ kind: 'calendar', calendarId: calendar.id })}>
+              <Icon name="edit" />
+              Modifier la formation
+            </Button>
+          </div>
+        )}
       </div>
       <div className="training-calendar-layout">
         <label className="mobile-training-picker">

@@ -16,6 +16,7 @@ import {
 import { Badge, Icon, Logo } from './components/ui.tsx';
 import Company from './components/Company.tsx';
 import Adviser from './components/Adviser.tsx';
+import Administrator from './components/Administrator.tsx';
 import Modals from './components/Modals.tsx';
 import NeedBuilder from './components/NeedBuilder.tsx';
 
@@ -24,7 +25,7 @@ function route() {
   const [, role, view] = (path || '/company/home').split('/');
   const params = new URLSearchParams(query);
   return {
-    role: (role === 'adviser' ? 'adviser' : 'company') as Role,
+    role: (role === 'admin' ? 'admin' : role === 'adviser' ? 'adviser' : 'company') as Role,
     view: view || 'home',
     needId: params.get('need') || 'need-admin',
     description: params.get('description') || undefined,
@@ -118,13 +119,25 @@ export default function App() {
     ['requests', 'message', 'Demandes à traiter', pending],
     ['companies', 'brief', 'Entreprises partenaires', 0],
   ] as const;
-  const nav = current.role === 'company' ? companyNav : adviserNav;
+  const adminNav = [
+    ['home', 'home', 'Vue d’ensemble', 0],
+    ['calendars', 'calendar', 'Formations & plannings', 0],
+    ['users', 'users', 'Utilisateurs', 0],
+    ['companies', 'brief', 'Entreprises', 0],
+  ] as const;
+  const nav =
+    current.role === 'admin' ? adminNav : current.role === 'company' ? companyNav : adviserNav;
   const mobileNav = current.role === 'adviser' ? nav.slice(0, 4) : nav;
   const activeView = ['discover', 'new-need'].includes(current.view) ? 'needs' : current.view;
   return (
     <AppContext
       value={{
-        store: current.role === 'company' ? companyView : adviserStore(store),
+        store:
+          current.role === 'admin'
+            ? store
+            : current.role === 'company'
+              ? companyView
+              : adviserStore(store),
         setStore,
         ...current,
         go,
@@ -164,7 +177,11 @@ export default function App() {
                 : 'Atelier Campus'}
             </strong>
             <small>
-              {current.role === 'company' ? 'Entreprise partenaire' : 'Équipe formation'}
+              {current.role === 'admin'
+                ? 'Administration'
+                : current.role === 'company'
+                  ? 'Entreprise partenaire'
+                  : 'Équipe formation'}
             </small>
           </div>
           <span className="workspace-dot" />
@@ -201,6 +218,11 @@ export default function App() {
                   Contacter le conseiller <Icon name="arrow" size={16} />
                 </button>
               </>
+            ) : current.role === 'admin' ? (
+              <>
+                <strong>Organisez votre campus.</strong>
+                <p>Formations, équipes et partenaires réunis dans un même espace.</p>
+              </>
             ) : (
               <>
                 <strong>
@@ -229,18 +251,24 @@ export default function App() {
                   .map((part) => part[0])
                   .slice(0, 2)
                   .join('')
-              : 'MJ'}
+              : current.role === 'admin'
+                ? 'AD'
+                : 'MJ'}
           </span>
           <div>
             <strong>
               {current.role === 'company'
                 ? getCompany(store, store.activeCompanyId).contact
-                : 'Mathilde JEANNE'}
+                : current.role === 'admin'
+                  ? 'Administration Glimlink'
+                  : 'Mathilde JEANNE'}
             </strong>
             <small>
               {current.role === 'company'
                 ? getCompany(store, store.activeCompanyId).name
-                : 'Conseillère formation'}
+                : current.role === 'admin'
+                  ? 'Administrateur'
+                  : 'Conseillère formation'}
             </small>
           </div>
         </div>
@@ -251,27 +279,33 @@ export default function App() {
             <Logo />
           </div>
           <div className="breadcrumb">
-            {current.role === 'company' ? 'Espace entreprise' : 'Espace conseiller'}
+            {current.role === 'admin'
+              ? 'Espace administrateur'
+              : current.role === 'company'
+                ? 'Espace entreprise'
+                : 'Espace conseiller'}
             <span>/</span>
             <strong>{nav.find(([id]) => id === activeView)?.[2] ?? 'Vue d’ensemble'}</strong>
           </div>
           <div className="topbar-actions">
             <span className="prototype-label">Maquette interactive</span>
             <RolePicker />
-            <button
-              type="button"
-              className="icon-button notification-button"
-              aria-label={`Notifications, ${notificationCount} non lue${notificationCount > 1 ? 's' : ''}`}
-              aria-haspopup="dialog"
-              onClick={() => setModal({ kind: 'notifications' })}
-            >
-              <Icon name="bell" />
-              {notificationCount > 0 && (
-                <span className="notification-count" aria-hidden="true">
-                  {notificationCount > 99 ? '99+' : notificationCount}
-                </span>
-              )}
-            </button>
+            {current.role !== 'admin' && (
+              <button
+                type="button"
+                className="icon-button notification-button"
+                aria-label={`Notifications, ${notificationCount} non lue${notificationCount > 1 ? 's' : ''}`}
+                aria-haspopup="dialog"
+                onClick={() => setModal({ kind: 'notifications' })}
+              >
+                <Icon name="bell" />
+                {notificationCount > 0 && (
+                  <span className="notification-count" aria-hidden="true">
+                    {notificationCount > 99 ? '99+' : notificationCount}
+                  </span>
+                )}
+              </button>
+            )}
             <span className="initial-avatar header-avatar">
               {current.role === 'company'
                 ? getCompany(store, store.activeCompanyId)
@@ -279,7 +313,9 @@ export default function App() {
                     .map((part) => part[0])
                     .slice(0, 2)
                     .join('')
-                : 'MJ'}
+                : current.role === 'admin'
+                  ? 'AD'
+                  : 'MJ'}
             </span>
           </div>
         </header>
@@ -317,6 +353,8 @@ export default function App() {
             <NeedBuilder />
           ) : current.role === 'company' ? (
             <Company />
+          ) : current.role === 'admin' ? (
+            <Administrator />
           ) : (
             <Adviser />
           )}
@@ -346,19 +384,25 @@ export default function App() {
             <small>
               {id === 'home'
                 ? 'Accueil'
-                : id === 'requests'
-                  ? 'Demandes'
-                  : id === 'students'
-                    ? 'Talents'
-                    : id === 'calendars'
-                      ? 'Rythmes'
-                      : id === 'selections'
-                        ? 'Sélection'
-                        : id === 'companies'
-                          ? 'Partenaires'
-                          : id === 'alerts'
-                            ? 'Alertes'
-                            : 'Besoins'}
+                : id === 'users'
+                  ? 'Utilisateurs'
+                  : id === 'requests'
+                    ? 'Demandes'
+                    : id === 'students'
+                      ? 'Talents'
+                      : id === 'calendars'
+                        ? current.role === 'admin'
+                          ? 'Formations'
+                          : 'Rythmes'
+                        : id === 'selections'
+                          ? 'Sélection'
+                          : id === 'companies'
+                            ? current.role === 'admin'
+                              ? 'Entreprises'
+                              : 'Partenaires'
+                            : id === 'alerts'
+                              ? 'Alertes'
+                              : 'Besoins'}
             </small>
             <span className="sr-only">{label}</span>
           </a>

@@ -143,3 +143,15 @@ Captures : `company-home-1366.png`, `company-home-390.png`, `company-needs-1366.
 Création de `specificaiton/` : 19 fichiers Markdown dont 15 spécifications thématiques, transcription source du PDF, index, matrice de traçabilité et journal. Les 20 sections du PDF, annexes A/B, 124 exigences identifiées et scénarios V3-01 à V3-12 sont couverts. Les décisions de la session et les simulations/écarts de la maquette d6f296f sont distingués des exigences originales. La règle de maintenance à chaque nouvelle demande est inscrite dans AGENTS.md.
 
 `rtk npm run spec:check` passe : métadonnées et dates, 11 rubriques par spécification, index, liens locaux, empreinte PDF, couverture et recette. Relecture de cohérence avec le PDF/code/docs. Aucun changement fonctionnel, aucun rebuild de la maquette ni nouvelle exécution des tests applicatifs pour cette demande documentaire. Les skills create-specification/update-specification de github/awesome-copilot ont été conservés avec leur provenance/licence, le nom exact specifications n’étant pas disponible.
+
+
+## USR-17 — Espace administrateur (8 octobre 2026)
+
+- Build TypeScript/Vite et génération de `maquette.html` réussis.
+- 51 tests métier réussis, dont création des référentiels, héritage du planning, refus des rôles non administrateurs, doublons et projections sans annuaire privé.
+- Suite CLI Playwright réellement exécutée : 13 tests réussis, 1 ignoré (scénario mobile sur desktop).
+- Parcours MCP sur le fichier autonome : création formation/compétence/planning, utilisateur et entreprise ; conservation après rechargement, rattachement candidat, consultation conseiller, largeurs 1366/390/320, aucun débordement ni erreur JavaScript. Modification d’exception et héritage Sophie/Inès vérifiés.
+- `spec:check` réussi : 16 spécifications, 132 exigences ; revue sémantique des droits et arbitrages.
+- Captures : [accueil desktop](screenshots/admin-home-1366.png), [accueil mobile](screenshots/admin-home-390.png), [formation desktop](screenshots/admin-formation-1366.png), [formation mobile](screenshots/admin-formation-390.png).
+
+Ajouts locaux uniquement ; création de comptes, authentification, invitations et routage multi-conseillers restent simulés ou ouverts. Voir [spécification administrateur](../specificaiton/spec-design-espace-administrateur.md).

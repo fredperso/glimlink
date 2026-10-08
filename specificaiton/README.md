@@ -13,7 +13,7 @@ Ce répertoire `specificaiton/` conserve l’orthographe demandée et constitue 
 ## Commencer la lecture
 
 1. [Vision et périmètre](spec-design-produit.md).
-2. [Parcours entreprise](spec-design-espace-entreprise.md) et [parcours conseiller](spec-design-espace-conseiller.md).
+2. [Parcours entreprise](spec-design-espace-entreprise.md) , [parcours conseiller](spec-design-espace-conseiller.md) et [administrateur](spec-design-espace-administrateur.md).
 3. [Traçabilité du PDF et des évolutions](TRACEABILITE.md).
 4. [Arbitrages et écarts de production](spec-process-arbitrages.md).
 5. [Recette](spec-process-recette.md).
@@ -28,6 +28,7 @@ Chaque fichier suit les 11 rubriques des skills de spécification : objet, défi
 | [Vision, périmètre et vocabulaire](spec-design-produit.md)                                  | 1, 17, 18, 19             |
 | [Accès, invitation et droits](spec-process-acces-droits.md)                                 | 2, 3, 15, 16, 17          |
 | [Espace entreprise et accueil simplifié](spec-design-espace-entreprise.md)                  | 4, 7, 9, 10, 11, 12       |
+| [Espace administrateur](spec-design-espace-administrateur.md) | Évolution USR-17 ; 2, 6, 13, 15, 20, A, B |
 | [Espace conseiller et vivier paginé](spec-design-espace-conseiller.md)                      | 2, 6, 10, 13, 14, 15      |
 | [Besoins, brief et matching explicable](spec-process-besoins-matching.md)                   | 4, 5, 7, 8, 9, 17         |
 | [Fiche candidat, publication et CV](spec-data-candidats-cv.md)                              | 2, 5, 7, 14, 15           |
@@ -68,3 +69,5 @@ La maquette d6f296f : accueil entreprise sans profils, swipe dans chaque besoin,
 Le nom exact `specifications` n’a pas été trouvé dans les skills locaux ni par la recherche disponible. Deux équivalents du dépôt GitHub officiel `awesome-copilot` ont été récupérés et lus : [create-specification](../tools/skills/create-specification/SKILL.md) et [update-specification](../tools/skills/update-specification/SKILL.md). Leurs [provenances](../tools/skills/create-specification/SOURCE.md) et licences sont conservées. Le répertoire demandé remplace leur chemin par défaut `/spec/` ; les rubriques sont en français.
 
 Les anciens [documents de couverture](../docs/SPEC_COVERAGE.md), [audit](../docs/AUDIT_SPECIFICATIONS.md) et [validation](../docs/VALIDATION.md) apportent le contexte historique et les preuves. Les spécifications thématiques constituent désormais la lecture consolidée des règles.
+
+Évolution examinée USR-17 : copie de travail locale du 8 octobre 2026, ajout de l’espace administrateur et transfert des formations/plannings ; voir [administration](spec-design-espace-administrateur.md).

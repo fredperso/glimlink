@@ -1,6 +1,6 @@
 ---
 title: 'Espace conseiller et vivier paginé'
-version: '1.0'
+version: '1.1'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -8,17 +8,17 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [2, 6, 10, 13, 14, 15]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-17
 tags: [specification, design, glimlink]
 ---
 
 # Espace conseiller et vivier paginé
 
-Référence consolidée du PDF V3 et de la session utilisateur, confrontée au code de la maquette `d6f296f`. Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail locale USR-17 (base `d6f296f`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
 
 ## 1. Objet et périmètre
 
-Permettre au conseiller de gérer le vivier, vérifier les fiches, entretenir les calendriers, inviter les partenaires et traiter les demandes dans son périmètre. L’espace ne doit pas devenir un CRM supplémentaire.
+Permettre au conseiller de gérer le vivier, vérifier les fiches, consulter les calendriers administrés, inviter les partenaires et traiter les demandes dans son périmètre. L’espace ne doit pas devenir un CRM supplémentaire.
 
 ## 2. Définitions
 
@@ -35,7 +35,7 @@ Permettre au conseiller de gérer le vivier, vérifier les fiches, entretenir le
 | CON-005 | PDF §10, §15        | Montrer les profils, brief confirmé et contact entreprise de chaque demande autorisée.                                      |
 | CON-006 | Demande utilisateur | L’espace conseiller propose Contacter l’entreprise, pas Contacter le conseiller.                                            |
 | CON-007 | Demande utilisateur | La cloche présente des événements simulés réactifs ; l’inscription d’un partenaire déclenche un événement de premier appel. |
-| CON-008 | PDF §6              | Les calendriers sont partagés ; leur modification est portée au niveau formation/promotion représenté.                      |
+| CON-008 | PDF §6 + USR-17      | Les calendriers sont partagés ; leur modification est portée par l’administrateur au niveau formation/promotion représenté.                      |
 
 ## 4. Interfaces et contrats de données
 
@@ -44,6 +44,8 @@ Navigation : `home`, `students`, `calendars`, `needs`, `requests`, `companies` s
 Le tableau Talents affiche identité autorisée, formation, compétences, statut et ouverture de fiche. La pagination de maquette propose 5/10/20 lignes, 5 par défaut ; une recherche ou un filtre réinitialise la page, la taille aussi. Après réduction du résultat, la page effective reste valide. Les boutons précédent/suivant sont désactivés aux bornes. Le tableau devient des lignes empilées sur mobile, avec libellés de colonnes.
 
 La liste partenaires comporte recherche, statut d’activation, parcours d’invitation et contact. Une inscription notifiée présente le téléphone pour l’appel initial. La fiche conseiller conserve les coordonnées privées indépendamment de la version professionnelle publiée.
+
+La consultation des formations reste dans `#/adviser/calendars` et depuis l’accueil ; la création et l’édition appartiennent à [l’administrateur](spec-design-espace-administrateur.md). AC-ADM-004 couvre le transfert.
 
 ## 5. Critères d’acceptation
 
@@ -63,7 +65,7 @@ La pagination répond à une demande de lisibilité. Les droits s’appliquent a
 
 ## 8. Dépendances et intégrations
 
-Profils et calendriers du campus du conseiller ; besoins/demandes autorisés ; partenaires rattachés. Les rôles d’administration des formations et délégations entre conseillers restent ouverts.
+Profils et calendriers du campus du conseiller ; besoins/demandes autorisés ; partenaires rattachés. L’administration des formations est confiée à l’administrateur par USR-17 ; les délégations entre conseillers restent ouvertes.
 
 ## 9. Exemples et cas limites
 

@@ -50,8 +50,8 @@ test('Sélection : fiche expliquée et demande transmise à la conseillère', as
   await expect(page.locator('.request-card')).toContainText('Maison Alba');
 });
 test('V3-05 : modifier un calendrier change le contrôle de deux profils', async ({ page }) => {
-  await page.goto('http://glimlink.demo/#/adviser/calendars');
-  await page.getByRole('button', { name: 'Modifier le rythme' }).click();
+  await page.goto('http://glimlink.demo/#/admin/calendars');
+  await page.getByRole('button', { name: 'Modifier la formation' }).click();
   await page.getByRole('dialog').getByText('Vendredi', { exact: true }).click();
   await page.getByRole('button', { name: 'Enregistrer le calendrier' }).click();
   await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
@@ -89,4 +89,52 @@ test('Accessibilité de base : aucun débordement, formulaire et dialog au clavi
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+
+test('USR-17 : administrateur ajoute les référentiels, conseiller consulte', async ({ page }) => {
+  await page.goto('http://glimlink.demo/#/admin/home');
+  await page.getByRole('button', { name: 'Ajouter une formation', exact: true }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Nom de la formation').fill('BTS test');
+  await dialog.getByLabel('Début d’application').fill('2026-10-01');
+  await dialog.getByLabel('Fin d’application').fill('2027-07-01');
+  await dialog.getByLabel('Nom de la compétence').fill('Gestion de projet');
+  await dialog.getByRole('button', { name: 'Ajouter la compétence', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Enregistrer le calendrier' }).click();
+  await page.goto('http://glimlink.demo/#/adviser/calendars');
+  await expect(page.getByRole('button', { name: 'Modifier la formation' })).toHaveCount(0);
+  await expect(page.locator('select option').filter({ hasText: 'BTS test' })).toHaveCount(1);
+  await page.goto('http://glimlink.demo/#/admin/users');
+  await page.getByRole('button', { name: 'Ajouter un utilisateur' }).click();
+  for (const [label, value] of [
+    ['Prénom', 'Lou'],
+    ['Nom', 'Martin'],
+    ['E-mail', 'lou@example.com'],
+    ['Téléphone', '04 00 00 00 00'],
+    ['Adresse complète', '1 rue du Centre, Montpellier'],
+  ])
+    await dialog.getByLabel(label, { exact: true }).fill(value);
+  await dialog.getByRole('button', { name: 'Enregistrer l’utilisateur' }).click();
+  await page.reload();
+  await expect(page.locator('.admin-record').filter({ hasText: 'lou@example.com' })).toContainText(
+    'Lou Martin',
+  );
+  await page.goto('http://glimlink.demo/#/admin/companies');
+  await page.getByRole('button', { name: 'Ajouter une entreprise' }).click();
+  for (const [label, value] of [
+    ['Nom de l’entreprise', 'Entreprise test'],
+    ['Secteur d’activité', 'Services'],
+    ['Contact principal', 'Lou Martin'],
+    ['Fonction du contact', 'Direction'],
+    ['Ville', 'Montpellier'],
+    ['E-mail', 'entreprise@example.com'],
+    ['Téléphone', '04 00 00 00 01'],
+    ['Adresse complète', '2 rue du Centre, Montpellier'],
+  ])
+    await dialog.getByLabel(label, { exact: true }).fill(value);
+  await dialog.getByRole('button', { name: 'Enregistrer l’entreprise' }).click();
+  await page.reload();
+  await expect(page.locator('.admin-record').filter({ hasText: 'Entreprise test' })).toContainText(
+    'Activation à effectuer',
+  );
 });

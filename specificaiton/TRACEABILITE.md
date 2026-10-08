@@ -13,7 +13,7 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md). Les décisions ci-dess
 | PDF | Sujet                           | Document consolidé                                            | Situation                                                                                     |
 | --- | ------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | 1   | Vision et limites               | [Spécification](spec-design-produit.md)                       | Cadrage conservé ; accueil simplifié sans changer la promesse                                 |
-| 2   | Acteurs et rôles                | [Spécification](spec-process-acces-droits.md)                 | Entreprise/conseiller ; aucun compte étudiant ; données privées modifiables dans le périmètre |
+| 2   | Acteurs et rôles                | [Spécification](spec-process-acces-droits.md)                 | Entreprise/conseiller/admin (USR-17) ; aucun compte étudiant ; données privées modifiables dans le périmètre |
 | 3   | Invitation et compte entreprise | [Spécification](spec-process-acces-droits.md)                 | Activation et référent simulés ; inscription notifiée                                         |
 | 4   | Besoin naturel                  | [Spécification](spec-process-besoins-matching.md)             | Champ accueil conservé au formulaire ; confirmation explicite                                 |
 | 5   | Matching                        | [Spécification](spec-process-besoins-matching.md)             | Contrôles structurés ; scores et IA simulés ; critères à arbitrer                             |
@@ -55,6 +55,8 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md). Les décisions ci-dess
 | USR-14    | Clôture à mise en relation effectuée                                              | REL-005                             | Request.completed, updateRequestStatus, tests              |
 | USR-15    | Notification au conseiller après inscription via invitation                       | ACC-006, NOT-006                    | activatePartner, notification d’inscription, premier appel |
 | USR-16    | Répertoire Markdown et actualisation à chaque nouvelle demande                    | GOV-001–007                         | AGENTS.md, JOURNAL.md, contrôle spec:check                 |
+
+| USR-17 | Espace administrateur : formations/plannings/compétences transférés, utilisateurs et entreprises avec coordonnées | ADM-001–008, CON-008, ACC-004 ; administration, calendriers, droits, données | Administrator, CalendarEditor, administration.ts ; copie de travail locale |
 
 USR-14 traduit la demande de clôture dans un état explicite confirmé par le conseiller ; elle ne signifie pas clôture dès l’envoi d’une demande. Les règles de réouverture restent ouvertes. Les premières demandes évoquant un « espace candidat » n’ajoutent pas de compte étudiant : aucun écran de ce rôle n’existe dans la V1 actuelle.
 

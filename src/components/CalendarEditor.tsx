@@ -1,20 +1,38 @@
 import Select from './Select.tsx';
+import { SKILL_LEVELS, skillKey, type SkillLevel } from '../domain/skills.ts';
+import { saveTraining } from '../domain/administration.ts';
 import { useState, type FormEvent } from 'react';
 import { useApp } from '../context.tsx';
 import { DAYS, createId, type Calendar, type CalendarException } from '../domain/model.ts';
 import { Button, Icon, Modal, dateLabel } from './ui.tsx';
 import { CalendarExplorer } from './CalendarViews.tsx';
 
-export default function CalendarEditor({ calendarId }: { calendarId: string }) {
+export default function CalendarEditor({ calendarId }: { calendarId?: string }) {
   const { store, setStore, closeModal, notify, role } = useApp();
-  const calendar = store.calendars.find((c) => c.id === calendarId && c.school === 'campus-a');
-  const [draft, setDraft] = useState(calendar ? structuredClone(calendar) : null);
+  const calendar = store.calendars.find((c) => c.id === calendarId);
+  const [draft, setDraft] = useState<Calendar>(
+    calendar
+      ? structuredClone(calendar)
+      : {
+          id: createId(),
+          title: '',
+          school: 'campus-a',
+          mode: 'weekly',
+          courseDays: [],
+          start: '',
+          end: '',
+          learningSkills: [],
+          exceptions: [],
+        },
+  );
   const [error, setError] = useState('');
+  const [skillName, setSkillName] = useState('');
+  const [skillLevel, setSkillLevel] = useState<SkillLevel>('autonomous');
   const [exception, setException] = useState<CalendarException | null>(null);
-  if (!draft || role !== 'adviser') return null;
+  if (!draft || role !== 'admin') return null;
   const count = store.students.filter(
     (s) =>
-      s.school === 'campus-a' &&
+      s.school === draft.school &&
       s.status !== 'withdrawn' &&
       (s.draft.trainingId === draft.id || s.published?.trainingId === draft.id),
   ).length;
@@ -55,6 +73,14 @@ export default function CalendarEditor({ calendarId }: { calendarId: string }) {
   function submit(event: FormEvent) {
     event.preventDefault();
     if (!draft) return;
+    if (skillName.trim()) {
+      setError('Ajoutez la compétence en cours ou effacez sa saisie avant d’enregistrer.');
+      return;
+    }
+    if (!draft.title.trim() || !draft.start || !draft.end || !draft.learningSkills?.length) {
+      setError('Renseignez le nom, la période et au moins une compétence visée.');
+      return;
+    }
     if (exception) {
       setError('Ajoutez l’exception en cours ou annulez sa saisie avant d’enregistrer.');
       return;
@@ -66,22 +92,136 @@ export default function CalendarEditor({ calendarId }: { calendarId: string }) {
       setError('Vérifiez la période de formation : elle doit inclure toutes les exceptions.');
       return;
     }
-    setStore((prev) => ({
-      ...prev,
-      calendars: prev.calendars.map((c) => (c.id === draft.id ? draft : c)),
-    }));
+    setStore((prev) => saveTraining(prev, draft, role));
     closeModal();
-    notify(`Calendrier mis à jour pour ${count} étudiants rattachés.`);
+    notify(
+      calendar
+        ? `Formation mise à jour pour ${count} étudiants rattachés.`
+        : 'Formation ajoutée avec son planning et ses compétences.',
+    );
   }
   return (
-    <Modal title="Modifier le calendrier partagé" onClose={closeModal} wide>
+    <Modal
+      title={calendar ? 'Modifier la formation et son planning' : 'Ajouter une formation'}
+      onClose={closeModal}
+      wide
+    >
       <form onSubmit={submit} className="calendar-editor-form">
         <div className="notice">
           <Icon name="users" />
           {count} étudiants héritent de ce calendrier. Les disponibilités individuelles restent
           distinctes.
         </div>
-        <h3>{draft.title}</h3>
+        <div className="form-grid">
+          <label>
+            Nom de la formation
+            <input
+              required
+              value={draft.title}
+              onChange={(e) => setDraft({ ...draft, title: e.target.value })}
+            />
+          </label>
+          <label>
+            Campus
+            <Select
+              value={draft.school}
+              disabled={!!calendar}
+              onChange={(e) => setDraft({ ...draft, school: e.target.value })}
+            >
+              <option value="campus-a">Atelier Campus</option>
+              <option value="campus-b">Campus B</option>
+            </Select>
+          </label>
+        </div>
+        <section className="formation-learning-skills">
+          <h3>Compétences visées</h3>
+          <p>
+            Les objectifs de la formation ne valident pas automatiquement les compétences des
+            candidats.
+          </p>
+          {draft.learningSkills?.map((skill) => (
+            <div className="exception-row" key={skill.id}>
+              <strong>{skill.name}</strong>
+              <label>
+                Niveau cible pour {skill.name}
+                <Select
+                  value={skill.targetLevel}
+                  onChange={(e) =>
+                    setDraft({
+                      ...draft,
+                      learningSkills: draft.learningSkills?.map((item) =>
+                        item.id === skill.id
+                          ? { ...item, targetLevel: e.target.value as SkillLevel }
+                          : item,
+                      ),
+                    })
+                  }
+                >
+                  {Object.entries(SKILL_LEVELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </Select>
+              </label>
+              <button
+                type="button"
+                className="icon-button"
+                aria-label={`Supprimer la compétence ${skill.name}`}
+                onClick={() =>
+                  setDraft({
+                    ...draft,
+                    learningSkills: draft.learningSkills?.filter((item) => item.id !== skill.id),
+                  })
+                }
+              >
+                <Icon name="close" />
+              </button>
+            </div>
+          ))}
+          <div className="form-grid">
+            <label>
+              Nom de la compétence
+              <input value={skillName} onChange={(e) => setSkillName(e.target.value)} />
+            </label>
+            <label>
+              Niveau cible
+              <Select
+                value={skillLevel}
+                onChange={(e) => setSkillLevel(e.target.value as SkillLevel)}
+              >
+                {Object.entries(SKILL_LEVELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </Select>
+            </label>
+          </div>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              if (
+                !skillName.trim() ||
+                draft.learningSkills?.some((item) => skillKey(item.name) === skillKey(skillName))
+              ) {
+                setError('Saisissez une compétence distincte de celles déjà ajoutées.');
+                return;
+              }
+              setDraft({
+                ...draft,
+                learningSkills: [
+                  ...(draft.learningSkills ?? []),
+                  { id: createId(), name: skillName.trim(), targetLevel: skillLevel },
+                ],
+              });
+              setSkillName('');
+              setError('');
+            }}
+          >
+            Ajouter la compétence
+          </Button>
+        </section>
         <div className="calendar-editor-layout">
           <div className="calendar-settings">
             <h4>1. Le rythme de référence</h4>

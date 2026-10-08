@@ -3,7 +3,7 @@ import type { Role, Store } from './domain/model.ts';
 export type ModalState =
   | { kind: 'profile'; studentId: string; needId: string }
   | { kind: 'student'; studentId: string }
-  | { kind: 'calendar'; calendarId: string }
+  | { kind: 'calendar'; calendarId?: string }
   | { kind: 'request'; needId: string }
   | { kind: 'contact'; companyId?: string }
   | { kind: 'activation'; companyId?: string }

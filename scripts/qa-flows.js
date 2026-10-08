@@ -61,8 +61,8 @@ async (page) => {
     );
     report.push({ width, scenario: 'Sélection et demande au conseiller', status: 'pass' });
     await reset();
-    await page.goto('http://glimlink.demo/#/adviser/calendars');
-    await page.getByRole('button', { name: 'Modifier le rythme' }).click();
+    await page.goto('http://glimlink.demo/#/admin/calendars');
+    await page.getByRole('button', { name: 'Modifier la formation' }).click();
     await page.getByRole('dialog').getByText('Vendredi', { exact: true }).click();
     await page.getByRole('button', { name: 'Enregistrer le calendrier' }).click();
     await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');

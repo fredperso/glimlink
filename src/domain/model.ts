@@ -12,7 +12,18 @@ export function createId(): string {
         byte.toString(16).padStart(2, '0'),
       ).join('');
 }
-export type Role = 'company' | 'adviser';
+export type Role = 'company' | 'adviser' | 'admin';
+export type ManagedUser = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  role: Role;
+  school: string;
+  companyId?: string;
+};
 export type Calendar = {
   id: string;
   title: string;
@@ -120,6 +131,7 @@ export type Store = {
   requests: Request[];
   alerts: Alert[];
   companies?: PartnerCompany[];
+  users?: ManagedUser[];
   activeCompanyId?: string;
   notificationWelcomeRead?: { companies?: string[]; adviser?: boolean };
 };
@@ -248,6 +260,7 @@ export function companyStore(store: Store): Store {
   const schools = new Set(companySchools(store, company.id));
   return {
     ...store,
+    users: undefined,
     notificationWelcomeRead: {
       companies: (store.notificationWelcomeRead?.companies ?? []).filter((id) => id === company.id),
     },
@@ -552,6 +565,7 @@ export function adviserStore(store: Store, school = 'campus-a'): Store {
   const needs = adviserNeeds(store, school);
   return {
     ...store,
+    users: undefined,
     notificationWelcomeRead: { adviser: store.notificationWelcomeRead?.adviser },
     students,
     needs,

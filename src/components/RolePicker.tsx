@@ -4,6 +4,7 @@ import type { Role } from '../domain/model.ts';
 import { Icon } from './ui.tsx';
 
 const OPTIONS = [
+  { value: 'admin' as Role, label: 'Espace administrateur', short: 'Admin' },
   { value: 'company' as Role, label: 'Espace entreprise', short: 'Entreprise' },
   { value: 'adviser' as Role, label: 'Espace conseiller', short: 'Conseiller' },
 ];

@@ -26,7 +26,7 @@ async (page) => {
     await page.setViewportSize({ width, height: width === 1440 ? 1000 : 844 });
     await page.evaluate(() => localStorage.clear());
     await page.reload();
-    await page.goto('http://glimlink.demo/#/adviser/calendars');
+    await page.goto('http://glimlink.demo/#/admin/calendars');
     await page.getByRole('heading', { name: 'Le rythme de vos formations.' }).waitFor();
     assert(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
@@ -57,7 +57,7 @@ async (page) => {
       (await page.locator('.calendar-navigation h3').textContent()).includes('novembre'),
       'Détail du mois',
     );
-    await page.getByRole('button', { name: 'Modifier le rythme' }).click();
+    await page.getByRole('button', { name: 'Modifier la formation' }).click();
     const dialog = page.getByRole('dialog');
     await dialog.getByRole('button', { name: 'Ajouter', exact: true }).click();
     await dialog.getByLabel('Libellé de l’exception').fill('Regroupement de novembre');

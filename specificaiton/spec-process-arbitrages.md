@@ -1,6 +1,6 @@
 ---
 title: 'Arbitrages, écarts et travaux de production'
-version: '1.0'
+version: '1.1'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -8,13 +8,13 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [20]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-17
 tags: [specification, process, glimlink]
 ---
 
 # Arbitrages, écarts et travaux de production
 
-Référence consolidée du PDF V3 et de la session utilisateur, confrontée au code de la maquette `d6f296f`. Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail locale USR-17 (base `d6f296f`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
 
 ## 1. Objet et périmètre
 
@@ -32,7 +32,7 @@ Préserver toutes les décisions ouvertes du §20 du PDF, les enrichir par les �
 | ARB-002 | Formation/promotion            | Niveau du calendrier, groupes, rattachements multiples et données disponibles. Le code regroupe encore formation et calendrier.                                                                                          |
 | ARB-003 | Granularité calendrier         | Demi-journées, périodes de stage et priorités d’exceptions. Mois/année/exceptions sont demandés et réalisés, sans arbitrer toute la granularité.                                                                         |
 | ARB-004 | Matching                       | Pondérations, exclusions, inconnues, compatibilité obligatoire, transferts, contribution des niveaux/acquisitions et calibrage. Le seuil PDF est 60 %, avec confirmation/calibrage attendus.                             |
-| ARB-005 | Administration/droits          | Création de formations/calendriers/conseillers, délégations et matrice multi-campus. Pas d’écran de création de formation actuellement.                                                                                  |
+| ARB-005 | Administration/droits          | USR-17 décide la création/édition de formations, l’ajout d’utilisateurs et d’entreprises dans un espace administrateur. Délégations, matrice multi-campus, véritables comptes et routage restent ouverts.                                                                                  |
 | ARB-006 | Cycles de vie                  | Réouverture, correction d’une relation confirmée, plusieurs demandes concurrentes et modification après sélection. Clôture sur confirmation de relation décidée par l’utilisateur.                                       |
 | ARB-007 | CV/extraction                  | Formats, tailles, stockage, expurgation contrôlée, téléchargement, erreur d’extraction et conservation source/version entreprise. Tout est simulé actuellement.                                                          |
 | ARB-008 | Protection des données         | Information/base légale, droits sans compte étudiant, conservation, suppression, journalisation, âge et données transmises aux fournisseurs. Formalisation avec le référent compétent, sans décision juridique inventée. |
@@ -54,10 +54,12 @@ Chaque arbitrage doit être clos par une décision datée/source explicite, avec
 | CV              | Propositions/aperçu fictif              | Fichiers source, expurgation, accès et erreurs           |
 | Notifications   | Stockage local et simulations           | Envoi e-mail, routage, file/réessai et métriques         |
 | Persistance     | localStorage partagé par navigateur     | BDD, migrations, concurrence et sauvegarde               |
-| Formations      | Édition de calendriers existants        | Entités/référentiels et administration autorisée         |
+| Formations      | Création/édition administrateur locale        | Entités/référentiels et administration autorisée         |
 | Confidentialité | Projections de champs et périmètres     | Autorisations API, fichiers, contrôles de textes publics |
 
 Décisions utilisateur acquises : accueil sans exploration, swipe dans le besoin, sélection résumée avec suggestions distinctes, données personnelles éditables par conseiller, compétences structurées, mois/année, sélecteurs complets, pagination et navigation tactile, notification d’inscription et clôture à relation effectuée.
+
+Décision USR-17 : transfert de l’édition des formations/plannings à l’administrateur, ajout d’utilisateurs et d’entreprises avec coordonnées. La démo impose nom/période/compétence pour une formation et coordonnées complètes pour les ajouts ; ces validations, le SIRET facultatif et l’unique référent fictif ne sont pas des arbitrages de production. Voir [administration](spec-design-espace-administrateur.md).
 
 ## 5. Critères d’acceptation
 

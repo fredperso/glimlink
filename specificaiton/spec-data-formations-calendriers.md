@@ -1,6 +1,6 @@
 ---
 title: 'Formations, calendriers et présence potentielle'
-version: '1.0'
+version: '1.1'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -8,13 +8,13 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [6, 14, 15, 17, 20]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-17
 tags: [specification, data, glimlink]
 ---
 
 # Formations, calendriers et présence potentielle
 
-Référence consolidée du PDF V3 et de la session utilisateur, confrontée au code de la maquette `d6f296f`. Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail locale USR-17 (base `d6f296f`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
 
 ## 1. Objet et périmètre
 
@@ -45,6 +45,8 @@ Partager un planning structuré au niveau formation/promotion pertinent et contr
 
 Priorité du calcul local : hors période → week-end non évalué → dernière exception couvrant la date → rythme variable/inconnu à vérifier → jours hebdomadaires. Les semaines commencent lundi. La plage d’un besoin détermine les dates contrôlées ; `checkAvailability` complète ce résultat par le permis et la disponibilité personnelle. Les demi-journées et horaires ne sont pas représentés.
 
+USR-17 : la création et l’édition du planning et des compétences visées utilisent [l’espace administrateur](spec-design-espace-administrateur.md). AC-ADM-001 et AC-ADM-004 complètent V3-05 ; le conseiller conserve uniquement la consultation et le rattachement des candidats.
+
 ## 5. Critères d’acceptation
 
 - **V3-05** : deux candidats rattachés héritent de la même mise à jour.
@@ -65,7 +67,7 @@ Le PDF laisse ouverte la granularité complète. L’utilisateur a demandé mois
 
 ## 8. Dépendances et intégrations
 
-Données fiables du centre et rattachement correct. Administration des formations, création de nouveaux calendriers, groupes, rattachements multiples, périodes de stage et priorités d’exceptions doivent être arbitrés. Pas de connexion à un planning externe.
+Données fiables du centre et rattachement correct. USR-17 confie la création et l’édition des formations/calendriers à l’administrateur. Groupes, rattachements multiples, périodes de stage et priorités d’exceptions restent à arbitrer. Pas de connexion à un planning externe.
 
 ## 9. Exemples et cas limites
 

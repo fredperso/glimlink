@@ -240,7 +240,7 @@ function Home() {
               <button
                 className="training-row"
                 key={c.id}
-                onClick={() => openModal({ kind: 'calendar', calendarId: c.id })}
+                onClick={() => go('calendars')}
               >
                 <span>
                   <strong>{c.title.split(' · ')[0]}</strong>
@@ -256,7 +256,7 @@ function Home() {
                       : 'Rythme à vérifier'}
                   </small>
                 </span>
-                <Icon name="edit" size={17} />
+                <Icon name="arrow" size={17} />
               </button>
             ))}
         </section>

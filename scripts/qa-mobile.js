@@ -37,8 +37,8 @@ async (page) => {
   await layout('Profil entreprise');
   await page.getByRole('button', {name:'Année',exact:true}).click(); await layout('Calendrier annuel profil');
   await page.getByRole('button', {name:'Fermer la fenêtre'}).click();
-  await page.goto('http://glimlink.demo/#/adviser/calendars');
-  await page.getByRole('button', {name:'Modifier le rythme'}).click(); await layout('Éditeur calendrier');
+  await page.goto('http://glimlink.demo/#/admin/calendars');
+  await page.getByRole('button', {name:'Modifier la formation'}).click(); await layout('Éditeur calendrier');
   await page.getByRole('button', {name:'Fermer la fenêtre'}).click();
   if(width === 320 || width === 390) {
    for(const [route,name] of [['/company/home','home'],['/adviser/students','students'],['/adviser/companies','partners']]) {
