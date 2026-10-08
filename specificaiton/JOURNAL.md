@@ -68,3 +68,13 @@ Pour la date et un identifiant unique, consigner : demande ; sources/impact ; d�
 - **Préparation** : récupération des références distantes et comparaison du contenu indexé à origin/main. La branche locale était en retard de 13 commits déjà représentés dans les fichiers de travail ; réalignement avec conservation de l’index et de tous les fichiers, puis commit de la seule différence à livrer.
 - **Fichiers / exigences** : JOURNAL.md pour cette opération ; code, maquette générée, tests, captures et spécifications de USR-17 inclus dans la livraison. Aucune exigence produit supplémentaire.
 - **Validation** : contrôle documentaire spec:check et contrôle des différences Git avant commit ; les preuves applicatives restent les 51 tests métier et 13 tests Playwright réussis (1 ignoré) de USR-17. Le résultat du push et la référence du commit sont vérifiés et rapportés dans la réponse de livraison.
+
+
+## 2026-10-08 — LIV-002 — Autorisation explicite du push sur origin/main
+
+- **Demande** : « force le push sur origin/main » après présentation du commit 729fcc3 et de son périmètre (administration, spécifications, tests et captures).
+- **Impact** : Aucun changement fonctionnel ; autorisation explicite de la livraison sur la branche principale.
+- **Contexte** : le contrôle automatique a rejeté le premier push faute d’autorisation assez explicite de la branche et du périmètre. Aucun push n’avait été effectué.
+- **Décision** : pousser le commit 729fcc3 et cette entrée de journal sur origin/main du dépôt fredperso/glimlink avec --force-with-lease. La récupération des références confirme que 729fcc3 prolonge origin/main : aucun commit distant n’est à supprimer. Les fichiers locaux .serena/ restent exclus.
+- **Fichiers / exigences** : JOURNAL.md pour cette demande ; aucune nouvelle exigence fonctionnelle. Le contenu applicatif et les validations de USR-17 sont inchangés.
+- **Validation** : lecture du README des spécifications, vérification de l’état Git, fetch origin et comparaison des historiques ; spec:check avant commit. Le résultat du push et l’égalité des références locale/distante sont vérifiés dans la réponse de livraison.
