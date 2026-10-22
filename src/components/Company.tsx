@@ -151,7 +151,7 @@ function Home() {
           <h2>
             Vous avez les missions.
             <br />
-            Ils ont le potentiel.
+            <span className="gradient-text">Ils ont le potentiel.</span>
           </h2>
           <p>Décrivez simplement les missions que vous souhaitez confier.</p>
           <form
@@ -176,6 +176,16 @@ function Home() {
             </Button>
           </form>
           <span className="welcome-footnote">Pas besoin de rédiger une offre d’emploi.</span>
+        </div>
+        <div className="welcome-stack" aria-hidden="true">
+          {[3, 0, 4].map((variant) => (
+            <span key={variant} className={`welcome-stack-card talent-art-${variant}`}>
+              <Avatar variant={variant} />
+            </span>
+          ))}
+          <span className="welcome-stack-heart">
+            <Icon name="heart" size={28} />
+          </span>
         </div>
       </section>
       <section className="home-shortcuts" aria-label="Votre activité">

@@ -2,7 +2,7 @@
 title: 'Spécifications fonctionnelles consolidées Glimlink V1'
 version: '1.2'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-22
 status: reference-consolidee
 ---
 
@@ -75,6 +75,8 @@ Le contrôle vérifie structure, dates, liens locaux, couverture des 20 sections
 ## État de référence
 
 La maquette d6f296f : accueil entreprise sans profils, swipe dans chaque besoin, sélection résumée avec suggestions distinctes des Talent Alerts, clôture à mise en relation confirmée, inscription entreprise notifiée au conseiller, vivier paginé, compétences avec niveaux/états, calendriers mois/année et sélecteurs accessibles. La validation précédente documente 48 tests métier réussis et des parcours navigateur MCP ; la suite CLI Playwright n’est pas déclarée exécutée.
+
+Évolution USR-21 (22 octobre 2026) : habillage inspiré des applications de rencontre (palette corail, cartes immersives, boutons ronds, écran de sélection façon « match ») ; voir [ergonomie](spec-design-ergonomie-mobile.md) et [espace entreprise](spec-design-espace-entreprise.md).
 
 Contrainte acquise USR-20 : hébergement de production sur un cloud souverain européen, avec préférence pour la France. Le fournisseur et le périmètre de souveraineté restent à valider ; voir PRO-008 dans la [vision produit](spec-design-produit.md) et ARB-011 dans les [arbitrages](spec-process-arbitrages.md).
 

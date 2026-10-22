@@ -112,30 +112,30 @@
   color: #845021;
 }
 .week-day.course > strong {
-  color: #5e6859;
+  color: #725d68;
 }
 .badge-neutral {
-  color: #536151;
+  color: #6c5461;
 }
 .modal-body .match-explanation p,
 .modal-body .counsellor-note p,
 .modal-body .notice,
 .confirmation-box small,
 .private-fields summary {
-  color: #53634a;
+  color: #725264;
 }
 .modal-body .notice-warning {
   color: #8b5a34;
 }
 .profile-score {
-  color: #406c38;
+  color: #a33136;
 }
 .progress-steps,
 .selection-next p {
-  color: #58654f;
+  color: #735666;
 }
 .alert-item span:not(.badge):not(.avatar-dot):not(.avatar-line) {
-  color: #5b6b51;
+  color: #7a5a6c;
 }
 h1,
 h2,
@@ -149,13 +149,13 @@ blockquote,
   max-width: 100%;
 }
 .welcome-footnote {
-  color: #56654c;
+  color: #755466;
 }
 .floating-talent i {
-  color: #47713b;
+  color: #a9363b;
 }
 .alert-strip p {
-  color: #58674d;
+  color: #775668;
 }
 .adviser-avatar {
   color: #665640;
@@ -169,36 +169,36 @@ blockquote,
 .result-explanation > span,
 .pass-link,
 .calendar-card-footer {
-  color: #5b6b51;
+  color: #7a5a6c;
 }
 .brief-summary span {
-  color: #54634c;
+  color: #725364;
 }
 .week-day > span:first-child {
-  color: #5b6653;
+  color: #735967;
 }
 .mobile-nav a {
-  color: #5a6b51;
+  color: #7a5a6b;
 }
 .builder-help > p,
 .help-rule,
 .adviser-banner p {
-  color: #536547;
+  color: #735365;
 }
 .prototype-label,
 .student-row-info > span,
 .training-row small,
 .profile-facts span,
 .counsellor-note small {
-  color: #5b6b51;
+  color: #7a5a6c;
 }
 input::placeholder,
 textarea::placeholder {
-  color: #66705f;
+  color: #7b6571;
 }
 .talent-card-compact .select-button {
-  background: #f1f5e8;
-  border: 1px solid #d7e3c9;
+  background: #ffefec;
+  border: 1px solid #f7d5ce;
 }
 @media (max-width: 1200px) and (min-width: 761px) {
   .dashboard-layout {

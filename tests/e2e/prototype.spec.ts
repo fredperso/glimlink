@@ -138,3 +138,16 @@ test('USR-17 : administrateur ajoute les référentiels, conseiller consulte', a
     'Activation à effectuer',
   );
 });
+test('Swipe : sélectionner ouvre le match, puis le choix reste annulable', async ({ page }) => {
+  await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
+  const first = await page.locator('.deck-front h3').textContent();
+  await page.getByRole('button', { name: 'Sélectionner', exact: true }).click();
+  const match = page.getByRole('dialog', { name: `${first} rejoint votre sélection` });
+  await expect(match).toBeVisible();
+  await expect(match.getByRole('button', { name: 'Continuer à explorer' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(match).toBeHidden();
+  await expect(page.locator('.deck-front h3')).not.toHaveText(first!);
+  await page.getByRole('button', { name: 'Annuler le dernier choix' }).click();
+  await expect(page.locator('.deck-front h3')).toHaveText(first!);
+});

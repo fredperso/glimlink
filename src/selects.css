@@ -5,7 +5,7 @@
   width: 100%;
   min-width: 0;
   margin-top: 8px;
-  border: 1px solid #cbd5cc;
+  border: 1px solid #ddcecb;
   border-radius: 9px;
   background: #fff;
   color: var(--ink);
@@ -56,7 +56,7 @@ body .select-field > .select-trigger {
   cursor: pointer;
 }
 .select-trigger:focus-visible {
-  outline: 3px solid #176c43;
+  outline: 3px solid #a4222e;
   outline-offset: 3px;
 }
 .select-trigger:disabled {
@@ -70,11 +70,11 @@ body .select-field > .select-trigger {
   box-sizing: border-box;
   overflow-y: auto;
   overscroll-behavior: contain;
-  border: 1px solid #cbd5cc;
+  border: 1px solid #ddcecb;
   border-radius: 12px;
   background: white;
-  color: #263c35;
-  box-shadow: 0 12px 32px #173a2429;
+  color: #452f3b;
+  box-shadow: 0 12px 32px #44273729;
 }
 .select-option {
   display: flex;
@@ -97,26 +97,26 @@ body .select-field > .select-trigger {
   flex-shrink: 0;
 }
 .select-option[aria-selected='true'] {
-  background: #e7f3e9;
-  color: #145b39;
+  background: #fdebe7;
+  color: #8a1e27;
   font-weight: 650;
 }
 .select-option.active {
-  outline: 2px solid #176c43;
+  outline: 2px solid #a4222e;
   outline-offset: -2px;
-  background: #f1f6ef;
+  background: #fcf2f0;
 }
 .select-option[aria-disabled='true'] {
-  color: #69756c;
+  color: #7c6c75;
   cursor: default;
 }
 .select-field:has(select:focus-visible) {
-  outline: 3px solid #176c43;
+  outline: 3px solid #a4222e;
   outline-offset: 3px;
 }
 .select-field:has(select:disabled) {
-  background: #f3f5f1;
-  color: #69756c;
+  background: #f8f3f2;
+  color: #7c6c75;
 }
 .select-field:has(select:disabled) > select {
   cursor: default;

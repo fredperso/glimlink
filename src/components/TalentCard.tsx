@@ -45,24 +45,29 @@ export function TalentCard({
   };
   return (
     <article className={`talent-card ${compact ? 'talent-card-compact' : ''}`}>
-      <div className="talent-art">
+      <div className={`talent-art talent-art-${student.avatar % 6}`}>
         <Avatar variant={student.avatar} />
         <span className="score">
-          <Icon name="spark" size={14} />
+          <Icon name="heart" size={14} />
           {scoreFor(student, need)}
           <small>%</small>
+          <span className="sr-only"> de compatibilité illustrative</span>
         </span>
         {student.discoveryReason && <span className="art-label">Un autre regard</span>}
+        <div className="talent-identity">
+          <div className="talent-name-row">
+            <h3>{data.firstName}</h3>
+            <span>
+              <Icon name="pin" size={14} />
+              {data.location}
+            </span>
+          </div>
+          <p className="training-name">
+            {calendar?.title.split(' · ')[0] ?? 'Formation à vérifier'}
+          </p>
+        </div>
       </div>
       <div className="talent-content">
-        <div className="talent-name-row">
-          <h3>{data.firstName}</h3>
-          <span>
-            <Icon name="pin" size={14} />
-            {data.location}
-          </span>
-        </div>
-        <p className="training-name">{calendar?.title.split(' · ')[0] ?? 'Formation à vérifier'}</p>
         <SkillList skills={data.skills} calendars={store.calendars} compact />
         {student.discoveryReason ? (
           <p className="discovery-reason">
@@ -75,24 +80,26 @@ export function TalentCard({
             {check?.text}
           </p>
         )}
-        <div className="talent-actions">
-          <button
-            className="text-button"
-            onClick={() => openModal({ kind: 'profile', studentId: student.id, needId: need.id })}
-          >
-            Voir le profil <Icon name="arrow" size={16} />
-          </button>
-          {!deck && (
+        {!deck && (
+          <div className="talent-actions">
+            <button
+              className="text-button"
+              onClick={() =>
+                openModal({ kind: 'profile', studentId: student.id, needId: need.id })
+              }
+            >
+              Voir le profil <Icon name="arrow" size={16} />
+            </button>
             <button
               className={`select-button ${selected ? 'selected' : ''}`}
               onClick={toggle}
               aria-label={`${selected ? 'Retirer' : 'Sélectionner'} ${data.firstName}`}
               aria-pressed={selected}
             >
-              <Icon name={selected ? 'check' : 'plus'} size={18} />
+              <Icon name={selected ? 'check' : 'heart'} size={18} />
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </article>
   );

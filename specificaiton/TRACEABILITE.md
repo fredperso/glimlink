@@ -1,7 +1,7 @@
 ---
 title: 'Traçabilité PDF, demandes et maquette'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-22
 ---
 
 # Traçabilité
@@ -63,6 +63,8 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md). Les décisions ci-dess
 | USR-19 | Ajouter une table des matières aux spécifications fonctionnelles | GOV-008, AC-GOV-005 ; index et 16 documents thématiques | TABLE_DES_MATIERES.md et tables locales ; évolution documentaire |
 
 | USR-20 | Cloud souverain européen, de préférence en France | PRO-008, AC-PRO-004, ARB-011, AC-ARB-005 ; vision produit et arbitrages | Contrainte de production acquise ; fournisseur et niveau de qualification non approuvés |
+
+| USR-21 | Ergonomie et look and feel inspirés des sites de rencontre | UX-009–011, AC-UX-008–010, ENT-010, AC-ENT-008 ; ergonomie, entreprise | rencontre.css, swipe.css, SwipeDeck (MatchDialog), TalentCard ; test E2E Swipe |
 
 USR-14 traduit la demande de clôture dans un état explicite confirmé par le conseiller ; elle ne signifie pas clôture dès l’envoi d’une demande. Les règles de réouverture restent ouvertes. Les premières demandes évoquant un « espace candidat » n’ajoutent pas de compte étudiant : aucun écran de ce rôle n’existe dans la V1 actuelle.
 

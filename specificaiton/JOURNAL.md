@@ -1,7 +1,7 @@
 ---
 title: 'Journal des demandes et décisions'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-22
 ---
 
 # Journal des demandes et décisions
@@ -153,3 +153,22 @@ Pour la date et un identifiant unique, consigner : demande ; sources/impact ; d�
 - **Sources officielles vérifiées** : disponibilité Paris des services, documentation/API Serverless Containers, Managed Databases, réseau privé, Object Storage et Transactional Email. Références : https://www.scaleway.com/fr/product-availability-by-region/ ; https://www.scaleway.com/en/developers/api/serverless-containers ; https://www.scaleway.com/en/docs/tutorials/metabase-postgre-containers-private-networks/ ; https://www.scaleway.com/en/docs/managed-databases-for-postgresql-and-mysql/concepts/ ; https://www.scaleway.com/en/docs/object-storage/how-to/create-a-bucket/ ; https://www.scaleway.com/en/developers/api/transactional-email.
 - **Fichiers / exigences** : JOURNAL.md uniquement ; ARB-011 reste ouvert pour le choix final et le périmètre. La proposition Clever Cloud de USR-20 conserve son statut historique non approuvé ; Scaleway devient la recommandation actuelle. Aucun accès au compte, création de ressources, achat, déploiement ou spécification technique détaillée effectué.
 - **Validation exécutée** : revue documentaire et vérification des sources officielles ; aucun test applicatif ni build, car le code ne change pas.
+
+
+## 2026-10-22 — OPS-001 — Publication de la maquette sur GitHub Pages
+
+- **Demande** : cloner le dépôt, installer les dépendances, puis mettre à jour les pages publiées sur https://fredperso.github.io/glimlink/.
+- **Impact** : Aucun changement fonctionnel ; opération de publication. GitHub Pages servait l’`index.html` source de Vite, qui ne s’exécute pas sans build : la page en ligne était blanche.
+- **Décision technique** : workflow `.github/workflows/pages.yml` déclenché à chaque push sur `main` (et manuellement) : `npm ci`, `npm run build`, publication de la maquette autonome `maquette.html` comme `index.html`. Source GitHub Pages basculée de « branche main » vers « GitHub Actions ».
+- **Fichiers / exigences** : workflow et JOURNAL.md ; aucune exigence modifiée.
+- **Validation exécutée** : build local réussi ; premier déploiement GitHub Actions réussi ; la page en ligne contient le script de la maquette.
+
+
+## 2026-10-22 — USR-21 — Ergonomie et look and feel inspirés des sites de rencontre
+
+- **Demande** : améliorer l’ergonomie et surtout le look and feel d’une application de rencontre entre entreprises et candidats à l’alternance, en s’appuyant sur les sites de rencontre. Choix confirmés : palette chaude (corail → orange) ; refonte de tout l’habillage et du parcours swipe.
+- **Impact** : présentation des trois espaces et parcours de découverte entreprise. Aucune règle métier, donnée ni droit modifié. La sélection n’est pas présentée comme un accord mutuel : l’écran « rejoint votre sélection » rappelle que rien n’est envoyé et que le conseiller organise la rencontre.
+- **Réalisation** : jetons de couleur chauds et dégradés ; neutres teintés de vert convertis vers des teintes chaudes à luminosité égale ; couleurs de disponibilité, de compétences et d’états OK conservées. Cartes de profil immersives (dégradé par avatar, identité en surimpression, pastille de compatibilité). Swipe : carte plus grande, tampons « Je retiens / Je passe », boutons ronds Annuler / Passer / Sélectionner / Fiche complète, collants sur mobile, dialogue natif de « match ». Accueil entreprise avec pile de cartes décorative ; navigation, onglets et boutons en pilule ; filtres de découverte défilants sur mobile.
+- **Décisions / questions ouvertes** : palette, formes et écran de match sont des choix de maquette validés dans leur principe par l’utilisateur ; le libellé et la fréquence de l’écran de match restent à confirmer en recette utilisateur.
+- **Fichiers / exigences** : UX-009–011, AC-UX-008–010 (ergonomie) ; ENT-010, AC-ENT-008 (entreprise) ; TRACEABILITE, README, JOURNAL ; docs/DESIGN.md. Code : `src/styles.css` (jetons), `src/rencontre.css`, `src/swipe.css`, `SwipeDeck.tsx`, `TalentCard.tsx`, `Company.tsx`, `ui.tsx` et couleurs des autres feuilles.
+- **Validation exécutée** : build et TypeScript réussis ; `npm test` 51 tests réussis ; Playwright CLI 16 tests réussis et 2 ignorés (desktop + mobile), dont le nouveau test du parcours de match ; contrastes des jetons calculés (≥ 4,5:1) ; captures desktop 1440 px et iPhone 13 revues. Pas d’essai sur appareil physique ni d’audit axe.

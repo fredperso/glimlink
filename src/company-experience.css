@@ -17,7 +17,7 @@
   flex: 1;
   min-width: 0;
   margin: 0;
-  border: 1px solid #a8bba7;
+  border: 1px solid #ccaca6;
   background: white;
   font-size: 16px;
   line-height: 1.6;
@@ -38,11 +38,11 @@
   align-items: center;
   gap: 12px;
   min-height: 112px;
-  border: 1px solid #cedbcf;
+  border: 1px solid #e6d2ce;
   border-radius: 16px;
   padding: 20px;
   background: white;
-  color: #263c35;
+  color: #452f3b;
   text-align: left;
   font-size: 16px;
 }
@@ -52,16 +52,16 @@
 }
 .home-shortcuts button strong {
   font-size: 28px;
-  color: #176c43;
+  color: #a4222e;
 }
 .home-shortcuts button small {
   display: block;
   font-size: 13px;
-  color: #52655a;
+  color: #6f5864;
 }
 .home-shortcuts button:hover {
-  background: #f0f8f1;
-  border-color: #176c43;
+  background: #fff2f0;
+  border-color: #a4222e;
 }
 .home-adviser {
   max-width: 560px;
@@ -74,7 +74,7 @@
   margin-top: 10px;
   font-size: 14px;
   font-weight: 650;
-  color: #176c43;
+  color: #a4222e;
 }
 .need-meta {
   flex-wrap: wrap;
@@ -87,7 +87,7 @@
 .closed-brief {
   padding: 16px 24px;
   background: white;
-  border: 1px solid #dce5d3;
+  border: 1px solid #f4dbd6;
   border-radius: 12px;
 }
 .closed-brief summary {
@@ -101,7 +101,7 @@
 }
 .selection-summary {
   min-width: 0;
-  border: 1px solid #d5e1d6;
+  border: 1px solid #ebd8d5;
   border-radius: 16px;
   padding: 16px;
   background: white;
@@ -115,7 +115,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #263c35;
+  color: #452f3b;
   text-align: left;
 }
 .selection-profile .avatar {
@@ -143,7 +143,7 @@
 .selection-suggestions {
   padding-top: 28px;
   margin-top: 24px;
-  border-top: 1px solid #d5e1d6;
+  border-top: 1px solid #ebd8d5;
 }
 @media (max-width: 1100px) {
   .home-shortcuts {

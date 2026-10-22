@@ -3,7 +3,7 @@ import { useApp } from '../context.tsx';
 import { type Student, type Need } from '../domain/model.ts';
 import { applySwipe, undoSwipe, type SwipeDecision } from '../domain/swipe.ts';
 import { TalentCard } from './TalentCard.tsx';
-import { Button, Icon, Week } from './ui.tsx';
+import { Avatar, Button, Icon, Week } from './ui.tsx';
 
 export default function SwipeDeck({
   students,
@@ -14,11 +14,12 @@ export default function SwipeDeck({
   need: Need;
   onGrid: () => void;
 }) {
-  const { store, setStore, go } = useApp();
+  const { store, setStore, go, openModal } = useApp();
   const [drag, setDrag] = useState(0);
   const [exit, setExit] = useState<'left' | 'right' | null>(null);
   const [history, setHistory] = useState<SwipeDecision[]>([]);
   const [message, setMessage] = useState('');
+  const [match, setMatch] = useState<Student | null>(null);
   const gesture = useRef<{ x: number; y: number; id: number; horizontal: boolean } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const busy = useRef(false);
@@ -38,6 +39,7 @@ export default function SwipeDeck({
     gesture.current = null;
     setExit(direction);
     const decision: SwipeDecision = { needId: need.id, studentId: card.id, direction };
+    const chosen = card;
     const firstName = card.published!.firstName;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     timer.current = setTimeout(
@@ -52,6 +54,7 @@ export default function SwipeDeck({
         setDrag(0);
         setExit(null);
         busy.current = false;
+        if (direction === 'right') setMatch(chosen);
       },
       reduced ? 0 : 220,
     );
@@ -112,7 +115,10 @@ export default function SwipeDeck({
           <h2>Un profil, une possibilité.</h2>
           <p id="swipe-instructions">Glissez à droite pour sélectionner, à gauche pour passer.</p>
         </div>
-        <span className="deck-remaining">{pending.length} à explorer</span>
+        <span className="deck-remaining">
+          {pending.length} à explorer · {need.selected.length} sélectionné
+          {need.selected.length > 1 ? 's' : ''}
+        </span>
       </div>
       <div className="deck-layout">
         <div className="deck-column">
@@ -155,7 +161,7 @@ export default function SwipeDeck({
                     className={`deck-stamp ${drag > 20 || exit === 'right' ? 'stamp-select' : drag < -20 || exit === 'left' ? 'stamp-pass' : ''}`}
                     aria-hidden="true"
                   >
-                    {drag > 0 || exit === 'right' ? 'Sélectionner' : 'Passer'}
+                    {drag > 0 || exit === 'right' ? 'Je retiens' : 'Je passe'}
                   </div>
                   <TalentCard student={card} need={need} deck />
                 </div>
@@ -163,12 +169,26 @@ export default function SwipeDeck({
               <div className="deck-actions">
                 <button
                   type="button"
+                  className="deck-action deck-undo"
+                  onClick={undo}
+                  disabled={!history.length || !!exit}
+                  aria-label="Annuler le dernier choix"
+                >
+                  <span className="deck-action-circle">
+                    <Icon name="undo" size={20} />
+                  </span>
+                  <span className="deck-action-label">Annuler</span>
+                </button>
+                <button
+                  type="button"
                   className="deck-action deck-pass"
                   onClick={() => decide('left')}
                   disabled={!!exit}
                 >
-                  <Icon name="close" size={24} />
-                  <span>Passer</span>
+                  <span className="deck-action-circle">
+                    <Icon name="close" size={30} />
+                  </span>
+                  <span className="deck-action-label">Passer</span>
                 </button>
                 <button
                   type="button"
@@ -176,8 +196,20 @@ export default function SwipeDeck({
                   onClick={() => decide('right')}
                   disabled={!!exit}
                 >
-                  <Icon name="heart" size={24} />
-                  <span>Sélectionner</span>
+                  <span className="deck-action-circle">
+                    <Icon name="heart" size={32} />
+                  </span>
+                  <span className="deck-action-label">Sélectionner</span>
+                </button>
+                <button
+                  type="button"
+                  className="deck-action deck-info"
+                  onClick={() => openModal({ kind: 'profile', studentId: card.id, needId: need.id })}
+                >
+                  <span className="deck-action-circle">
+                    <Icon name="info" size={20} />
+                  </span>
+                  <span className="deck-action-label">Fiche complète</span>
                 </button>
               </div>
               <p className="deck-keyboard">
@@ -198,19 +230,16 @@ export default function SwipeDeck({
               </Button>
             </div>
           )}
-          <div className="deck-footer">
-            <button
-              className="text-button"
-              type="button"
-              onClick={undo}
-              disabled={!history.length || !!exit}
-            >
-              <Icon name="undo" size={16} /> Annuler le dernier choix
-            </button>
-            <span>
-              {need.selected.length} sélectionné{need.selected.length > 1 ? 's' : ''}
-            </span>
-          </div>
+          {match && (
+            <MatchDialog
+              student={match}
+              onClose={() => setMatch(null)}
+              onRequest={() => {
+                setMatch(null);
+                openModal({ kind: 'request', needId: need.id });
+              }}
+            />
+          )}
           <p className="deck-feedback" role="status" aria-live="polite">
             {message}
           </p>
@@ -244,5 +273,65 @@ export default function SwipeDeck({
         </aside>
       </div>
     </section>
+  );
+}
+
+// Moment « match » plein écran : la sélection est confirmée, la mise en relation reste un choix.
+function MatchDialog({
+  student,
+  onClose,
+  onRequest,
+}: {
+  student: Student;
+  onClose: () => void;
+  onRequest: () => void;
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const continueButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const dialog = ref.current!;
+    const previous = document.activeElement as HTMLElement | null;
+    dialog.showModal();
+    continueButton.current?.focus();
+    document.body.classList.add('modal-open');
+    return () => {
+      dialog.close();
+      document.body.classList.remove('modal-open');
+      previous?.focus();
+    };
+  }, []);
+  return (
+    <dialog
+      ref={ref}
+      className="deck-match"
+      aria-labelledby="deck-match-title"
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+    >
+      <div className="deck-match-avatars" aria-hidden="true">
+        <Avatar variant={student.avatar} />
+        <span className="deck-match-heart">
+          <Icon name="heart" size={26} />
+        </span>
+      </div>
+      <h2 id="deck-match-title">{student.published!.firstName} rejoint votre sélection</h2>
+      <p>
+        Rien n’est encore envoyé. Mathilde vérifie les disponibilités et prépare la rencontre quand
+        vous demandez une mise en relation.
+      </p>
+      <Button onClick={onRequest}>
+        Demander une mise en relation <Icon name="arrow" size={18} />
+      </Button>
+      <button
+        ref={continueButton}
+        type="button"
+        className="text-button deck-match-continue"
+        onClick={onClose}
+      >
+        Continuer à explorer
+      </button>
+    </dialog>
   );
 }

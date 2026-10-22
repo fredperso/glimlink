@@ -2,11 +2,17 @@
 
 L'objectif est d'aider une PME à trouver des alternants sans connaître les diplômes. La découverte reste accompagnée par un conseiller.
 
-Palette : forêt #183d36 (actions et navigation), papier #f6f7f2 (fond), citron #e7f19b (découverte), sauge #e6eee8 (confiance), prune #735e86 (talents atypiques), terre #9b512c (réserves).
+Direction « rencontre » (USR-21, octobre 2026) : l’application reprend les codes des applications de rencontre (Tinder, Bumble, Hinge) au service du recrutement en alternance. Ce sont la carte de profil plein cadre, le geste, les boutons ronds et le moment de « match ». La sélection reste un choix de l’entreprise, jamais un accord mutuel.
 
-Typographie : une pile locale Avenir Next / Trebuchet MS / sans-serif, pour fonctionner sans CDN. Titres courts, hiérarchie franche, lignes lisibles. Aucun portrait réel ni âge étudiant.
+Palette : corail `#cc1a47` (couleur d’action, jeton historique `--forest`), dégradé d’action `#e0264a → #cf3d23` (texte blanc ≥ 4,5:1), dégradé décoratif `#ff4f6d → #ff8a4c` (jamais sous un texte courant), encre aubergine `#2b1d2c` (`--ink`, `--night`), crème `#fff8f5` (fond), pêche `#ffe3d6` et rose poudré `#fdeeea` (surfaces douces), prune #735e86 (talents atypiques), terre #9b512c (réserves). Les neutres anciennement teintés de vert ont été convertis vers des teintes chaudes à luminosité égale.
 
-Le motif visuel distinctif est une constellation de formes : chaque talent a un avatar géométrique non identifiant. La découverte associe cartes, raisons documentées et rythme scolaire directement lisible. Les scores sont des valeurs fictives par besoin, jamais une qualité intrinsèque.
+Typographie : une pile locale Avenir Next / Trebuchet MS / sans-serif, pour fonctionner sans CDN. Titres courts en gras serré, hiérarchie franche, lignes lisibles. Aucun portrait réel ni âge étudiant.
+
+Formes : boutons, onglets, badges et navigation en pilule ; cartes et panneaux à 22–32 px de rayon avec une ombre chaude diffuse. L’onglet actif de la navigation porte le dégradé d’action.
+
+Le motif visuel distinctif est une constellation de formes : chaque talent a un avatar géométrique non identifiant, posé sur un dégradé propre à sa variante, avec prénom, formation et ville en surimpression. Le swipe propose les actions Annuler, Passer (✕), Sélectionner (♥, dégradé) et Fiche complète. Sur téléphone, elles restent collées au-dessus de la barre inférieure. Une sélection ouvre un dialogue « … rejoint votre sélection » qui rappelle que rien n’est envoyé.
+
+Les couleurs porteuses de sens ne suivent pas la marque : disponibilités, compétences acquises et en cours, états OK et succès gardent leurs verts, bleus et oranges. La découverte associe cartes, raisons documentées et rythme scolaire directement lisible. Les scores sont des valeurs fictives par besoin, jamais une qualité intrinsèque.
 
 Bureau : navigation latérale, contenu principal, accompagnement contextualisé. Mobile : navigation inférieure, cartes à une colonne, feuilles de détail plein écran. Le swipe dispose toujours des alternatives Passer / Sélectionner et de commandes clavier natives.
 

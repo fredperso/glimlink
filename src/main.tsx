@@ -19,3 +19,5 @@ import './talents-table.css';
 import './role-picker.css';
 
 import './company-experience.css';
+
+import './rencontre.css';

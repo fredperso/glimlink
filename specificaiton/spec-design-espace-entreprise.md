@@ -1,8 +1,8 @@
 ---
 title: 'Espace entreprise et accueil simplifié'
-version: '1.1'
+version: '1.2'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-22
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
@@ -51,6 +51,7 @@ Spécifier le parcours entreprise consolidé au 8 octobre. L’accueil sert à e
 | ENT-007 | Décision utilisateur          | Ma sélection montre avatar, prénom, formation par besoin, ouvre la fiche complète autorisée et propose la mise en relation avec le conseiller.                                      |
 | ENT-008 | Décision utilisateur          | Ajouter des suggestions dans Ma sélection, distinctes des Talent Alerts.                                                                                                            |
 | ENT-009 | PDF §9                        | Accompagner une recherche sans résultat, expliquer les raisons et proposer le contact conseiller.                                                                                   |
+| ENT-010 | Demande utilisateur USR-21    | Après une sélection dans le swipe, un écran de confirmation façon « match » annonce l’ajout ; rien n’est envoyé. Il propose de demander une mise en relation ou de continuer à explorer. |
 
 ## 4. Interfaces et contrats de données
 
@@ -76,6 +77,7 @@ Les avancements représentés : recherche à confirmer, profils à explorer, dem
 - **AC-ENT-004** : cliquer sur le résumé d’un talent retenu ouvre sa fiche publiée ; aucune coordonnée privée n’apparaît.
 - **AC-ENT-005** : un profil Talent Alert du besoin n’est pas également affiché comme suggestion.
 - **AC-ENT-006** : ajouter une suggestion enrichit uniquement la sélection du besoin choisi.
+- **AC-ENT-008** : sélectionner un profil dans le swipe ouvre un dialogue « {prénom} rejoint votre sélection » dont le focus est sur « Continuer à explorer » ; Échap le ferme ; « Demander une mise en relation » ouvre la demande ; le choix reste annulable.
 - **AC-ENT-007** : l’envoi d’une demande ne clôture pas le besoin ; la confirmation du conseiller actualise les trois compteurs.
 
 ## 6. Stratégie de test

@@ -48,7 +48,7 @@
   gap: 16px;
 }
 .admin-record {
-  border: 1px solid var(--line, #e1e6e3);
+  border: 1px solid var(--line, #e9e3e2);
   border-radius: 16px;
   padding: 20px;
   min-width: 0;

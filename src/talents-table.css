@@ -1,5 +1,5 @@
 .talents-table-panel {
-  border: 1px solid #d9e2da;
+  border: 1px solid #eadcd9;
   border-radius: 12px;
   background: #fff;
   overflow: hidden;
@@ -12,8 +12,8 @@
 }
 .talent-table th {
   text-align: left;
-  background: #eef4ed;
-  color: #385044;
+  background: #faefed;
+  color: #5b404f;
   font-weight: 650;
   padding: 16px 12px;
 }
@@ -40,13 +40,13 @@ body .talent-table .student-row {
 }
 .talent-table td {
   padding: 18px 12px;
-  border-top: 1px solid #e3e9e1;
+  border-top: 1px solid #f0e4e2;
   vertical-align: middle;
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
 .talent-table tbody tr:hover {
-  background: #f8fbf6;
+  background: #fef8f7;
 }
 .talent-name > div {
   display: flex;
@@ -93,7 +93,7 @@ body .talent-table .student-row .button {
 }
 .talents-pagination p {
   margin: 0;
-  color: #52655a;
+  color: #6f5864;
 }
 .talents-pagination > label {
   display: flex;
@@ -131,7 +131,7 @@ body .talent-table .student-row .button {
   body .talent-table .student-row {
     display: block;
     padding: 18px 16px;
-    border-top: 1px solid #d9e2da;
+    border-top: 1px solid #eadcd9;
   }
   body .talent-table .student-row:first-child {
     border-top: 0;
@@ -147,7 +147,7 @@ body .talent-table .student-row .button {
     content: attr(data-label);
     font-size: 12px;
     font-weight: 600;
-    color: #52655a;
+    color: #6f5864;
   }
   .talent-table .talent-name,
   .talent-table .talent-action {

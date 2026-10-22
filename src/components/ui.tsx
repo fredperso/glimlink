@@ -1,8 +1,14 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { DAYS, type Calendar, type Day } from '../domain/model.ts';
 
 export function Icon({ name, size = 20 }: { name: string; size?: number }) {
   const paths: Record<string, ReactNode> = {
+    info: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v6M12 7.5v.01" />
+      </>
+    ),
     undo: (
       <>
         <path d="M9 5 4 10l5 5" />
@@ -156,13 +162,20 @@ export function Icon({ name, size = 20 }: { name: string; size?: number }) {
 }
 
 export function Logo() {
+  const gradient = useId();
   return (
     <span className="logo">
       <svg width="34" height="34" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-        <rect width="40" height="40" rx="12" fill="currentColor" />
+        <defs>
+          <linearGradient id={gradient} x1="0" y1="0" x2="40" y2="40">
+            <stop offset="0" stopColor="#ff4f6d" />
+            <stop offset="1" stopColor="#ff8a4c" />
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" rx="12" fill={`url(#${gradient})`} />
         <path
           d="M11 24V16a6 6 0 0 1 12 0v8a6 6 0 0 1-12 0m6 0v-8a6 6 0 0 1 12 0v8a6 6 0 0 1-12 0"
-          stroke="#e7f19b"
+          stroke="#fff"
           strokeWidth="3"
         />
       </svg>
