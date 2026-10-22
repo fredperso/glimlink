@@ -66,6 +66,8 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md). Les décisions ci-dess
 
 | USR-21 | Ergonomie et look and feel inspirés des sites de rencontre | UX-009–011, AC-UX-008–010, ENT-010, AC-ENT-008 ; ergonomie, entreprise | rencontre.css, swipe.css, SwipeDeck (MatchDialog), TalentCard ; test E2E Swipe |
 
+| USR-22 | Swipe mobile hyper fluide et équivalent ordinateur sans geste | UX-012–013, AC-UX-011–012, ENT-010, AC-ENT-008 ; ergonomie, entreprise | SwipeDeck (moteur de geste, DeckCard bento, file, plateau, raccourcis), swipe.css ; tests E2E Swipe |
+
 USR-14 traduit la demande de clôture dans un état explicite confirmé par le conseiller ; elle ne signifie pas clôture dès l’envoi d’une demande. Les règles de réouverture restent ouvertes. Les premières demandes évoquant un « espace candidat » n’ajoutent pas de compte étudiant : aucun écran de ce rôle n’existe dans la V1 actuelle.
 
 ## Points d’entrée du code et des preuves

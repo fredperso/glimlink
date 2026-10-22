@@ -140,14 +140,35 @@ test('USR-17 : administrateur ajoute les référentiels, conseiller consulte', a
 });
 test('Swipe : sélectionner ouvre le match, puis le choix reste annulable', async ({ page }) => {
   await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
-  const first = await page.locator('.deck-front h3').textContent();
+  const top = page.locator('.deck-slot-0 h3');
+  const first = await top.textContent();
   await page.getByRole('button', { name: 'Sélectionner', exact: true }).click();
   const match = page.getByRole('dialog', { name: `${first} rejoint votre sélection` });
   await expect(match).toBeVisible();
   await expect(match.getByRole('button', { name: 'Continuer à explorer' })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(match).toBeHidden();
-  await expect(page.locator('.deck-front h3')).not.toHaveText(first!);
+  await expect(top).not.toHaveText(first!);
   await page.getByRole('button', { name: 'Annuler le dernier choix' }).click();
-  await expect(page.locator('.deck-front h3')).toHaveText(first!);
+  await expect(top).toHaveText(first!);
+});
+test('Swipe : raccourcis clavier et match limité à la première sélection', async ({ page }) => {
+  await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
+  const top = page.locator('.deck-slot-0 h3');
+  const first = await top.textContent();
+  await page.keyboard.press('ArrowUp');
+  await expect(page.getByRole('dialog')).toContainText('Pourquoi ça matche ?');
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.keyboard.press('ArrowLeft');
+  await expect(top).not.toHaveText(first!);
+  await page.keyboard.press('Backspace');
+  await expect(top).toHaveText(first!);
+  await page.keyboard.press('ArrowRight');
+  await expect(page.getByRole('dialog', { name: /rejoint votre sélection/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Continuer à explorer' }).click();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.getByRole('heading', { name: 'Vous avez exploré ces profils.' })).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('status').filter({ hasText: 'ajouté à votre sélection' })).toBeVisible();
 });

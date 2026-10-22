@@ -7,12 +7,10 @@ export function TalentCard({
   student,
   need,
   compact = false,
-  deck = false,
 }: {
   student: Student;
   need: Need;
   compact?: boolean;
-  deck?: boolean;
 }) {
   const { store, setStore, openModal, notify } = useApp();
   const data = student.published!;
@@ -80,26 +78,22 @@ export function TalentCard({
             {check?.text}
           </p>
         )}
-        {!deck && (
-          <div className="talent-actions">
-            <button
-              className="text-button"
-              onClick={() =>
-                openModal({ kind: 'profile', studentId: student.id, needId: need.id })
-              }
-            >
-              Voir le profil <Icon name="arrow" size={16} />
-            </button>
-            <button
-              className={`select-button ${selected ? 'selected' : ''}`}
-              onClick={toggle}
-              aria-label={`${selected ? 'Retirer' : 'Sélectionner'} ${data.firstName}`}
-              aria-pressed={selected}
-            >
-              <Icon name={selected ? 'check' : 'heart'} size={18} />
-            </button>
-          </div>
-        )}
+        <div className="talent-actions">
+          <button
+            className="text-button"
+            onClick={() => openModal({ kind: 'profile', studentId: student.id, needId: need.id })}
+          >
+            Voir le profil <Icon name="arrow" size={16} />
+          </button>
+          <button
+            className={`select-button ${selected ? 'selected' : ''}`}
+            onClick={toggle}
+            aria-label={`${selected ? 'Retirer' : 'Sélectionner'} ${data.firstName}`}
+            aria-pressed={selected}
+          >
+            <Icon name={selected ? 'check' : 'heart'} size={18} />
+          </button>
+        </div>
       </div>
     </article>
   );

@@ -1,6 +1,6 @@
 ---
 title: 'Ergonomie, sélecteurs et navigation mobile'
-version: '1.3'
+version: '1.4'
 date_created: 2026-10-08
 last_updated: 2026-10-22
 owner: Glimlink
@@ -8,13 +8,13 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [1, 7, 18]
-maquette_revision: travail-local-USR-21
+maquette_revision: travail-local-USR-22
 tags: [specification, design, glimlink]
 ---
 
 # Ergonomie, sélecteurs et navigation mobile
 
-Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail USR-21 (base publiée `dd3809f`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail USR-22 (base publiée `5bb345e`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
 
 ## Table des matières
 
@@ -53,6 +53,8 @@ Garantir une lecture et des actions simples sur PC et téléphone : navigation t
 | UX-009 | Demande utilisateur USR-21        | Le look and feel s’inspire des applications de rencontre : palette chaude corail, cartes de profil immersives, formes arrondies, gestes et boutons d’action ronds. Les couleurs de disponibilité et de compétences ne changent pas de sens. |
 | UX-010 | Constat de maquette USR-21        | Sur téléphone, les actions du swipe (Annuler, Passer, Sélectionner, Fiche complète) restent visibles au-dessus de la barre inférieure pendant la lecture de la carte. |
 | UX-011 | Constat de maquette USR-21        | Les couleurs d’action conservent un contraste d’au moins 4,5:1 avec leur texte ; les dégradés vifs restent décoratifs. |
+| UX-012 | Demande utilisateur USR-22        | Sur téléphone, le swipe est fluide : la carte suit le doigt sans re-rendu, tient compte de la vitesse (un geste rapide et court suffit), revient en place avec un effet ressort sous le seuil et révèle la carte suivante déjà affichée. |
+| UX-013 | Demande utilisateur USR-22        | Sur ordinateur, la découverte n’impose pas le geste : fiche à tuiles (visuel, pourquoi ça matche, compétences, rythme), file d’attente cliquable, plateau « Ma sélection » et raccourcis clavier affichés (← passer, → sélectionner, ↑ fiche complète, retour arrière annuler). |
 
 ## 4. Interfaces et contrats de données
 
@@ -81,11 +83,14 @@ Mesures de maquette : contrôles tactiles d’au moins 44 px, options de liste 4
 - **AC-UX-009** : à 390 px, pendant le défilement d’une carte de swipe, les quatre actions restent visibles au-dessus de la barre inférieure, sans débordement horizontal, y compris pendant l’animation de sortie de la carte.
 - **AC-UX-010** : le texte des boutons d’action et des onglets actifs atteint un contraste de 4,5:1.
 
+- **AC-UX-011** : à 390 px, un glissé de 60 px laisse la même carte en place ; un glissé au-delà du seuil (28 % de la largeur, entre 70 et 120 px) ou un geste rapide de plus de 30 px décide dans sa direction ; aucun nœud DOM n’est ajouté ou retiré pendant le geste.
+- **AC-UX-012** : à 1440 px, flèches gauche/droite, flèche haut et retour arrière passent, sélectionnent, ouvrent la fiche et annulent, hors champs de saisie et dialogues ; la file d’attente permet d’ouvrir un autre profil ; un profil retenu rejoint le plateau.
+
 - **AC-UX-007** : depuis Besoins, ouvrir Plus ne laisse qu’un seul bouton sélectionné visuellement (Plus). Refermer le menu ou activer Besoins restaure sa sélection. Choisir Demandes/Entreprises ferme le menu et conserve Plus sélectionné. Vérifier à 320/390 px et en paysage 740×390.
 
 ## 6. Stratégie de test
 
-`qa-mobile.js`, `qa-mobile-navigation.js`, `qa-selects.js`, `qa-role-picker.js`, `qa-swipe.js` et contrôles axe. Le test Playwright « Swipe : sélectionner ouvre le match, puis le choix reste annulable » couvre AC-ENT-008 sur ordinateur et téléphone ; les contrastes d’AC-UX-010 ont été calculés sur les jetons de couleur. Formats déjà contrôlés : jusqu’à 1920 px pour listes ; 320/375/390/430 et 740×390 pour mobile. Les émulations Chromium ne constituent pas une validation sur un iPhone physique/Safari.
+`qa-mobile.js`, `qa-mobile-navigation.js`, `qa-selects.js`, `qa-role-picker.js`, `qa-swipe.js` et contrôles axe. Le test Playwright « Swipe : sélectionner ouvre le match, puis le choix reste annulable » couvre AC-ENT-008 sur ordinateur et téléphone, et « Swipe : raccourcis clavier et match limité à la première sélection » couvre AC-UX-012 ; AC-UX-011 a été vérifié par gestes simulés (Playwright, iPhone 13) ; les contrastes d’AC-UX-010 ont été calculés sur les jetons de couleur. Formats déjà contrôlés : jusqu’à 1920 px pour listes ; 320/375/390/430 et 740×390 pour mobile. Les émulations Chromium ne constituent pas une validation sur un iPhone physique/Safari.
 
 ## 7. Justification et contexte
 
