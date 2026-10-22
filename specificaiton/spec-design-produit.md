@@ -1,6 +1,6 @@
 ---
 title: 'Vision, périmètre et vocabulaire'
-version: '1.1'
+version: '1.3'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -15,6 +15,20 @@ tags: [specification, design, glimlink]
 # Vision, périmètre et vocabulaire
 
 Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail locale USR-17 (base `d6f296f`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+
+## Table des matières
+
+- [1. Objet et périmètre](#1-objet-et-périmètre)
+- [2. Définitions](#2-définitions)
+- [3. Exigences, contraintes et recommandations](#3-exigences-contraintes-et-recommandations)
+- [4. Interfaces et contrats de données](#4-interfaces-et-contrats-de-données)
+- [5. Critères d’acceptation](#5-critères-dacceptation)
+- [6. Stratégie de test](#6-stratégie-de-test)
+- [7. Justification et contexte](#7-justification-et-contexte)
+- [8. Dépendances et intégrations](#8-dépendances-et-intégrations)
+- [9. Exemples et cas limites](#9-exemples-et-cas-limites)
+- [10. Critères de validation](#10-critères-de-validation)
+- [11. Spécifications liées](#11-spécifications-liées)
 
 ## 1. Objet et périmètre
 
@@ -40,6 +54,7 @@ Glimlink facilite le recrutement d’alternants et de stagiaires pour les entrep
 | PRO-005 | PDF §1.2             | Exclure CRM de prospection, admissions, Cerfa/contractualisation, suivi pédagogique et ATS complet.       |
 | PRO-006 | PDF §2.3, §7         | Aucun compte étudiant V1 ; âge affiché prévu ultérieurement et à arbitrer.                                |
 | PRO-007 | Demandes utilisateur | Concevoir une application simple utilisable sur mobile, avec listes de choix et swipe professionnel.      |
+| PRO-008 | USR-20, 2026-10-08 | Héberger la production sur un cloud souverain européen, avec préférence pour la France. Le fournisseur, le périmètre des services et le niveau de qualification restent à sélectionner explicitement. |
 
 ## 4. Interfaces et contrats de données
 
@@ -52,6 +67,7 @@ USR-17 ajoute l’administration des formations/plannings, utilisateurs et entre
 - **AC-PRO-001** : un utilisateur entreprise peut créer un besoin, comprendre les profils, retenir des talents et demander une mise en relation.
 - **AC-PRO-002** : le conseiller peut enrichir et publier un profil puis traiter la demande.
 - **AC-PRO-003** : les écrans n’exposent pas de fonctionnalités de CRM, d’admission ou de contractualisation non demandées.
+- **AC-PRO-004** : avant validation de l’hébergement de production, le dossier de choix documente l’opérateur, sa gouvernance, les régions et la chaîne de sous-traitance au regard de PRO-008. Une localisation française est étudiée en priorité ; la localisation seule ne démontre pas la souveraineté. Le niveau de qualification et les éventuelles exceptions de périmètre nécessitent une décision explicite.
 
 ## 6. Stratégie de test
 
@@ -63,7 +79,7 @@ L’autonomie de découverte sert un processus accompagné. Un score seul ou une
 
 ## 8. Dépendances et intégrations
 
-Référentiel de formations, données validées du centre et expertise métier. En production : contrôle des accès, stockage de fiches/CV, services d’IA et de notifications. Aucune intégration CRM/ERP/ATS n’est actuellement connectée.
+Référentiel de formations, données validées du centre et expertise métier. En production : contrôle des accès, stockage de fiches/CV, services d’IA et de notifications. Aucune intégration CRM/ERP/ATS n’est actuellement connectée. La contrainte d’hébergement USR-20 est acquise ; aucune stack ni aucun fournisseur ne sont approuvés. Voir ARB-011 pour la vérification des dépendances et la définition du niveau de souveraineté attendu.
 
 ## 9. Exemples et cas limites
 

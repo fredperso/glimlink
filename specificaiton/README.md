@@ -1,6 +1,6 @@
 ---
 title: 'Spécifications fonctionnelles consolidées Glimlink V1'
-version: '1.0'
+version: '1.2'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 status: reference-consolidee
@@ -9,6 +9,16 @@ status: reference-consolidee
 # Glimlink — spécifications consolidées V1
 
 Ce répertoire `specificaiton/` conserve l’orthographe demandée et constitue la référence Markdown maintenue. Il consolide le [PDF fonctionnel V3](../Glimlink_Specifications_Fonctionnelles_Detaillees_V3.pdf) du 7 octobre 2026, les décisions de la session utilisateur et la maquette applicative `d6f296f` du 8 octobre 2026. **V3 est la révision du PDF ; le logiciel reste le MVP/V1.**
+
+## Table des matières
+
+- [Table détaillée des 16 spécifications et de leurs rubriques](TABLE_DES_MATIERES.md).
+- [Commencer la lecture](#commencer-la-lecture).
+- [Documents thématiques](#documents-thématiques).
+- [Sources et statut des informations](#sources-et-statut-des-informations).
+- [Maintenir à chaque demande](#maintenir-à-chaque-demande).
+- [État de référence](#état-de-référence).
+- [Skills utilisés](#skills-utilisés).
 
 ## Commencer la lecture
 
@@ -19,6 +29,8 @@ Ce répertoire `specificaiton/` conserve l’orthographe demandée et constitue 
 5. [Recette](spec-process-recette.md).
 
 ## Documents thématiques
+
+La [table des matières détaillée](TABLE_DES_MATIERES.md) permet de rejoindre directement chaque rubrique. Chaque document thématique possède aussi sa table locale.
 
 Chaque fichier suit les 11 rubriques des skills de spécification : objet, définitions, exigences, interfaces/données, acceptation, tests, contexte, dépendances, exemples, validation et liens. Les exigences possèdent des identifiants stables. Les sources, les décisions utilisateur et les constats de réalisation sont distingués.
 
@@ -63,6 +75,8 @@ Le contrôle vérifie structure, dates, liens locaux, couverture des 20 sections
 ## État de référence
 
 La maquette d6f296f : accueil entreprise sans profils, swipe dans chaque besoin, sélection résumée avec suggestions distinctes des Talent Alerts, clôture à mise en relation confirmée, inscription entreprise notifiée au conseiller, vivier paginé, compétences avec niveaux/états, calendriers mois/année et sélecteurs accessibles. La validation précédente documente 48 tests métier réussis et des parcours navigateur MCP ; la suite CLI Playwright n’est pas déclarée exécutée.
+
+Contrainte acquise USR-20 : hébergement de production sur un cloud souverain européen, avec préférence pour la France. Le fournisseur et le périmètre de souveraineté restent à valider ; voir PRO-008 dans la [vision produit](spec-design-produit.md) et ARB-011 dans les [arbitrages](spec-process-arbitrages.md).
 
 ## Skills utilisés
 

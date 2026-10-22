@@ -1,6 +1,6 @@
 ---
 title: 'Arbitrages, écarts et travaux de production'
-version: '1.1'
+version: '1.3'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -15,6 +15,20 @@ tags: [specification, process, glimlink]
 # Arbitrages, écarts et travaux de production
 
 Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail locale USR-17 (base `d6f296f`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+
+## Table des matières
+
+- [1. Objet et périmètre](#1-objet-et-périmètre)
+- [2. Définitions](#2-définitions)
+- [3. Exigences, contraintes et recommandations](#3-exigences-contraintes-et-recommandations)
+- [4. Interfaces et contrats de données](#4-interfaces-et-contrats-de-données)
+- [5. Critères d’acceptation](#5-critères-dacceptation)
+- [6. Stratégie de test](#6-stratégie-de-test)
+- [7. Justification et contexte](#7-justification-et-contexte)
+- [8. Dépendances et intégrations](#8-dépendances-et-intégrations)
+- [9. Exemples et cas limites](#9-exemples-et-cas-limites)
+- [10. Critères de validation](#10-critères-de-validation)
+- [11. Spécifications liées](#11-spécifications-liées)
 
 ## 1. Objet et périmètre
 
@@ -38,7 +52,7 @@ Préserver toutes les décisions ouvertes du §20 du PDF, les enrichir par les �
 | ARB-008 | Protection des données         | Information/base légale, droits sans compte étudiant, conservation, suppression, journalisation, âge et données transmises aux fournisseurs. Formalisation avec le référent compétent, sans décision juridique inventée. |
 | ARB-009 | Qualification réglementaire IA | Analyse du cadre applicable au classement/matching et responsabilités des acteurs avec les personnes compétentes. Aucune qualification conclue ici.                                                                      |
 | ARB-010 | Notifications/routage          | Multi-marques, référent absent, republication, déduplication, délai mesurable, échec d’envoi et fréquence. Premier appel après inscription décidé ; canal réel complémentaire à fixer.                                   |
-| ARB-011 | Exploitation/intégrations      | Volumes, temps de réponse, hébergement, sécurité, sauvegardes, coût IA et intégrations CRM/ERP/ATS futures. Pages héberge uniquement une démo statique.                                                                  |
+| ARB-011 | Exploitation/intégrations      | USR-20 impose un cloud souverain européen et privilégie la France. Fournisseur, périmètre de souveraineté et éventuelle qualification SecNumCloud restent à décider ; volumes, temps de réponse, sécurité, sauvegardes, coût IA et intégrations futures restent ouverts. Pages héberge uniquement une démo statique.                                                                  |
 | ARB-012 | Validation pilote              | Jeu expert, critères de recette, objectifs de découverte/sélection/relation/délai et périmètre du premier pilote.                                                                                                        |
 | ARB-013 | Extension compétences          | Valider niveaux, descriptions, objectifs pédagogiques et preuve d’acquisition ; exemples actuels ne sont pas un référentiel RNCP.                                                                                        |
 | ARB-014 | Extension UX                   | Définir navigateurs/appareils cibles et recette Safari/clavier virtuel ; confirmer les choix visuels et accessibilité avec utilisateurs.                                                                                 |
@@ -61,12 +75,15 @@ Décisions utilisateur acquises : accueil sans exploration, swipe dans le besoin
 
 Décision USR-17 : transfert de l’édition des formations/plannings à l’administrateur, ajout d’utilisateurs et d’entreprises avec coordonnées. La démo impose nom/période/compétence pour une formation et coordonnées complètes pour les ajouts ; ces validations, le SIRET facultatif et l’unique référent fictif ne sont pas des arbitrages de production. Voir [administration](spec-design-espace-administrateur.md).
 
+Décision USR-20 (8 octobre 2026) : hébergement de production sur un cloud souverain européen, de préférence en France (PRO-008). Cette demande fait évoluer la proposition de stack ANAL-002, sans valider un fournisseur ni demander une qualification SecNumCloud. Le périmètre à examiner comprend application, identité, base, CV, sauvegardes, journaux, e-mails et traitements IA, ainsi que les outils de livraison ayant accès à des secrets ou données. L’usage actuel de GitHub pour le code demeure autorisé ; ses accès et le périmètre de souveraineté de la chaîne de livraison restent à documenter.
+
 ## 5. Critères d’acceptation
 
 - **AC-ARB-001** : chacun des 12 thèmes du §20 possède une entrée ouverte ou partiellement précisée.
 - **AC-ARB-002** : les décisions acquises n’apparaissent pas comme entièrement ouvertes, et leurs limites restent explicites.
 - **AC-ARB-003** : aucune simulation n’est présentée comme service opérationnel.
 - **AC-ARB-004** : une décision future met à jour le document thématique et la recette concernés, pas seulement cette liste.
+- **AC-ARB-005** : le choix d’hébergement renseigne pour chaque service de son périmètre l’opérateur, la région, les sous-traitants et les flux de données. Les éléments non vérifiés et les éventuelles exceptions sont identifiés avant approbation. Si SecNumCloud est exigé ultérieurement, la preuve porte sur l’offre et les services effectivement qualifiés ; un projet en cours de qualification ne suffit pas.
 
 ## 6. Stratégie de test
 
@@ -78,7 +95,7 @@ Le PDF précise que les descriptions V3 ne valident pas implicitement le §20. C
 
 ## 8. Dépendances et intégrations
 
-Responsable produit, expert alternance, administration du centre, référents données/sécurité/IA et future équipe de réalisation. Aucun fournisseur ni architecture de production n’est sélectionné dans ce document.
+Responsable produit, expert alternance, administration du centre, référents données/sécurité/IA et future équipe de réalisation. Aucun fournisseur ni architecture de production n’est sélectionné dans ce document. Proposition révisée non approuvée : conserver React/TypeScript/Vite et étudier un serveur Node.js, PostgreSQL, stockage privé compatible S3 et identité sur Clever Cloud en France. Les services complémentaires e-mail/IA et la chaîne de livraison sont soumis à la revue du périmètre USR-20. Scaleway constitue une alternative à étudier ; l’exigence éventuelle de qualification SecNumCloud reste ouverte.
 
 ## 9. Exemples et cas limites
 

@@ -1,6 +1,6 @@
 ---
 title: 'Formations, calendriers et présence potentielle'
-version: '1.1'
+version: '1.2'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -15,6 +15,20 @@ tags: [specification, data, glimlink]
 # Formations, calendriers et présence potentielle
 
 Référence consolidée du PDF V3 et de la session utilisateur, confrontée à la copie de travail locale USR-17 (base `d6f296f`). Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+
+## Table des matières
+
+- [1. Objet et périmètre](#1-objet-et-périmètre)
+- [2. Définitions](#2-définitions)
+- [3. Exigences, contraintes et recommandations](#3-exigences-contraintes-et-recommandations)
+- [4. Interfaces et contrats de données](#4-interfaces-et-contrats-de-données)
+- [5. Critères d’acceptation](#5-critères-dacceptation)
+- [6. Stratégie de test](#6-stratégie-de-test)
+- [7. Justification et contexte](#7-justification-et-contexte)
+- [8. Dépendances et intégrations](#8-dépendances-et-intégrations)
+- [9. Exemples et cas limites](#9-exemples-et-cas-limites)
+- [10. Critères de validation](#10-critères-de-validation)
+- [11. Spécifications liées](#11-spécifications-liées)
 
 ## 1. Objet et périmètre
 

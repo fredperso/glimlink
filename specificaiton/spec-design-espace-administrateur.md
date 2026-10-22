@@ -1,6 +1,6 @@
 ---
 title: 'Espace administrateur : formations, utilisateurs et entreprises'
-version: '1.0'
+version: '1.1'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -15,6 +15,20 @@ tags: [specification, design, glimlink]
 # Espace administrateur
 
 Évolution explicitement demandée le 8 octobre 2026 (USR-17), postérieure au PDF V3. La preuve applicative est la copie de travail locale ; aucune révision Git nouvelle n’est revendiquée.
+
+## Table des matières
+
+- [1. Objet et périmètre](#1-objet-et-périmètre)
+- [2. Définitions](#2-définitions)
+- [3. Exigences, contraintes et recommandations](#3-exigences-contraintes-et-recommandations)
+- [4. Interfaces et contrats de données](#4-interfaces-et-contrats-de-données)
+- [5. Critères d’acceptation](#5-critères-dacceptation)
+- [6. Stratégie de test](#6-stratégie-de-test)
+- [7. Justification et contexte](#7-justification-et-contexte)
+- [8. Dépendances et intégrations](#8-dépendances-et-intégrations)
+- [9. Exemples et cas limites](#9-exemples-et-cas-limites)
+- [10. Critères de validation](#10-critères-de-validation)
+- [11. Spécifications liées](#11-spécifications-liées)
 
 ## 1. Objet et périmètre
 

@@ -1,6 +1,6 @@
 ---
 title: 'Gouvernance et mise à jour continue'
-version: '1.0'
+version: '1.1'
 date_created: 2026-10-08
 last_updated: 2026-10-08
 owner: Glimlink
@@ -15,6 +15,20 @@ tags: [specification, process, glimlink]
 # Gouvernance et mise à jour continue
 
 Référence consolidée du PDF V3 et de la session utilisateur, confrontée au code de la maquette `d6f296f`. Les exigences produit et les mécanismes simulés sont distingués ci-dessous.
+
+## Table des matières
+
+- [1. Objet et périmètre](#1-objet-et-périmètre)
+- [2. Définitions](#2-définitions)
+- [3. Exigences, contraintes et recommandations](#3-exigences-contraintes-et-recommandations)
+- [4. Interfaces et contrats de données](#4-interfaces-et-contrats-de-données)
+- [5. Critères d’acceptation](#5-critères-dacceptation)
+- [6. Stratégie de test](#6-stratégie-de-test)
+- [7. Justification et contexte](#7-justification-et-contexte)
+- [8. Dépendances et intégrations](#8-dépendances-et-intégrations)
+- [9. Exemples et cas limites](#9-exemples-et-cas-limites)
+- [10. Critères de validation](#10-critères-de-validation)
+- [11. Spécifications liées](#11-spécifications-liées)
 
 ## 1. Objet et périmètre
 
@@ -39,6 +53,7 @@ Faire de `specificaiton/` la référence Markdown maintenue du produit V1. Cette
 | GOV-005 | Maintenabilité                    | Modifier les exigences existantes concernées au lieu de seulement ajouter une note contradictoire en fin de fichier.                                                                                                                  |
 | GOV-006 | Maintenabilité                    | Mettre à jour les critères de recette, liens, métadonnées et écarts en même temps que les règles.                                                                                                                                     |
 | GOV-007 | Fidélité au PDF                   | SOURCE_V3.md et le PDF demeurent des archives de référence, sans y insérer les demandes ultérieures.                                                                                                                                  |
+| GOV-008 | Demande utilisateur USR-19 | Chaque spécification thématique comporte une table des matières cliquable vers ses rubriques ; la table globale relie tous les documents et leurs rubriques. Les liens sont actualisés lors d’un changement de titre ou de structure. |
 
 La règle GOV-001 est aussi inscrite dans `AGENTS.md`. Une mise à jour purement documentaire ne nécessite pas de reconstruire `maquette.html`. Une évolution de la maquette implique la documentation correspondante dans la même livraison.
 
@@ -54,6 +69,8 @@ Ordre d’interprétation : demande explicite actuelle → décisions utilisateu
 - **AC-GOV-002** : une simple question de statut produit une entrée sans impact, sans modification artificielle des exigences.
 - **AC-GOV-003** : tout point non décidé possède une entrée dans le registre d’arbitrages.
 - **AC-GOV-004** : aucune contradiction connue entre spécifications thématiques et dernière décision utilisateur ne reste masquée par une note historique.
+
+- **AC-GOV-005** : la table globale couvre les 16 spécifications maintenues ; chaque table locale donne accès aux 11 rubriques dans leur ordre, et tous les liens pointent vers des titres existants. Le PDF et SOURCE_V3.md restent inchangés.
 
 ## 6. Stratégie de test
 

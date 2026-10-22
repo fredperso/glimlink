@@ -60,6 +60,10 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md). Les décisions ci-dess
 
 | USR-18 | Sur mobile, Plus ouvert ne doit pas laisser Besoins sélectionné | UX-004, AC-UX-007 ; ergonomie, conseiller, recette | App.tsx, tests/e2e/mobile-navigation.spec.ts ; copie de travail USR-18 |
 
+| USR-19 | Ajouter une table des matières aux spécifications fonctionnelles | GOV-008, AC-GOV-005 ; index et 16 documents thématiques | TABLE_DES_MATIERES.md et tables locales ; évolution documentaire |
+
+| USR-20 | Cloud souverain européen, de préférence en France | PRO-008, AC-PRO-004, ARB-011, AC-ARB-005 ; vision produit et arbitrages | Contrainte de production acquise ; fournisseur et niveau de qualification non approuvés |
+
 USR-14 traduit la demande de clôture dans un état explicite confirmé par le conseiller ; elle ne signifie pas clôture dès l’envoi d’une demande. Les règles de réouverture restent ouvertes. Les premières demandes évoquant un « espace candidat » n’ajoutent pas de compte étudiant : aucun écran de ce rôle n’existe dans la V1 actuelle.
 
 ## Points d’entrée du code et des preuves
