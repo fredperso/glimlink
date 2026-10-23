@@ -70,6 +70,8 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md) et le PDF V6 visuel du 
 
 | USR-23 | Intégrer le PDF V6 visuel, adapter la maquette et affiner avec « Questions V1 » | SOURCE_V6 ; MAT-001–016, ENT-005, ENT-009, ENT-011–017, CON-009–012, NOT-009–010, PRO-009–011, ACC-007–008, FIC-008–009, DAT-008, REL-009–010, ADM-009, GOV-009, REC-007, ARB-001–020 | brief.ts, reading.ts, model.ts (relevance, discoveryOrder, requestAdviserHelp), NeedBuilder, Company, SwipeDeck, TalentCard, Modals, AdviserRelay ; tests V6 |
 
+| USR-24 | Back Java, front sans framework JavaScript (Bootstrap), MFA intégrée, FIDO2 ; rédiger la spécification technique | ACC-009, AC-ACC-007, ARB-021 ; ARC-001–007, AUT-001–011, AUZ-001–006, PER-001–007, FCH-001–004, IAG-001–009, FRT-001–007, INF-001–007, LIV-001–005, EXP-001–006, AC-ARC-001–018 | spec-architecture-technique.md ; proposition technique non réalisée, choix « Conception » à valider en revue |
+
 USR-14 traduit la demande de clôture dans un état explicite confirmé par le conseiller ; elle ne signifie pas clôture dès l’envoi d’une demande. Les règles de réouverture restent ouvertes. Les premières demandes évoquant un « espace candidat » n’ajoutent pas de compte étudiant : aucun écran de ce rôle n’existe dans la V1 actuelle.
 
 ## Couverture du PDF V6

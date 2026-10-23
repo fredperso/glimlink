@@ -225,3 +225,14 @@ Pour la date et un identifiant unique, consigner : demande ; sources/impact ; d�
 - **Sources vérifiées** : https://docs.spring.io/spring-security/reference/7.1/servlet/authentication/mfa.html ; https://docs.spring.io/spring-security/reference/7.0/servlet/authentication/passkeys.html ; https://www.herodevs.com/blog-posts/spring-boot-versions-eol-dates-and-latest-releases-april-2026.
 - **Fichiers / exigences** : JOURNAL.md uniquement ; aucune exigence modifiée.
 - **Validation exécutée** : revue documentaire et des sources ci-dessus ; spec:check. Aucun test applicatif ni build, car le code ne change pas.
+
+
+## 2026-10-23 — USR-24 — Spécification technique : Java, front Bootstrap, MFA FIDO2
+
+- **Demande** : « oui c’est bien FIDO2, rédige la spécification technique », à la suite de la demande d’un back Java, d’un front sans framework si Bootstrap suffit et d’une MFA intégrée à l’application.
+- **Impact** : nouvelle exigence d’accès (MFA FIDO2) et nouvelle spécification technique ; aucun parcours ni règle métier de la maquette modifié, aucun code changé.
+- **Décisions acquises** : back Java ; front sans framework JavaScript applicatif ; MFA intégrée ; FIDO2 (ACC-009). Spring Boot 4.1 / Spring Security 7.1, Thymeleaf + Bootstrap 5.3 + htmx 2, PostgreSQL avec RLS, worker IA Spring AI sur Scaleway Generative APIs, Scaleway fr-par et la chaîne de livraison restent des choix « Conception » à valider en revue technique.
+- **Questions ouvertes** : ARB-021 créé (MFA obligatoire pour les entreprises, passkeys synchronisées ou clés matérielles pour les administrateurs, récupération d’accès, durées d’invitation et de session) ; CV anonymisé généré depuis la version publiée plutôt qu’expurgé (ARB-007) ; chiffrement applicatif des coordonnées ; ARB-008, ARB-009 et ARB-011 inchangés.
+- **Fichiers / exigences** : nouveau `spec-architecture-technique.md` (ARC, AUT, AUZ, PER, FCH, IAG, FRT, INF, LIV, EXP, AC-ARC-001–018) ; accès-droits ACC-009, AC-ACC-007 et §8 ; arbitrages ARB-021 et §8 ; gouvernance AC-GOV-005 (17 spécifications) ; README, TABLE_DES_MATIERES, TRACEABILITE, JOURNAL.
+- **Validation exécutée** : relecture des spécifications d’accès, de données, de CV, d’arbitrages et de la V6 (§2, §14, §15, §18, §21, §22) ; vérification des sources Spring Security (MFA, passkeys), Spring Boot et Scaleway citées dans ANAL-005/ANAL-006 ; spec:check. Aucun test applicatif ni build, car le code ne change pas ; aucune API Spring n’a été compilée.
+

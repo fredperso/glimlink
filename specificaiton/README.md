@@ -1,6 +1,6 @@
 ---
 title: 'Spécifications fonctionnelles consolidées Glimlink V1'
-version: '1.3'
+version: '1.4'
 date_created: 2026-10-08
 last_updated: 2026-10-23
 status: reference-consolidee
@@ -12,7 +12,7 @@ Ce répertoire `specificaiton/` conserve l’orthographe demandée et constitue 
 
 ## Table des matières
 
-- [Table détaillée des 16 spécifications et de leurs rubriques](TABLE_DES_MATIERES.md).
+- [Table détaillée des 17 spécifications et de leurs rubriques](TABLE_DES_MATIERES.md).
 - [Commencer la lecture](#commencer-la-lecture).
 - [Documents thématiques](#documents-thématiques).
 - [Sources et statut des informations](#sources-et-statut-des-informations).
@@ -52,6 +52,7 @@ Chaque fichier suit les 11 rubriques des skills de spécification : objet, défi
 | [Modèle de données et contrats de visibilité](spec-schema-donnees.md)                       | A, 5, 6, 14, 15           |
 | [Recette fonctionnelle et limites de validation](spec-process-recette.md)                   | B, 18, 19, 20             |
 | [Arbitrages, écarts et travaux de production](spec-process-arbitrages.md)                   | 20                        |
+| [Architecture technique de production](spec-architecture-technique.md) | USR-24 ; 2, 3, 14, 15, 16, 19, 20, A |
 
 ## Sources et statut des informations
 
@@ -80,6 +81,8 @@ La maquette d6f296f : accueil entreprise sans profils, swipe dans chaque besoin,
 Évolution USR-21 (22 octobre 2026) : habillage inspiré des applications de rencontre (palette corail, cartes immersives, boutons ronds, écran de sélection façon « match ») ; voir [ergonomie](spec-design-ergonomie-mobile.md) et [espace entreprise](spec-design-espace-entreprise.md).
 
 Évolution USR-23 (23 octobre 2026) : intégration de la V6. Aucun score visible, trois espaces de découverte sur le même vivier, passer ≠ refuser, reformulation « Est-ce que j’ai bien compris ? » (3 missions minimum, lieu prérempli multi-sites, niveaux, langue, disponibilité), calendrier utilisé seulement si une présence obligatoire est exprimée, lecture personnalisée et Déclic Glimlink, relais humain vers le conseiller, observations et signal interne du conseiller, Mon profil. Voir [besoins et matching](spec-process-besoins-matching.md), [espace entreprise](spec-design-espace-entreprise.md) et [arbitrages](spec-process-arbitrages.md).
+
+Décision USR-24 (23 octobre 2026) : back Java, front sans framework JavaScript (Bootstrap), MFA FIDO2 intégrée ; voir l’[architecture technique de production](spec-architecture-technique.md), proposition à valider en revue technique.
 
 Contrainte acquise USR-20 : hébergement de production sur un cloud souverain européen, avec préférence pour la France. Le fournisseur et le périmètre de souveraineté restent à valider ; voir PRO-008 dans la [vision produit](spec-design-produit.md) et ARB-011 dans les [arbitrages](spec-process-arbitrages.md).
 

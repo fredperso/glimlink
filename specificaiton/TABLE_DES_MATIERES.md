@@ -1,13 +1,13 @@
 ---
 title: 'Table des matières des spécifications fonctionnelles'
-version: '1.0'
+version: '1.1'
 date_created: 2026-10-08
 last_updated: 2026-10-23
 ---
 
 # Table des matières des spécifications fonctionnelles
 
-Accès direct aux 16 spécifications consolidées de Glimlink MVP/V1 et à leurs rubriques. Les documents thématiques disposent aussi d’une table des matières locale. Voir [l’index](README.md) pour le statut des sources, décisions, simulations et arbitrages.
+Accès direct aux 17 spécifications consolidées de Glimlink MVP/V1 et à leurs rubriques. Les documents thématiques disposent aussi d’une table des matières locale. Voir [l’index](README.md) pour le statut des sources, décisions, simulations et arbitrages.
 
 ## Documents
 
@@ -27,6 +27,7 @@ Accès direct aux 16 spécifications consolidées de Glimlink MVP/V1 et à leurs
 14. [Recette fonctionnelle et limites de validation](#14-recette-fonctionnelle-et-limites-de-validation)
 15. [Arbitrages, écarts et travaux de production](#15-arbitrages-écarts-et-travaux-de-production)
 16. [Gouvernance et mise à jour continue](#16-gouvernance-et-mise-à-jour-continue)
+17. [Architecture technique de production](#17-architecture-technique-de-production)
 
 ## 1. Vision, périmètre et vocabulaire
 
@@ -283,6 +284,22 @@ Accès direct aux 16 spécifications consolidées de Glimlink MVP/V1 et à leurs
 - [9. Exemples et cas limites](spec-process-gouvernance.md#9-exemples-et-cas-limites)
 - [10. Critères de validation](spec-process-gouvernance.md#10-critères-de-validation)
 - [11. Spécifications liées](spec-process-gouvernance.md#11-spécifications-liées)
+
+## 17. Architecture technique de production
+
+[Ouvrir la spécification](spec-architecture-technique.md)
+
+- [1. Objet et périmètre](spec-architecture-technique.md#1-objet-et-périmètre)
+- [2. Définitions](spec-architecture-technique.md#2-définitions)
+- [3. Exigences, contraintes et recommandations](spec-architecture-technique.md#3-exigences-contraintes-et-recommandations)
+- [4. Interfaces et contrats de données](spec-architecture-technique.md#4-interfaces-et-contrats-de-données)
+- [5. Critères d’acceptation](spec-architecture-technique.md#5-critères-dacceptation)
+- [6. Stratégie de test](spec-architecture-technique.md#6-stratégie-de-test)
+- [7. Justification et contexte](spec-architecture-technique.md#7-justification-et-contexte)
+- [8. Dépendances et intégrations](spec-architecture-technique.md#8-dépendances-et-intégrations)
+- [9. Exemples et cas limites](spec-architecture-technique.md#9-exemples-et-cas-limites)
+- [10. Critères de validation](spec-architecture-technique.md#10-critères-de-validation)
+- [11. Spécifications liées](spec-architecture-technique.md#11-spécifications-liées)
 
 ## Références et suivi
 

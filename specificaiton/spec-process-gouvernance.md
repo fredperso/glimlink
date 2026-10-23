@@ -1,6 +1,6 @@
 ---
 title: 'Gouvernance et mise à jour continue'
-version: '1.2'
+version: '1.3'
 date_created: 2026-10-08
 last_updated: 2026-10-23
 owner: Glimlink
@@ -71,7 +71,7 @@ Ordre d’interprétation : demande explicite actuelle → décisions utilisateu
 - **AC-GOV-003** : tout point non décidé possède une entrée dans le registre d’arbitrages.
 - **AC-GOV-004** : aucune contradiction connue entre spécifications thématiques et dernière décision utilisateur ne reste masquée par une note historique.
 
-- **AC-GOV-005** : la table globale couvre les 16 spécifications maintenues ; chaque table locale donne accès aux 11 rubriques dans leur ordre, et tous les liens pointent vers des titres existants. Le PDF et SOURCE_V3.md restent inchangés.
+- **AC-GOV-005** : la table globale couvre les 17 spécifications maintenues ; chaque table locale donne accès aux 11 rubriques dans leur ordre, et tous les liens pointent vers des titres existants. Le PDF et SOURCE_V3.md restent inchangés.
 - **AC-GOV-006** : `spec:check` vérifie l’empreinte du PDF V6 dans `SOURCE_V6.md`.
 
 ## 6. Stratégie de test

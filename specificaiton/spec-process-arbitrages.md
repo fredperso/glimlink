@@ -1,6 +1,6 @@
 ---
 title: 'Arbitrages, écarts et travaux de production'
-version: '1.4'
+version: '1.5'
 date_created: 2026-10-08
 last_updated: 2026-10-23
 owner: Glimlink
@@ -63,6 +63,7 @@ Préserver toutes les décisions ouvertes du §20 du PDF V3 et du §21 du [PDF V
 | ARB-018 | Exposition                     | Règles d’exposition à pertinence comparable (rotation, équité entre profils, place du Déclic) (V6 §21). La maquette trie par pertinence, Déclic après profil direct à égalité. |
 | ARB-019 | Routage conseiller             | Router le besoin validé vers le conseiller responsable de la formation/niveau tout en conservant le référent relationnel ; cas de plusieurs formations ou niveaux (V6 §16). Non réalisé : une conseillère fictive unique. |
 | ARB-020 | Assouplissements V3            | La V6 ne reprend pas les assouplissements calculés de la V3 §9 côté entreprise. Décision de maquette USR-23 à confirmer : ils deviennent des pistes pour le conseiller dans le relais. |
+| ARB-021 | Authentification (USR-24)      | MFA FIDO2 décidée et obligatoire pour conseillers et administrateurs (ACC-009). Restent ouverts : MFA obligatoire ou non pour les entreprises ; passkeys synchronisées acceptées ou clés matérielles exigées pour les administrateurs ; procédure de récupération d’accès ; durées des invitations (7 jours proposés) et des sessions (30 min / 2 h proposées). Propositions dans l’[architecture technique](spec-architecture-technique.md). |
 
 Chaque arbitrage doit être clos par une décision datée/source explicite, avec mise à jour des exigences et de la recette. Un constat de code ne suffit pas.
 
@@ -102,7 +103,7 @@ Le PDF précise que les descriptions V3 ne valident pas implicitement le §20. C
 
 ## 8. Dépendances et intégrations
 
-Responsable produit, expert alternance, administration du centre, référents données/sécurité/IA et future équipe de réalisation. Aucun fournisseur ni architecture de production n’est sélectionné dans ce document. Proposition révisée non approuvée : conserver React/TypeScript/Vite et étudier un serveur Node.js, PostgreSQL, stockage privé compatible S3 et identité sur Clever Cloud en France. Les services complémentaires e-mail/IA et la chaîne de livraison sont soumis à la revue du périmètre USR-20. Scaleway constitue une alternative à étudier ; l’exigence éventuelle de qualification SecNumCloud reste ouverte.
+Responsable produit, expert alternance, administration du centre, référents données/sécurité/IA et future équipe de réalisation. Aucun fournisseur n’est approuvé contractuellement dans ce document. USR-24 (23 octobre 2026) décide un back Java, un front sans framework JavaScript et une MFA FIDO2 intégrée ; l’[architecture technique](spec-architecture-technique.md) propose Spring Boot, rendu serveur Thymeleaf/Bootstrap/htmx, PostgreSQL et les services Scaleway fr-par. Elle remplace les propositions Node.js/Clever Cloud (USR-20), Scaleway Node.js (ANAL-003) et Django (ANAL-005). L’exigence éventuelle de qualification SecNumCloud reste ouverte.
 
 ## 9. Exemples et cas limites
 

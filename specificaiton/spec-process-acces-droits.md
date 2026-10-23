@@ -1,6 +1,6 @@
 ---
 title: 'Accès, invitation et droits'
-version: '1.3'
+version: '1.4'
 date_created: 2026-10-08
 last_updated: 2026-10-23
 owner: Glimlink
@@ -52,6 +52,7 @@ Définir les acteurs, l’invitation entreprise et les règles de visibilité en
 | ACC-006     | Demande utilisateur du 08/10 | L’invitation rattache l’entreprise à son conseiller référent ; son inscription alerte ce conseiller pour un premier appel.     |
 | ACC-007     | V6 §2, §16                   | Architecture cible : Organisation → Campus → Écoles/Marques → Formations → Talents. Un même campus peut porter des filières concurrentes : on partage l’opportunité, pas les viviers. |
 | ACC-008     | V6 §13                       | Un conseiller ne voit jamais automatiquement les CV d’autres conseillers ou marques. |
+| ACC-009     | USR-24, 2026-10-23           | Authentification multifacteur intégrée à l’application, fondée sur FIDO2 (passkeys) : obligatoire pour les conseillers et les administrateurs ; proposée aux entreprises, avec lien à usage unique par e-mail en solution de repli. Le caractère obligatoire pour les entreprises et la récupération d’accès restent ouverts (ARB-021). Réalisation : [architecture technique](spec-architecture-technique.md), AUT-001 à AUT-011. |
 
 ## 4. Interfaces et contrats de données
 
@@ -72,6 +73,7 @@ USR-17 : l’administrateur gère les formations/plannings et ajoute les utilisa
 - **AC-ACC-003** : un changement de partenaire ne mélange pas ses besoins, demandes et alertes.
 - **AC-ACC-004** : un conseiller hors périmètre ne peut consulter/modifier une fiche.
 - **AC-ACC-005** : une ancienne notification ne réactive pas un profil retiré ou un besoin clôturé.
+- **AC-ACC-007** : en production, un conseiller ou un administrateur n’accède à son espace qu’après une authentification par passkey FIDO2 avec vérification de l’utilisateur ; la maquette ne simule pas cette étape.
 - **AC-ACC-006** : un profil d’un autre campus n’apparaît ni dans le vivier conseiller ni dans la découverte entreprise, y compris dans Tous les profils.
 
 ## 6. Stratégie de test
@@ -84,7 +86,7 @@ L’utilisateur a demandé de clarifier la différence entre contact de l’entr
 
 ## 8. Dépendances et intégrations
 
-Production : identité/session, validation e-mail, gestion des invitations et autorisations serveur. Durée, révocation et renouvellement des invitations, délégations et routage multi-conseillers restent à arbitrer. Héberger la maquette sur GitHub Pages ne constitue pas un contrôle d’accès sécurisé de l’application.
+Production : identité/session, validation e-mail, gestion des invitations et autorisations serveur, décrites dans l’[architecture technique](spec-architecture-technique.md) (MFA FIDO2, sessions serveur, RLS). Durée, révocation et renouvellement des invitations, délégations et routage multi-conseillers restent à arbitrer. Héberger la maquette sur GitHub Pages ne constitue pas un contrôle d’accès sécurisé de l’application.
 
 ## 9. Exemples et cas limites
 
