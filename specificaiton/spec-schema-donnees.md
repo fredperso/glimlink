@@ -1,14 +1,14 @@
 ---
 title: 'Modèle de données et contrats de visibilité'
-version: '1.2'
+version: '1.3'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: ['A', 5, 6, 14, 15]
-maquette_revision: travail-local-USR-17
+maquette_revision: travail-local-USR-23
 tags: [specification, schema, glimlink]
 ---
 
@@ -45,10 +45,11 @@ Consolider le modèle logique proposé en annexe A et le modèle TypeScript rée
 | DAT-001 | Annexe A             | Relier étudiant, établissement/marque, conseiller, formation/promotion et calendrier.                          |
 | DAT-002 | Annexe A, §14        | Conserver les documents CV séparément de la fiche et distinguer source/version entreprise.                     |
 | DAT-003 | Annexe A             | Distinguer privé/public, inconnu/négatif et dernière validation/validateur.                                    |
-| DAT-004 | Annexe A, §5         | Les données indexées proviennent des données validées ; scores liés au couple candidat/besoin.                 |
+| DAT-004 | Annexe A, §5 ; V6 §7 | Les données indexées proviennent des données validées ; la pertinence interne est liée au couple candidat/besoin et n’est jamais exposée. |
 | DAT-005 | PDF §10, §11         | Relier sélection, demande et alerte à leur besoin et candidats.                                                |
 | DAT-006 | Demandes utilisateur | Représenter compétences avec niveau/état/lien formation et inscription du partenaire avec conseiller référent. |
 | DAT-007 | Cohérence            | Préserver les corrections, instantanés et anciens profils sans remise à zéro lors d’une migration locale.      |
+| DAT-008 | V6 §3, §5, §11, §15  | `Need` porte `title`, au moins 3 `missions`, `levels`, `language`/`languageLevel`, `availability`, `suggestedTrainingId` et `helpRequestedAt` ; `PartnerCompany.sites` liste les sites ; `Student.highlight` est privé et jamais projeté côté entreprise. |
 
 ## 4. Interfaces et contrats de données
 
@@ -81,6 +82,7 @@ Contrat administrateur USR-17 : annuaire `ManagedUser` avec identité, rôle, co
 - **AC-DAT-003** : les champs privés supplémentaires ne traversent pas la projection entreprise.
 - **AC-DAT-004** : l’instantané d’une demande conserve les données publiées de sa création.
 - **AC-DAT-005** : une entreprise hors autorisation ne gagne pas de droits par un champ `schools` modifié sur son besoin.
+- **AC-DAT-006** : la projection entreprise d’un profil signalé « à valoriser » ne contient aucune propriété `highlight`.
 
 ## 6. Stratégie de test
 

@@ -1,14 +1,14 @@
 ---
 title: 'Vision, périmètre et vocabulaire'
-version: '1.3'
+version: '1.4'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [1, 17, 18, 19]
-maquette_revision: travail-local-USR-17
+maquette_revision: travail-local-USR-23
 tags: [specification, design, glimlink]
 ---
 
@@ -55,6 +55,9 @@ Glimlink facilite le recrutement d’alternants et de stagiaires pour les entrep
 | PRO-006 | PDF §2.3, §7         | Aucun compte étudiant V1 ; âge affiché prévu ultérieurement et à arbitrer.                                |
 | PRO-007 | Demandes utilisateur | Concevoir une application simple utilisable sur mobile, avec listes de choix et swipe professionnel.      |
 | PRO-008 | USR-20, 2026-10-08 | Héberger la production sur un cloud souverain européen, avec préférence pour la France. Le fournisseur, le périmètre des services et le niveau de qualification restent à sélectionner explicitement. |
+| PRO-009 | V6 §1 | L’IA peut déduire pour aider, jamais inventer pour décider : elle priorise, contextualise et explique ; elle n’élimine pas un étudiant et n’affiche aucun score. |
+| PRO-010 | V6 §1, §19 | Aucune photo identifiable des étudiants dans les cartes, la grille ou la fiche ; les avatars géométriques non identifiants de la maquette restent compatibles. |
+| PRO-011 | V6 §20 | Hors périmètre : messagerie entreprise–étudiant, prospection/CRM complet, dépôt d’offre obligatoire, CDI, score public, soft skill inventée par l’IA, filtre RQTH automatique, rubrique visible « Pépite / Regard conseiller ». |
 
 ## 4. Interfaces et contrats de données
 
@@ -68,6 +71,7 @@ USR-17 ajoute l’administration des formations/plannings, utilisateurs et entre
 - **AC-PRO-002** : le conseiller peut enrichir et publier un profil puis traiter la demande.
 - **AC-PRO-003** : les écrans n’exposent pas de fonctionnalités de CRM, d’admission ou de contractualisation non demandées.
 - **AC-PRO-004** : avant validation de l’hébergement de production, le dossier de choix documente l’opérateur, sa gouvernance, les régions et la chaîne de sous-traitance au regard de PRO-008. Une localisation française est étudiée en priorité ; la localisation seule ne démontre pas la souveraineté. Le niveau de qualification et les éventuelles exceptions de périmètre nécessitent une décision explicite.
+- **AC-PRO-005** : aucune page entreprise n’affiche de pourcentage, de photo ou de rubrique « Pépite / Regard conseiller ».
 
 ## 6. Stratégie de test
 

@@ -1,14 +1,14 @@
 ---
 title: 'Fiche candidat, publication et CV'
-version: '1.1'
+version: '1.2'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [2, 5, 7, 14, 15]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-23
 tags: [specification, data, glimlink]
 ---
 
@@ -50,6 +50,8 @@ Faire de la fiche structurée validée la source métier de publication et de ma
 | SEC-FIC-001 | PDF §7, §14         | La fiche entreprise et le CV destiné à l’entreprise ne révèlent aucun identifiant privé ni champ non autorisé. |
 | FIC-006     | Demande utilisateur | Le conseiller modifie les coordonnées de son candidat indépendamment de ses corrections professionnelles.      |
 | FIC-007     | PDF §5              | Une donnée absente conserve une valeur inconnue ; aucune compétence supposée ne devient validée implicitement. |
+| FIC-008     | V6 §9, §19          | Le CV anonymisé est accessible en un clic depuis la fiche détaillée ; nom, téléphone, e-mail et adresse précise sont masqués. |
+| FIC-009     | V6 §14-15           | Le champ d’observations remplace le « commentaire destiné aux entreprises » : faits observés uniquement, repris sans rubrique dédiée. |
 
 ## 4. Interfaces et contrats de données
 
@@ -67,6 +69,7 @@ La publication conserve un instantané séparé ; sauvegarder le brouillon ne re
 - **V3-04** : permis non mentionné donne non renseigné, pas non détenu.
 - **V3-10** : un profil retiré disparaît des nouveaux résultats et un ancien lien ne l’ouvre pas comme profil actif.
 - **AC-FIC-001** : enregistrer l’e-mail privé ne publie pas simultanément les modifications professionnelles en attente.
+- **AC-FIC-002** : l’onglet CV anonymisé ne contient ni nom de famille, ni e-mail, ni téléphone, ni adresse de l’étudiant.
 - **V3-11** : les réponses et documents entreprise ne délivrent pas de coordonnées privées (contrôle serveur/fichier restant à réaliser).
 
 ## 6. Stratégie de test

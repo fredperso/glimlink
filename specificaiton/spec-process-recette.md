@@ -1,14 +1,14 @@
 ---
 title: 'Recette fonctionnelle et limites de validation'
-version: '1.1'
+version: '1.2'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: ['B', 18, 19, 20]
-maquette_revision: travail-local-USR-17
+maquette_revision: travail-local-USR-23
 tags: [specification, process, glimlink]
 ---
 
@@ -48,6 +48,7 @@ Définir une recette qui couvre les scénarios V3 du PDF et les évolutions util
 | REC-004 | Demandes utilisateur | Ajouter les scénarios accueil simplifié, sélection résumée, suggestions, inscription notifiée, navigation mobile et sélecteurs. |
 | REC-005 | Maintenabilité       | Mettre à jour les critères touchés à chaque nouvelle demande ; conserver leurs identifiants.                                    |
 | REC-006 | Constat de projet    | Utiliser données fictives, remettre l’état de test à zéro et conserver les captures utiles.                                     |
+| REC-007 | USR-23 | Ajouter les scénarios V6 : reformulation, calendrier seulement si exprimé, absence de score, tous les profils accessibles, passer ≠ refuser, relais humain, Mon profil multi-sites, CV anonymisé. |
 
 ## 4. Interfaces et contrats de données
 
@@ -93,6 +94,7 @@ Ajouts de session : AC-ENT-001–007, AC-REL-001–006, AC-NOT-001–006, AC-UX-
 - **AC-REC-ADM** : exécuter AC-ADM-001–006 de [l’administration](spec-design-espace-administrateur.md), incluant création, édition, persistance, coordonnées et consultation conseiller. V3-05 se joue désormais en administrateur pour l’édition.
 
 - **AC-REC-NAV** : exécuter AC-UX-007 de [l’ergonomie mobile](spec-design-ergonomie-mobile.md) : Besoins → Plus, fermeture, réactivation de Besoins et passage aux demandes, avec une seule sélection visuelle.
+- **AC-REC-V6** : exécuter AC-MAT-007–010, AC-ENT-009–013, AC-CON-006–008, AC-NOT-007 et AC-DAT-006 ; tests `V6 …` de `tests/domain.test.ts` et `tests/e2e/prototype.spec.ts`.
 
 ## 6. Stratégie de test
 

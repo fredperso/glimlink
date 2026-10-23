@@ -14,10 +14,16 @@ export type PartnerCompany = {
   phone?: string;
   siret?: string;
   address?: string;
+  // Sites de l’entreprise (V6 §3) ; le premier sert de lieu prérempli pour un nouveau besoin.
+  sites?: string[];
   adviserId?: string;
   registeredAt?: string;
   registrationNotificationRead?: boolean;
 };
+export function companySites(company: PartnerCompany): string[] {
+  const sites = company.sites?.map((site) => site.trim()).filter(Boolean) ?? [];
+  return sites.length || company.location === 'À compléter' ? sites : [company.location];
+}
 export const partnerCompanies: PartnerCompany[] = [
   {
     id: 'maison-alba',
@@ -28,6 +34,8 @@ export const partnerCompanies: PartnerCompany[] = [
     location: 'Montpellier',
     contact: 'Camille Martin',
     position: 'Responsable d’entreprise',
+    siret: '000 000 000 00000',
+    sites: ['Montpellier', 'Lattes'],
   },
   {
     id: 'atelier-rivage',

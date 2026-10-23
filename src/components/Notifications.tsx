@@ -52,7 +52,15 @@ export default function Notifications() {
                   if (role === 'company' && item.studentId)
                     openModal({ kind: 'profile', studentId: item.studentId, needId: item.needId! });
                   else
-                    go(role === 'company' ? 'alerts' : item.companyId ? 'companies' : 'requests');
+                    go(
+                      role === 'company'
+                        ? 'alerts'
+                        : item.help
+                          ? 'needs'
+                          : item.companyId
+                            ? 'companies'
+                            : 'requests',
+                    );
                 }}
               >
                 {item.welcome
@@ -61,9 +69,11 @@ export default function Notifications() {
                     ? item.studentId
                       ? 'Voir le profil'
                       : 'Voir les alertes'
-                    : item.companyId
-                      ? 'Contacter l’entreprise'
-                      : 'Voir les demandes'}
+                    : item.help
+                      ? 'Reprendre le besoin'
+                      : item.companyId
+                        ? 'Contacter l’entreprise'
+                        : 'Voir les demandes'}
                 <Icon name="arrow" size={16} />
               </Button>
               {!item.read && (

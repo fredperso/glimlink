@@ -6,14 +6,9 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useApp } from '../context.tsx';
-import {
-  checkAvailability,
-  scoreFor,
-  type Calendar,
-  type Need,
-  type Student,
-} from '../domain/model.ts';
-import { SKILL_LEVELS } from '../domain/skills.ts';
+import { checkAvailability, type Calendar, type Need, type Student } from '../domain/model.ts';
+import { profileReading } from '../domain/reading.ts';
+import AdviserRelay from './AdviserRelay.tsx';
 import { applySwipe, undoSwipe, type SwipeDecision } from '../domain/swipe.ts';
 import { Avatar, Button, Icon, Week } from './ui.tsx';
 
@@ -47,7 +42,7 @@ export default function SwipeDeck({
   need: Need;
   onGrid: () => void;
 }) {
-  const { store, setStore, go, openModal } = useApp();
+  const { store, setStore, go, openModal, notify } = useApp();
   const [history, setHistory] = useState<SwipeDecision[]>([]);
   const [message, setMessage] = useState('');
   const [match, setMatch] = useState<Student | null>(null);
@@ -342,9 +337,9 @@ export default function SwipeDeck({
       <div className="deck-intro">
         <h2>Un profil, une possibilité.</h2>
         <p id="swipe-instructions">
-          Glissez à droite pour sélectionner, à gauche pour passer. Au clavier : flèche droite pour
-          sélectionner, flèche gauche pour passer, flèche haut pour la fiche complète, retour
-          arrière pour annuler.
+          Glissez à droite pour sélectionner, à gauche pour passer : passer n’est pas refuser, le
+          profil reste dans Tous les profils. Au clavier : flèche droite pour sélectionner, flèche
+          gauche pour passer, flèche haut pour le profil et le CV, retour arrière pour annuler.
         </p>
       </div>
       <div className="deck-layout">
@@ -373,7 +368,6 @@ export default function SwipeDeck({
                           ?.title.split(' · ')[0] ?? 'Formation à vérifier'}
                       </small>
                     </span>
-                    <em>{scoreFor(student, need)}%</em>
                   </button>
                 </li>
               ))}
@@ -492,7 +486,7 @@ export default function SwipeDeck({
                   <span className="deck-action-circle">
                     <Icon name="info" size={20} />
                   </span>
-                  <span className="deck-action-label">Fiche complète</span>
+                  <span className="deck-action-label">Profil & CV</span>
                   <kbd aria-hidden="true">↑</kbd>
                 </button>
               </div>
@@ -500,14 +494,31 @@ export default function SwipeDeck({
           ) : (
             <div className="deck-finished">
               <Icon name="check" size={36} />
-              <h3>Vous avez exploré ces profils.</h3>
+              <h3>Vous avez parcouru tous les profils.</h3>
               <p>
-                Retrouvez les candidats retenus dans votre sélection. Mathilde prend le relais pour
-                la mise en relation.
+                Les profils passés restent disponibles : passer n’est pas refuser. Mathilde prend le
+                relais dès que vous demandez une mise en relation.
               </p>
-              <Button onClick={() => go('selections', need.id)}>Voir ma sélection</Button>
+              {need.selected.length > 0 && (
+                <Button onClick={() => go('selections', need.id)}>Voir ma sélection</Button>
+              )}
+              {need.passed.length > 0 && (
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setStore((prev) => ({
+                      ...prev,
+                      needs: prev.needs.map((n) => (n.id === need.id ? { ...n, passed: [] } : n)),
+                    }));
+                    setHistory([]);
+                    notify('Les profils passés reviennent dans Découvrir.');
+                  }}
+                >
+                  Revoir les profils passés
+                </Button>
+              )}
               <Button variant="secondary" onClick={onGrid}>
-                Revoir les profils en grille
+                Voir tous les profils
               </Button>
               {history.length > 0 && (
                 <button className="text-button" type="button" onClick={undo}>
@@ -516,6 +527,7 @@ export default function SwipeDeck({
               )}
             </div>
           )}
+          {!card && need.selected.length === 0 && <AdviserRelay need={need} />}
           {match && (
             <MatchDialog
               student={match}
@@ -535,7 +547,8 @@ export default function SwipeDeck({
   );
 }
 
-// Carte de profil : plein cadre sur téléphone, fiche « bento » à tuiles sur ordinateur.
+// Carte de profil V6 : identité sans photo, lecture personnalisée, aucun score affiché.
+// Sur téléphone, le contenu défile dans la carte ; sur ordinateur, il forme des tuiles.
 function DeckCard({
   student,
   need,
@@ -548,25 +561,13 @@ function DeckCard({
   const data = student.published!;
   const calendar = calendars.find((c) => c.id === data.trainingId);
   const checks = checkAvailability(data, calendar, need);
-  const main =
-    checks.find((c) => c.kind === 'conflict') ??
-    checks.find((c) => c.kind === 'unknown') ??
-    checks[0];
-  const acquired = data.skills.filter((skill) => skill.status === 'acquired');
-  const learning = data.skills.filter((skill) => skill.status === 'learning');
-  const chips = [...acquired.slice(0, 3), ...learning.slice(0, 1)];
+  const reading = profileReading(student, need, calendars);
   const training = calendar?.title.split(' · ')[0] ?? 'Formation à vérifier';
   return (
     <article className="deck-card">
       <div className={`deck-hero talent-art-${student.avatar % 6}`}>
         <Avatar variant={student.avatar} />
-        <span className="score">
-          <Icon name="heart" size={14} />
-          {scoreFor(student, need)}
-          <small>%</small>
-          <span className="sr-only"> de compatibilité illustrative</span>
-        </span>
-        {student.discoveryReason && <span className="art-label">Un autre regard</span>}
+        {reading.declic && <span className="art-label">Déclic Glimlink</span>}
         <span className="deck-stamp stamp-like" aria-hidden="true">
           Je retiens
         </span>
@@ -582,62 +583,53 @@ function DeckCard({
               {data.location}
             </span>
           </p>
-          <ul className="deck-chips" aria-label="Compétences principales">
-            {chips.map((skill) => (
-              <li key={skill.id} className={`chip-${skill.status}`}>
-                <Icon name={skill.status === 'acquired' ? 'check' : 'clock'} size={13} />
-                {skill.name}
-                <span className="sr-only">
-                  {skill.status === 'acquired' ? ', acquise' : ', en cours d’acquisition'}
-                </span>
-              </li>
-            ))}
-            {data.skills.length > chips.length && (
-              <li className="chip-more">+{data.skills.length - chips.length}</li>
-            )}
-          </ul>
-          {main && (
-            <p className={`deck-check check-${main.kind}`}>
-              <Icon name={main.kind === 'ok' ? 'check' : 'alert'} size={15} />
-              {main.text}
-            </p>
-          )}
         </div>
       </div>
-      <div className="deck-tiles">
+      <div className="deck-body">
         <section className="deck-tile deck-tile-why">
           <h4>
-            <Icon name="spark" size={16} /> Pourquoi ça matche
+            <Icon name="spark" size={16} /> Pourquoi ce profil pour votre besoin ?
           </h4>
-          <p>
-            {student.discoveryReason ??
-              `Les compétences validées de ${data.firstName} répondent aux missions de votre brief.`}
-          </p>
-          <ul className="deck-checks">
-            {checks.map((check) => (
-              <li key={check.text} className={`check-${check.kind}`}>
-                <Icon name={check.kind === 'ok' ? 'check' : 'alert'} size={15} />
-                {check.text}
-              </li>
+          <p>{reading.why}</p>
+          <ul className="fact-chips" aria-label="Ce qui ressort">
+            {reading.highlights.map((fact) => (
+              <li key={fact}>{fact}</li>
             ))}
           </ul>
         </section>
-        <section className="deck-tile deck-tile-skills">
+        {reading.declic && (
+          <section className="deck-tile deck-tile-declic">
+            <h4>
+              <Icon name="spark" size={16} /> Déclic Glimlink
+            </h4>
+            <p>{reading.declic}</p>
+          </section>
+        )}
+        <section className="deck-tile deck-tile-missions">
           <h4>
-            <Icon name="check" size={16} /> Compétences
+            <Icon name="brief" size={16} /> En lien avec vos missions
           </h4>
-          <ul className="deck-skill-list">
-            {[...acquired, ...learning].map((skill) => (
-              <li key={skill.id} className={`chip-${skill.status}`}>
-                <Icon name={skill.status === 'acquired' ? 'check' : 'clock'} size={13} />
-                <strong>{skill.name}</strong>
-                <small>
-                  {skill.status === 'acquired' ? '' : 'En cours · '}
-                  {SKILL_LEVELS[skill.level]}
-                </small>
+          <ul className="mission-links">
+            {reading.missions.map((item) => (
+              <li key={item.mission} className={`link-${item.status}`}>
+                <Icon name={item.status === 'unknown' ? 'help' : 'check'} size={15} />
+                <span>
+                  <strong>{item.mission}</strong>
+                  <small>{item.label}</small>
+                </span>
               </li>
             ))}
           </ul>
+          {checks.length > 0 && (
+            <ul className="deck-checks">
+              {checks.map((check) => (
+                <li key={check.text} className={`check-${check.kind}`}>
+                  <Icon name={check.kind === 'ok' ? 'check' : 'alert'} size={15} />
+                  {check.text}
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
         <section className="deck-tile deck-tile-rhythm">
           <h4>
@@ -648,9 +640,9 @@ function DeckCard({
             required={need.requiredDays}
             unavailable={data.unavailableDays}
           />
-          <p className="deck-mobility">
-            <Icon name="pin" size={14} /> Mobilité : {data.mobility || 'à vérifier avec Mathilde'}
-          </p>
+          {!need.requiredDays.length && (
+            <p className="micro">Consultable même s’il n’a pas servi à la recherche.</p>
+          )}
         </section>
       </div>
     </article>

@@ -107,9 +107,10 @@ export default function App() {
       'Mes besoins',
       companyView.needs.filter((n) => n.status === 'active').length,
     ],
+    ['discover', 'stack', 'Découvrir', 0],
     ['selections', 'heart', 'Ma sélection', selections],
-    ['requests', 'users', 'Mises en relation', companyView.requests.length],
     ['alerts', 'bell', 'Talent Alerts', unread],
+    ['profile', 'user', 'Mon profil', 0],
   ] as const;
   const adviserNav = [
     ['home', 'home', 'Vue d’ensemble', 0],
@@ -127,8 +128,16 @@ export default function App() {
   ] as const;
   const nav =
     current.role === 'admin' ? adminNav : current.role === 'company' ? companyNav : adviserNav;
-  const mobileNav = current.role === 'adviser' ? nav.slice(0, 4) : nav;
-  const activeView = ['discover', 'new-need'].includes(current.view) ? 'needs' : current.view;
+  const mobileNav = current.role === 'admin' ? nav : nav.slice(0, 4);
+  // Les mises en relation se suivent depuis Ma sélection (V6 : cinq accès entreprise).
+  const activeView =
+    current.view === 'new-need'
+      ? 'needs'
+      : current.view === 'requests' && current.role === 'company'
+        ? 'selections'
+        : current.view;
+  const moreViews =
+    current.role === 'company' ? ['alerts', 'profile', 'requests'] : ['requests', 'companies'];
   return (
     <AppContext
       value={{
@@ -374,7 +383,9 @@ export default function App() {
             key={id}
             href={`#/${current.role}/${id}`}
             onClick={(event) => navigate(event, id)}
-            className={!mobileMore && activeView === id ? 'active' : ''}
+            className={
+              !mobileMore && activeView === id && !moreViews.includes(current.view) ? 'active' : ''
+            }
             aria-current={activeView === id ? 'page' : undefined}
           >
             <span>
@@ -402,34 +413,62 @@ export default function App() {
                               : 'Partenaires'
                             : id === 'alerts'
                               ? 'Alertes'
-                              : 'Besoins'}
+                              : id === 'discover'
+                                ? 'Découvrir'
+                                : 'Besoins'}
             </small>
             <span className="sr-only">{label}</span>
           </a>
         ))}
-        {current.role === 'adviser' && (
+        {current.role !== 'admin' && (
           <>
             <button
               type="button"
-              className={`mobile-more-button ${mobileMore || ['requests', 'companies'].includes(activeView) ? 'active' : ''}`}
+              className={`mobile-more-button ${mobileMore || moreViews.includes(current.view) ? 'active' : ''}`}
               aria-expanded={mobileMore}
               aria-controls="mobile-more-links"
               onClick={() => setMobileMore((open) => !open)}
             >
-              <Icon name="grid" />
+              <span>
+                <Icon name="grid" />
+                {current.role === 'company' && unread > 0 && <i>{unread}</i>}
+              </span>
               <small>Plus</small>
-              <span className="sr-only">Demandes et entreprises partenaires</span>
+              <span className="sr-only">
+                {current.role === 'company'
+                  ? 'Talent Alerts, mon profil et mises en relation'
+                  : 'Demandes et entreprises partenaires'}
+              </span>
             </button>
             {mobileMore && (
               <div id="mobile-more-links" className="mobile-more-panel">
-                <a href="#/adviser/requests" onClick={(event) => navigate(event, 'requests')}>
-                  <Icon name="message" />
-                  Demandes à traiter {pending > 0 && <Badge>{pending}</Badge>}
-                </a>
-                <a href="#/adviser/companies" onClick={(event) => navigate(event, 'companies')}>
-                  <Icon name="brief" />
-                  Entreprises partenaires
-                </a>
+                {current.role === 'company' ? (
+                  <>
+                    <a href="#/company/alerts" onClick={(event) => navigate(event, 'alerts')}>
+                      <Icon name="bell" />
+                      Talent Alerts {unread > 0 && <Badge>{unread}</Badge>}
+                    </a>
+                    <a href="#/company/profile" onClick={(event) => navigate(event, 'profile')}>
+                      <Icon name="user" />
+                      Mon profil
+                    </a>
+                    <a href="#/company/requests" onClick={(event) => navigate(event, 'requests')}>
+                      <Icon name="users" />
+                      Mises en relation
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    <a href="#/adviser/requests" onClick={(event) => navigate(event, 'requests')}>
+                      <Icon name="message" />
+                      Demandes à traiter {pending > 0 && <Badge>{pending}</Badge>}
+                    </a>
+                    <a href="#/adviser/companies" onClick={(event) => navigate(event, 'companies')}>
+                      <Icon name="brief" />
+                      Entreprises partenaires
+                    </a>
+                  </>
+                )}
               </div>
             )}
           </>

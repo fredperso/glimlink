@@ -1,14 +1,14 @@
 ---
 title: 'Espace conseiller et vivier paginé'
-version: '1.2'
+version: '1.3'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [2, 6, 10, 13, 14, 15]
-maquette_revision: travail-local-USR-18
+maquette_revision: travail-local-USR-23
 tags: [specification, design, glimlink]
 ---
 
@@ -50,6 +50,10 @@ Permettre au conseiller de gérer le vivier, vérifier les fiches, consulter les
 | CON-006 | Demande utilisateur | L’espace conseiller propose Contacter l’entreprise, pas Contacter le conseiller.                                            |
 | CON-007 | Demande utilisateur | La cloche présente des événements simulés réactifs ; l’inscription d’un partenaire déclenche un événement de premier appel. |
 | CON-008 | PDF §6 + USR-17      | Les calendriers sont partagés ; leur modification est portée par l’administrateur au niveau formation/promotion représenté.                      |
+| CON-009 | V6 §15 | Après entretien, le conseiller peut saisir des observations factuelles facultatives et, exceptionnellement, un signal interne « profil à valoriser ». Le signal reste invisible pour l’entreprise ; les observations sont reprises dans une formulation neutre, sans rubrique dédiée ni qualité supposée. |
+| CON-010 | V6 §11, §13 | Une demande de relais (non-sélection) alerte le conseiller et apparaît dans Besoins entreprises avec la date et les pistes calculées ; le conseiller reprend le besoin avec l’entreprise. |
+| CON-011 | V6 §3, §16 | Lors de l’invitation, le conseiller peut préparer un premier besoin ; il reste « À confirmer par l’entreprise » et n’active aucun matching avant confirmation. |
+| CON-012 | V6 §13, §16 | Le conseiller ne voit jamais automatiquement les CV d’autres conseillers ou marques. Un besoin validé est routé vers le conseiller responsable de la formation/niveau, le référent relationnel étant conservé (routage multi-conseillers à réaliser, ARB-019). |
 
 ## 4. Interfaces et contrats de données
 
@@ -68,6 +72,9 @@ La consultation des formations reste dans `#/adviser/calendars` et depuis l’ac
 - **AC-CON-003** : une fiche publiée avec modifications conserve sa version entreprise et affiche Corrections à valider.
 - **AC-CON-004** : une demande donne accès à la fiche complète du candidat autorisé et signale les changements depuis sa création.
 - **AC-CON-005** : le contact partenaire propose son e-mail/téléphone ; le conseiller ne se contacte pas lui-même.
+- **AC-CON-006** : cocher « Profil à valoriser » n’ajoute aucune mention côté entreprise ; seule la position du profil dans Découvrir peut changer.
+- **AC-CON-007** : une demande de relais apparaît dans la cloche (« Relais demandé : aucun profil retenu ») et dans Besoins entreprises avec ses pistes ; la lire la marque comme lue sans modifier les autres besoins.
+- **AC-CON-008** : un premier besoin préparé à l’invitation apparaît « À confirmer par l’entreprise » et ne produit aucun résultat de découverte.
 
 ## 6. Stratégie de test
 

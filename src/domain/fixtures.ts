@@ -156,6 +156,7 @@ export function initialStore(): Store {
         {
           discoveryReason:
             'Son expérience événementielle mobilise l’accueil et l’organisation nécessaires à vos missions.',
+          highlight: true,
         },
       ),
       student(
@@ -206,6 +207,9 @@ export function initialStore(): Store {
         validated: true,
         selected: ['lucas', 'ines'],
         passed: [],
+        levels: ['Bac+2', 'Bac+3'],
+        availability: 'immediate',
+        suggestedTrainingId: 'gpm',
       },
       {
         id: 'need-sales',
@@ -218,20 +222,31 @@ export function initialStore(): Store {
         end: '2027-02-26',
         requiredDays: [],
         licenseRequired: false,
-        missions: ['Suivre les demandes commerciales', 'Conseiller les clients'],
+        missions: [
+          'Suivre les demandes commerciales',
+          'Conseiller les clients',
+          'Mettre à jour le suivi commercial',
+        ],
         wishes: '',
         schools: ['campus-a'],
         status: 'active',
         validated: true,
         selected: [],
         passed: [],
+        levels: ['Bac+2', 'Bac+3', 'Bac+5'],
+        availability: 'immediate',
+        suggestedTrainingId: 'mco',
       },
       {
         id: 'need-bloom',
         companyId: 'bloom-studio',
         title: 'Communication & contenus',
         description: 'Préparer des contenus et accompagner les publications de notre agence.',
-        missions: ['Rédiger des contenus', 'Préparer les publications sur les réseaux sociaux'],
+        missions: [
+          'Rédiger des contenus',
+          'Préparer les publications sur les réseaux sociaux',
+          'Suivre les retours des publications',
+        ],
         proposedSkills: ['Rédaction', 'Communication digitale'],
         proposedDomains: ['Communication'],
         contract: 'Stage',

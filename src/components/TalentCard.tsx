@@ -1,21 +1,17 @@
-import { SkillList } from './Skills.tsx';
 import { useApp } from '../context.tsx';
-import { checkAvailability, scoreFor, type Student, type Need } from '../domain/model.ts';
+import { checkAvailability, type Student, type Need } from '../domain/model.ts';
+import { profileReading } from '../domain/reading.ts';
 import { Avatar, Icon } from './ui.tsx';
 
-export function TalentCard({
-  student,
-  need,
-  compact = false,
-}: {
-  student: Student;
-  need: Need;
-  compact?: boolean;
-}) {
+// Carte de la vue « Tous les profils » : même vivier que le swipe, aucun score affiché (V6 §7-9).
+export function TalentCard({ student, need }: { student: Student; need: Need }) {
   const { store, setStore, openModal, notify } = useApp();
   const data = student.published!;
   const selected = need.selected.includes(student.id);
+  const passed = need.passed.includes(student.id);
   const calendar = store.calendars.find((c) => c.id === data.trainingId);
+  const reading = profileReading(student, need, store.calendars);
+  const linked = reading.missions.filter((item) => item.status !== 'unknown').length;
   const checks = checkAvailability(data, calendar, need);
   const check =
     checks.find((c) => c.kind === 'conflict') ??
@@ -31,6 +27,7 @@ export function TalentCard({
               selected: selected
                 ? n.selected.filter((id) => id !== student.id)
                 : [...n.selected, student.id],
+              passed: n.passed.filter((id) => id !== student.id),
             }
           : n,
       ),
@@ -42,16 +39,15 @@ export function TalentCard({
     );
   };
   return (
-    <article className={`talent-card ${compact ? 'talent-card-compact' : ''}`}>
+    <article className={`talent-card ${passed ? 'is-passed' : ''}`}>
       <div className={`talent-art talent-art-${student.avatar % 6}`}>
         <Avatar variant={student.avatar} />
-        <span className="score">
-          <Icon name="heart" size={14} />
-          {scoreFor(student, need)}
-          <small>%</small>
-          <span className="sr-only"> de compatibilité illustrative</span>
-        </span>
-        {student.discoveryReason && <span className="art-label">Un autre regard</span>}
+        {(selected || passed) && (
+          <span className={`card-state ${selected ? 'state-selected' : 'state-passed'}`}>
+            {selected ? 'Dans ma sélection' : 'Passé'}
+          </span>
+        )}
+        {reading.declic && <span className="art-label">Déclic Glimlink</span>}
         <div className="talent-identity">
           <div className="talent-name-row">
             <h3>{data.firstName}</h3>
@@ -66,16 +62,26 @@ export function TalentCard({
         </div>
       </div>
       <div className="talent-content">
-        <SkillList skills={data.skills} calendars={store.calendars} compact />
-        {student.discoveryReason ? (
+        <ul className="fact-chips" aria-label="Ce qui ressort">
+          {reading.highlights.slice(0, 3).map((fact) => (
+            <li key={fact}>{fact}</li>
+          ))}
+        </ul>
+        {reading.declic ? (
           <p className="discovery-reason">
             <Icon name="spark" size={16} />
-            {student.discoveryReason}
+            {reading.declic}
           </p>
         ) : (
-          <p className={`calendar-check check-${check?.kind}`}>
-            <Icon name={check?.kind === 'ok' ? 'check' : 'alert'} size={15} />
-            {check?.text}
+          <p className="mission-summary">
+            {linked} mission{linked > 1 ? 's' : ''} sur {reading.missions.length} en lien avec son
+            parcours
+          </p>
+        )}
+        {check && (
+          <p className={`calendar-check check-${check.kind}`}>
+            <Icon name={check.kind === 'ok' ? 'check' : 'alert'} size={15} />
+            {check.text}
           </p>
         )}
         <div className="talent-actions">

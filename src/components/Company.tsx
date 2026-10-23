@@ -6,22 +6,26 @@ import {
 } from '../domain/company-experience.ts';
 import Select from './Select.tsx';
 import { readNotifications } from '../domain/notifications.ts';
-import ValidatedBrief from './ValidatedBrief.tsx';
+import ValidatedBrief, { contractLabel } from './ValidatedBrief.tsx';
 import { TalentCard } from './TalentCard.tsx';
 import SwipeDeck from './SwipeDeck.tsx';
 import { useState } from 'react';
 import { useApp } from '../context.tsx';
 import {
   adviserRequests,
+  getCompanies,
   getCompany,
-  relaxationSuggestions,
   requestChanges,
   checkAvailability,
   classifyStudent,
+  discoveryOrder,
   visibleStudents,
   type Need,
   type Student,
 } from '../domain/model.ts';
+import { companySites } from '../domain/partners.ts';
+import { ChoiceSelect, POSITION_CHOICES, SECTOR_CHOICES } from './Choices.tsx';
+import AdviserRelay from './AdviserRelay.tsx';
 import { Avatar, Badge, Button, Empty, Icon, dateLabel } from './ui.tsx';
 
 export function AdviserCard() {
@@ -54,9 +58,7 @@ export function AdviserCard() {
 function NeedRow({ need }: { need: Need }) {
   const { store } = useApp();
   const alerts = talentAlerts(store, need.id).length;
-  const count = visibleStudents(store, need).filter(
-    (s) => classifyStudent(store, s, need) === 'main',
-  ).length;
+  const count = visibleStudents(store, need).length;
   return (
     <a
       className="need-row"
@@ -73,7 +75,7 @@ function NeedRow({ need }: { need: Need }) {
           </Badge>
         </div>
         <p>
-          {need.contract}
+          {contractLabel(need.contract)}
           <span>·</span>
           {need.location}
           <span>·</span>À partir du {dateLabel(need.start)}
@@ -81,7 +83,7 @@ function NeedRow({ need }: { need: Need }) {
         <span className="need-progress">{needProgress(store, need)}</span>
         <span className="need-meta">
           {need.status === 'active'
-            ? `${count} profils compatibles · ${need.selected.length} retenus`
+            ? `${count} profils à découvrir · ${need.selected.length} retenus`
             : 'Historique conservé'}
           {alerts > 0 && (
             <Badge tone="green">
@@ -92,35 +94,6 @@ function NeedRow({ need }: { need: Need }) {
       </div>
       <Icon name="arrow" />
     </a>
-  );
-}
-
-function DiscoveryViewSwitch({
-  mode,
-  onChange,
-}: {
-  mode: 'grid' | 'swipe';
-  onChange: (mode: 'grid' | 'swipe') => void;
-}) {
-  return (
-    <div className="view-switch" aria-label="Affichage des candidats">
-      <button
-        aria-label="Affichage carte par carte"
-        aria-pressed={mode === 'swipe'}
-        className={mode === 'swipe' ? 'active' : ''}
-        onClick={() => onChange('swipe')}
-      >
-        <Icon name="stack" size={18} /> Swipe
-      </button>
-      <button
-        aria-label="Affichage en grille"
-        aria-pressed={mode === 'grid'}
-        className={mode === 'grid' ? 'active' : ''}
-        onClick={() => onChange('grid')}
-      >
-        <Icon name="grid" size={18} /> Grille
-      </button>
-    </div>
   );
 }
 
@@ -140,7 +113,10 @@ function Home() {
               ✳
             </span>
           </h1>
-          <p>Votre recrutement commence ici. Mathilde vous accompagne.</p>
+          <p>
+            Glimlink lit ce que vous n’avez pas le temps de lire, révèle ce que vous pourriez ne pas
+            voir, mais ne choisit jamais à votre place.
+          </p>
         </div>
       </div>
       <section className="welcome-banner company-welcome">
@@ -153,7 +129,7 @@ function Home() {
             <br />
             <span className="gradient-text">Ils ont le potentiel.</span>
           </h2>
-          <p>Décrivez simplement les missions que vous souhaitez confier.</p>
+          <p>Décrivez simplement votre besoin, avec vos mots. Aucun formulaire à remplir.</p>
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -169,10 +145,10 @@ function Home() {
               maxLength={2000}
               value={description}
               onChange={(event) => setDescription(event.target.value)}
-              placeholder="Ex. : accueillir mes clients et gérer des devis, le vendredi à Montpellier…"
+              placeholder="Ex. : je recherche quelqu’un pour faire de l’administratif, gérer un portefeuille clients et effectuer des relances commerciales…"
             />
             <Button type="submit">
-              <Icon name="spark" size={18} /> Décrire mon besoin <Icon name="arrow" size={18} />
+              <Icon name="spark" size={18} /> Comprendre mon besoin <Icon name="arrow" size={18} />
             </Button>
           </form>
           <span className="welcome-footnote">Pas besoin de rédiger une offre d’emploi.</span>
@@ -315,7 +291,7 @@ function Needs() {
             }
             action={
               filter === 'active' ? (
-                <Button onClick={() => go('new-need')}>Décrire mon besoin</Button>
+                <Button onClick={() => go('new-need')}>Comprendre mon besoin</Button>
               ) : undefined
             }
           >
@@ -327,42 +303,36 @@ function Needs() {
   );
 }
 
+// Découverte V6 : trois espaces sur le même vivier, les profils les plus alignés d’abord.
 function Discovery() {
-  const { store, needId, setStore, openModal, go, notify } = useApp();
-  const [tab, setTab] = useState('main');
-  const [mode, setMode] = useState<'grid' | 'swipe'>('swipe');
+  const { store, needId, openModal, go } = useApp();
+  const query = new URLSearchParams(location.hash.split('?')[1]);
+  const active = store.needs.filter((n) => n.status === 'active' && n.validated);
+  const need = query.has('need') ? store.needs.find((n) => n.id === needId) : active[0];
+  const [mode, setMode] = useState<'grid' | 'swipe'>(
+    query.get('view') === 'grid' ? 'grid' : 'swipe',
+  );
   const [showBrief, setShowBrief] = useState(false);
-  const need = store.needs.find((n) => n.id === needId);
-  if (!need || need.status === 'closed' || !need.validated)
+  if (!need)
+    return (
+      <Empty
+        title="Décrivez un besoin pour découvrir des talents"
+        action={<Button onClick={() => go('new-need')}>Comprendre mon besoin</Button>}
+      >
+        Glimlink reformule votre besoin, vous le confirmez, puis les profils de votre vivier
+        apparaissent ici.
+      </Empty>
+    );
+  if (need.status === 'closed' || !need.validated)
     return (
       <Empty
         title="Ce besoin n’est pas ouvert à la découverte"
         action={<Button onClick={() => go('needs')}>Revenir à mes besoins</Button>}
       >
-        Le besoin doit être actif et son brief confirmé pour proposer des talents.
+        Le besoin doit être actif et sa reformulation confirmée pour proposer des talents.
       </Empty>
     );
-  const all = visibleStudents(store, need);
-  const group = (key: string) => all.filter((s) => classifyStudent(store, s, need) === key);
-  const current = group(tab).filter((s) => !need.passed.includes(s.id));
-  const pass = (student: Student) => {
-    setStore((prev) => ({
-      ...prev,
-      needs: prev.needs.map((n) =>
-        n.id === need.id ? { ...n, passed: [...n.passed, student.id] } : n,
-      ),
-    }));
-    notify(`${student.published!.firstName} passé. Vous pouvez revoir les profils passés.`);
-  };
-  const alternatives = relaxationSuggestions(store, need);
-  const blockers = new Map<string, number>();
-  for (const student of all)
-    for (const check of checkAvailability(
-      student.published!,
-      store.calendars.find((c) => c.id === student.published!.trainingId),
-      need,
-    ).filter((check) => check.kind !== 'ok'))
-      blockers.set(check.text, (blockers.get(check.text) ?? 0) + 1);
+  const ordered = discoveryOrder(store, need);
   return (
     <div className={mode === 'swipe' ? 'swipe-discovery' : 'grid-discovery'}>
       <a className="back-link" href="#/company/needs">
@@ -373,22 +343,35 @@ function Discovery() {
           <Badge tone="green">Besoin actif</Badge>
           <h1>{need.title}</h1>
           <p>
-            {need.contract} · {need.location} · À partir du {dateLabel(need.start)}
+            {contractLabel(need.contract)} · {need.location} · À partir du {dateLabel(need.start)}
           </p>
         </div>
-        <Button variant="secondary" onClick={() => go('selections', need.id)}>
-          <Icon name="heart" /> Ma sélection{' '}
-          <span className="button-count">{need.selected.length}</span>
-        </Button>
+        {active.length > 1 && (
+          <label className="need-switch">
+            Besoin exploré
+            <Select
+              value={need.id}
+              onChange={(event) => go('discover', event.target.value)}
+              aria-label="Changer de besoin"
+            >
+              {active.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.title}
+                </option>
+              ))}
+            </Select>
+          </label>
+        )}
       </div>
       <section className="brief-summary">
         <div>
           <Icon name="shield" />
-          <strong>Votre brief validé</strong>
+          <strong>Votre besoin confirmé</strong>
           <span>
-            {need.missions[0]}
+            {need.missions.length} missions
             {need.requiredDays.length > 0 ? ` · Présence : ${need.requiredDays.join(', ')}` : ''}
             {need.licenseRequired ? ' · Permis obligatoire' : ''}
+            {need.levels?.length ? ` · ${need.levels.join(', ')}` : ''}
           </span>
         </div>
         <button
@@ -396,177 +379,70 @@ function Discovery() {
           onClick={() => setShowBrief(!showBrief)}
           aria-expanded={showBrief}
         >
-          {showBrief ? 'Masquer' : 'Voir le brief'}
+          {showBrief ? 'Masquer' : 'Voir le besoin'}
           <Icon name="chevron" size={16} />
         </button>
       </section>
       {showBrief && (
         <section className="panel brief-details">
           <ValidatedBrief need={need} />
-          <p className="micro">Les changements de brief nécessitent une nouvelle confirmation.</p>
+          <p className="micro">Toute modification demande une nouvelle confirmation.</p>
           <Button variant="secondary" onClick={() => go('new-need', need.id)}>
             <Icon name="edit" size={16} /> Modifier et reconfirmer
           </Button>
         </section>
       )}
       <div className="discovery-toolbar">
-        <div className="tabs discovery-tabs">
-          {[
-            ['main', 'Pour votre besoin'],
-            ['discover', 'À découvrir'],
-            ['verify', 'À vérifier'],
-            ['conflict', 'Conflits identifiés'],
-          ].map(([id, label]) => (
-            <button
-              className={tab === id ? 'active' : ''}
-              key={id}
-              onClick={() => {
-                setTab(id);
-              }}
-              aria-pressed={tab === id}
-            >
-              {id === 'discover' && <Icon name="spark" size={16} />} {label}
-              <span>{group(id).length}</span>
-            </button>
-          ))}
+        <div className="discovery-spaces" role="group" aria-label="Espaces de découverte">
+          <button
+            type="button"
+            aria-pressed={mode === 'swipe'}
+            className={mode === 'swipe' ? 'active' : ''}
+            onClick={() => setMode('swipe')}
+          >
+            <Icon name="stack" size={18} /> Découvrir
+          </button>
+          <button
+            type="button"
+            aria-pressed={mode === 'grid'}
+            className={mode === 'grid' ? 'active' : ''}
+            onClick={() => setMode('grid')}
+          >
+            <Icon name="grid" size={18} /> Tous les profils <span>{ordered.length}</span>
+          </button>
+          <a href={`#/company/selections?need=${need.id}`}>
+            <Icon name="heart" size={18} /> Ma sélection <span>{need.selected.length}</span>
+          </a>
         </div>
-        <DiscoveryViewSwitch mode={mode} onChange={setMode} />
       </div>
       <p className="result-explanation">
-        {tab === 'discover'
-          ? 'Des parcours moins évidents, des compétences qui font le lien avec vos missions.'
-          : tab === 'verify'
-            ? 'Ces profils nécessitent une vérification du calendrier ou des disponibilités avec votre conseiller.'
-            : tab === 'conflict'
-              ? 'Ces profils présentent une incompatibilité connue. Elle est expliquée avant toute décision.'
-              : `${current.length} talents à explorer, à partir des fiches validées par le centre.`}{' '}
-        <span>Scores illustratifs de la maquette.</span>
+        {ordered.length} profil{ordered.length > 1 ? 's' : ''} de votre vivier autorisé, les plus
+        directement alignés d’abord. Passer n’écarte personne : chaque profil reste dans « Tous les
+        profils ».
       </p>
-      {current.length || (mode === 'swipe' && group(tab).length) ? (
-        mode === 'grid' ? (
+      {ordered.length === 0 ? (
+        <>
+          <Empty title="Aucun profil publié dans votre vivier pour le moment">
+            Les nouveaux profils validés par le centre arriveront dans Talent Alerts.
+          </Empty>
+          <AdviserRelay need={need} />
+        </>
+      ) : mode === 'grid' ? (
+        <>
           <div className="talent-grid discovery-grid">
-            {current.map((s) => (
-              <div key={s.id}>
-                <TalentCard student={s} need={need} />
-                <button className="pass-link" onClick={() => pass(s)}>
-                  Passer ce profil
-                </button>
-              </div>
+            {ordered.map((student) => (
+              <TalentCard key={student.id} student={student} need={need} />
             ))}
           </div>
-        ) : (
-          <SwipeDeck
-            key={`${need.id}-${tab}`}
-            students={group(tab)}
-            need={need}
-            onGrid={() => setMode('grid')}
-          />
-        )
+          {need.selected.length === 0 && <AdviserRelay need={need} />}
+        </>
       ) : (
-        <Empty
-          title={
-            need.passed.length
-              ? 'Vous avez exploré ces talents'
-              : 'Pas encore de talent pour ces critères'
-          }
-          action={
-            <div className="empty-actions">
-              {need.passed.length > 0 && (
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    setStore((prev) => ({
-                      ...prev,
-                      needs: prev.needs.map((n) => (n.id === need.id ? { ...n, passed: [] } : n)),
-                    }));
-                    notify('Profils passés de nouveau visibles');
-                  }}
-                >
-                  Revoir les profils passés
-                </Button>
-              )}
-              <Button onClick={() => openModal({ kind: 'contact' })}>
-                En parler avec Mathilde
-              </Button>
-              <Button variant="secondary" onClick={() => go('new-need', need.id)}>
-                Ajuster et reconfirmer le brief
-              </Button>
-            </div>
-          }
-        >
-          <div className="no-match-help">
-            <p>
-              {group('conflict').length} profil(s) présentent un conflit connu ;{' '}
-              {group('verify').length} nécessitent une vérification. {group('discover').length}{' '}
-              parcours sont dans « À découvrir ».
-            </p>
-            {all.length === 0 && (
-              <p>Aucun profil publié n’est actuellement disponible dans votre vivier autorisé.</p>
-            )}
-            {blockers.size > 0 && (
-              <ul>
-                {[...blockers.entries()].map(([reason, count]) => (
-                  <li key={reason}>
-                    {reason} : {count} profil(s) concerné(s).
-                  </li>
-                ))}
-              </ul>
-            )}
-            {group('discover').length > 0 && (
-              <Button variant="secondary" onClick={() => setTab('discover')}>
-                Explorer les autres parcours
-              </Button>
-            )}
-            {alternatives.map((alternative) => (
-              <div className="relaxation-option" key={alternative.label}>
-                <strong>{alternative.label}</strong>
-                <p>
-                  +{alternative.count} profil(s) potentiellement compatible(s), selon les
-                  contraintes renseignées. Scores de démonstration.
-                </p>
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    const relaxedDays = need.requiredDays.filter(
-                      (day) => !alternative.need.requiredDays.includes(day),
-                    );
-                    const wishes = [
-                      need.wishes,
-                      ...relaxedDays.map((day) => `Présence le ${day.toLowerCase()} souhaitable`),
-                      need.licenseRequired && !alternative.need.licenseRequired
-                        ? 'Permis B souhaitable'
-                        : '',
-                    ]
-                      .filter(Boolean)
-                      .join(' ; ');
-                    setStore((prev) => ({
-                      ...prev,
-                      needs: prev.needs.map((n) =>
-                        n.id === need.id
-                          ? {
-                              ...n,
-                              requiredDays: alternative.need.requiredDays,
-                              licenseRequired: alternative.need.licenseRequired,
-                              wishes,
-                              validated: false,
-                            }
-                          : n,
-                      ),
-                    }));
-                    go('new-need', need.id);
-                  }}
-                >
-                  Revoir cette proposition et confirmer
-                </Button>
-              </div>
-            ))}
-            <p>
-              Vérifiez les conflits de cours et les informations manquantes dans les autres onglets.
-            </p>
-            Vous pouvez envisager d’autres jours de présence ou revoir le permis obligatoire ; aucun
-            critère n’est assoupli automatiquement.
-          </div>
-        </Empty>
+        <SwipeDeck
+          key={need.id}
+          students={ordered}
+          need={need}
+          onGrid={() => setMode('grid')}
+        />
       )}
       {need.selected.length > 0 && (
         <div className="selection-dock">
@@ -659,6 +535,10 @@ function Selections() {
           <h1>Vos talents à rencontrer.</h1>
           <p>Ma sélection, organisée par besoin. Cliquez sur un profil pour consulter sa fiche.</p>
         </div>
+        <Button variant="secondary" onClick={() => go('requests')}>
+          <Icon name="users" /> Mes mises en relation{' '}
+          <span className="button-count">{store.requests.length}</span>
+        </Button>
       </div>
       {needs.length > 0 && (
         <label className="need-select">
@@ -715,12 +595,22 @@ function Selections() {
           </div>
         </>
       ) : (
-        <Empty
-          title="Votre sélection prend forme ici"
-          action={<Button onClick={() => go('needs')}>Voir mes besoins</Button>}
-        >
-          Retenez des profils depuis les cartes de chaque besoin.
-        </Empty>
+        <>
+          <Empty
+            title="Votre sélection prend forme ici"
+            action={
+              need ? (
+                <Button onClick={() => go('discover', need.id)}>Découvrir les profils</Button>
+              ) : (
+                <Button onClick={() => go('needs')}>Voir mes besoins</Button>
+              )
+            }
+          >
+            Retenez des profils depuis Découvrir ou Tous les profils. La sélection n’a pas de
+            plafond et reste propre à chaque besoin.
+          </Empty>
+          {need && <AdviserRelay need={need} />}
+        </>
       )}
       {need && (
         <section className="selection-suggestions">
@@ -1027,6 +917,168 @@ export function RequestList({ adviser: requestedAdviser = false }: { adviser?: b
   );
 }
 
+// Mon profil (V6 §2-3) : coordonnées professionnelles et sites, dont le lieu prérempli des besoins.
+function CompanyProfile() {
+  const { store, setStore, notify } = useApp();
+  const company = getCompany(store, store.activeCompanyId);
+  const [draft, setDraft] = useState({ ...company, sites: companySites(company) });
+  const patch = (value: Partial<typeof draft>) => setDraft((prev) => ({ ...prev, ...value }));
+  return (
+    <>
+      <div className="page-heading">
+        <div>
+          <h1>Mon profil entreprise.</h1>
+          <p>Ces informations aident votre conseiller et préremplissent le lieu de vos besoins.</p>
+        </div>
+      </div>
+      <form
+        className="panel company-profile"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const sites = draft.sites.map((site) => site.trim()).filter(Boolean);
+          setStore((prev) => ({
+            ...prev,
+            companies: getCompanies(prev).map((item) =>
+              item.id === company.id
+                ? { ...item, ...draft, sites, location: sites[0] ?? item.location }
+                : item,
+            ),
+          }));
+          notify('Profil entreprise enregistré.');
+        }}
+      >
+        <h2>Coordonnées professionnelles</h2>
+        <div className="form-grid">
+          <label>
+            Raison sociale
+            <input
+              name="name"
+              autoComplete="organization"
+              required
+              value={draft.name}
+              onChange={(e) => patch({ name: e.target.value })}
+            />
+          </label>
+          <label>
+            SIRET
+            <input
+              name="siret"
+              inputMode="numeric"
+              autoComplete="off"
+              value={draft.siret ?? ''}
+              onChange={(e) => patch({ siret: e.target.value })}
+            />
+          </label>
+          <label>
+            Secteur
+            <ChoiceSelect
+              name="sector"
+              options={SECTOR_CHOICES}
+              allowCustom
+              value={draft.sector}
+              onChange={(sector) => patch({ sector })}
+            />
+          </label>
+          <label>
+            Contact principal
+            <input
+              name="contact"
+              autoComplete="name"
+              value={draft.contact}
+              onChange={(e) => patch({ contact: e.target.value })}
+            />
+          </label>
+          <label>
+            Fonction
+            <ChoiceSelect
+              name="position"
+              options={POSITION_CHOICES}
+              allowCustom
+              value={draft.position}
+              onChange={(position) => patch({ position })}
+            />
+          </label>
+          <label>
+            E-mail professionnel
+            <input
+              name="email"
+              type="email"
+              autoComplete="email"
+              spellCheck={false}
+              value={draft.email}
+              onChange={(e) => patch({ email: e.target.value })}
+            />
+          </label>
+          <label>
+            Téléphone professionnel
+            <input
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              value={draft.phone ?? ''}
+              onChange={(e) => patch({ phone: e.target.value })}
+            />
+          </label>
+        </div>
+        <fieldset className="mission-list">
+          <legend>Sites de l’entreprise</legend>
+          <p className="micro">
+            Le premier site est proposé par défaut pour chaque nouveau besoin ; le lieu reste
+            modifiable dans la reformulation.
+          </p>
+          <ol>
+            {draft.sites.map((site, index) => (
+              <li key={index}>
+                <input
+                  aria-label={index === 0 ? 'Site principal' : `Site ${index + 1}`}
+                  name="sites"
+                  value={site}
+                  onChange={(e) =>
+                    patch({
+                      sites: draft.sites.map((item, i) => (i === index ? e.target.value : item)),
+                    })
+                  }
+                />
+                {index === 0 ? (
+                  <Badge tone="sage">Principal</Badge>
+                ) : (
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label={`Retirer le site ${index + 1}`}
+                    onClick={() => patch({ sites: draft.sites.filter((_, i) => i !== index) })}
+                  >
+                    <Icon name="close" size={16} />
+                  </button>
+                )}
+              </li>
+            ))}
+          </ol>
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => patch({ sites: [...draft.sites, ''] })}
+          >
+            <Icon name="plus" size={16} /> Ajouter un site
+          </button>
+        </fieldset>
+        <div className="form-footer">
+          <span className="micro">
+            Les coordonnées des étudiants ne sont jamais visibles ici : la mise en relation passe
+            par votre conseiller.
+          </span>
+          <Button type="submit">
+            <Icon name="check" size={17} /> Enregistrer mon profil
+          </Button>
+        </div>
+      </form>
+      <div className="home-adviser">
+        <AdviserCard />
+      </div>
+    </>
+  );
+}
+
 export default function Company() {
   const { view, store } = useApp();
   switch (view) {
@@ -1038,6 +1090,8 @@ export default function Company() {
       return <Selections />;
     case 'alerts':
       return <Alerts />;
+    case 'profile':
+      return <CompanyProfile key={store.activeCompanyId} />;
     case 'requests':
       return (
         <>

@@ -1,14 +1,14 @@
 ---
 title: 'Notifications et premier contact entreprise'
-version: '1.1'
+version: '1.2'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [3, 11, 16, 17, 20]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-23
 tags: [specification, process, glimlink]
 ---
 
@@ -50,6 +50,8 @@ Notifier l’entreprise des nouveaux profils et le conseiller des demandes ainsi
 | NOT-006 | Décision utilisateur du 08/10 | L’inscription via invitation alerte le conseiller référent pour un premier appel d’explication.                               |
 | NOT-007 | Décision utilisateur          | Les compteurs Talent Alerts affichent uniquement les nouveaux profils compatibles, distincts des suggestions de Ma sélection. |
 | NOT-008 | Confidentialité PDF           | Aucun e-mail ou message entreprise ne contient de coordonnées privées des étudiants.                                          |
+| NOT-009 | V6 §11, §13 | Une demande de relais après non-sélection alerte le conseiller (in-app dans la maquette ; e-mail à réaliser) ; le lien ouvre les besoins entreprises ; une seule notification par besoin. |
+| NOT-010 | V6 §12 | Talent Alerts : aucune fréquence quotidienne/hebdomadaire à paramétrer en V1 ; notification in-app et e-mail à chaque nouveau profil pertinent. |
 
 ## 4. Interfaces et contrats de données
 
@@ -72,6 +74,7 @@ Un événement de bienvenue est ajouté à chaque contexte entreprise/conseiller
 - **AC-NOT-004** : après inscription, le conseiller référent reçoit Nouvelle entreprise inscrite, avec accès au contact/téléphone ; rejouer l’activation ne duplique pas l’événement.
 - **AC-NOT-005** : un lien vers un profil retiré ou un besoin clôturé ne permet plus de le consulter comme profil actif.
 - **AC-NOT-006** : les suggestions ne prennent pas les candidats déjà associés aux Talent Alerts du besoin.
+- **AC-NOT-007** : demander deux fois le relais pour le même besoin ne crée qu’une notification conseiller, datée de la dernière demande.
 
 ## 6. Stratégie de test
 

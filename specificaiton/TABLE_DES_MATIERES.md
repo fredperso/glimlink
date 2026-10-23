@@ -2,7 +2,7 @@
 title: 'Table des matières des spécifications fonctionnelles'
 version: '1.0'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 ---
 
 # Table des matières des spécifications fonctionnelles
@@ -289,4 +289,5 @@ Accès direct aux 16 spécifications consolidées de Glimlink MVP/V1 et à leurs
 - [Traçabilité des exigences et décisions](TRACEABILITE.md).
 - [Journal des demandes](JOURNAL.md).
 - [Archive du PDF V3](SOURCE_V3.md).
+- [Archive du PDF V6 visuel](SOURCE_V6.md).
 - [PDF original](../Glimlink_Specifications_Fonctionnelles_Detaillees_V3.pdf).

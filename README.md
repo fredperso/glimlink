@@ -27,13 +27,14 @@ Le build vérifie TypeScript, génère `dist/` et régénère `maquette.html`. L
 
 ## Parcours à essayer
 
-1. **Entreprise** : Décrire mon besoin → choisir un exemple → préparer le brief → renseigner le lieu → confirmer → découvrir les talents.
-2. Explorer les cartes : glisser à droite pour sélectionner, à gauche pour passer ; annuler un choix si nécessaire. Ouvrir la fiche complète pour lire les correspondances et le calendrier. La grille reste disponible.
-3. Sélectionner des talents et demander une mise en relation ; retrouver la demande dans l'espace conseiller.
-4. **Conseiller** : importer un CV fictif → corriger le brouillon → rattacher une formation → contrôler → publier.
-5. Modifier les jours de cours : les profils rattachés héritent du calendrier et leurs contrôles de présence changent.
-6. Retirer un talent placé : il disparaît des nouveaux résultats et les demandes existantes signalent le retrait.
-7. Explorer l'invitation et la vérification simulée d'e-mail depuis le guide.
+1. **Entreprise** : écrire une phrase libre → Comprendre mon besoin → vérifier la reformulation « Est-ce que j’ai bien compris ? » (3 missions minimum, lieu prérempli, niveaux, présence obligatoire seulement si elle est écrite) → Oui, c’est bien ça.
+2. Découvrir : glisser à droite pour sélectionner, à gauche pour passer (passer n’est pas refuser) ; annuler un choix si nécessaire. Ouvrir Profil & CV pour la lecture personnalisée, le CV anonymisé et le calendrier. Tous les profils montre le même vivier en grille. Aucun score n’est affiché (spécifications V6).
+3. Sélectionner des talents et demander une mise en relation ; retrouver la demande dans l'espace conseiller. Sans profil retenu, demander l’aide du conseiller : le relais apparaît dans ses besoins entreprises.
+4. Mon profil : ajouter un site ; il préremplit le lieu du prochain besoin.
+5. **Conseiller** : importer un CV fictif → corriger le brouillon → rattacher une formation → saisir d’éventuelles observations factuelles ou le signal interne « à valoriser » → contrôler → publier.
+6. Modifier les jours de cours : les profils rattachés héritent du calendrier et leurs contrôles de présence changent.
+7. Retirer un talent placé : il disparaît des nouveaux résultats et les demandes existantes signalent le retrait.
+8. Explorer l'invitation (avec un premier besoin préparé) et la vérification simulée d'e-mail depuis le guide.
 
 ## Structure et documentation
 
@@ -48,6 +49,6 @@ La référence fonctionnelle maintenue est [specificaiton/README.md](specificait
 
 ## Simulations
 
-Les scores, le préremplissage du brief et les propositions de CV sont simulés. Aucun moteur IA, serveur, authentification réelle, extraction de fichier ou envoi d'e-mail n'est connecté. Les demandes et alertes sont locales.
+La pertinence interne (jamais affichée), la reformulation du besoin, la lecture personnalisée et les propositions de CV sont simulées par des règles simples. Aucun moteur IA, serveur, authentification réelle, extraction de fichier ou envoi d'e-mail n'est connecté. Les demandes et alertes sont locales.
 
 Aucune donnée personnelle réelle d'étudiant n'est embarquée. Le cloisonnement est illustré à l'écran ; la production devra garantir les droits et la confidentialité côté serveur et sur les documents.

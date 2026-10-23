@@ -1,14 +1,14 @@
 ---
 title: 'Sélections, demandes et clôture des besoins'
-version: '1.1'
+version: '1.2'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [10, 12, 14, 15, 17, 20]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-23
 tags: [specification, process, glimlink]
 ---
 
@@ -50,6 +50,8 @@ Conserver les profils retenus pour chaque besoin et organiser une demande au con
 | REL-006 | Décision utilisateur               | Ma sélection contient des résumés ouvrant la fiche complète publique et un bouton de demande au conseiller.                  |
 | REL-007 | Décision utilisateur + réalisation | Les suggestions appartiennent au besoin et ne dupliquent pas ses Talent Alerts, ses profils retenus ni passés.               |
 | REL-008 | PDF §12                            | Une fermeture manuelle peut arrêter un besoin devenu sans objet ; conserver son historique.                                  |
+| REL-009 | V6 §10-11                          | Sélection sans plafond et indépendante par besoin ; sans profil retenu, le relais humain est proposé plutôt qu’une conclusion d’absence de candidats. |
+| REL-010 | V6 §9                              | Sélectionner un profil passé depuis Tous les profils ou la fiche le retire des profils passés. |
 
 ## 4. Interfaces et contrats de données
 
@@ -67,6 +69,7 @@ Ma sélection se concentre sur les besoins actifs. Les besoins clôturés garden
 - **AC-REL-004** : une demande reçue laisse le besoin actif ; sa confirmation completed le clôture sans fermer les autres besoins.
 - **AC-REL-005** : après clôture, les compteurs affichent la mise en relation et retirent les alertes compatibles de ce besoin.
 - **AC-REL-006** : un profil retiré n’est pas réactivé par une demande ou un ancien lien.
+- **AC-REL-007** : sélectionner depuis Tous les profils un profil marqué Passé l’ajoute à la sélection et retire la mention Passé.
 
 ## 6. Stratégie de test
 

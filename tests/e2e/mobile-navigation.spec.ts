@@ -16,7 +16,7 @@ test('Mobile — un appui change la vue et Accueil revient en haut', async ({ pa
     expect(await page.evaluate(() => scrollY)).toBe(0);
     const views =
       role === 'company'
-        ? ['needs', 'selections', 'requests', 'alerts', 'home']
+        ? ['needs', 'discover', 'selections', 'home']
         : ['students', 'calendars', 'needs', 'home'];
     for (const view of views) {
       const link = page.locator(`.mobile-nav > a[href="#/${role}/${view}"]`);

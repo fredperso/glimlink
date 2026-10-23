@@ -391,3 +391,404 @@ body .selection-profile .avatar {
 body .selection-profile strong {
   font-weight: 700;
 }
+
+/* ── V6 : découverte sans score, lecture personnalisée, relais humain ─────────── */
+
+/* Trois espaces sur le même vivier */
+.discovery-spaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.discovery-spaces > button,
+.discovery-spaces > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.discovery-spaces > button.active {
+  background: var(--night);
+  border-color: var(--night);
+  color: #fff;
+}
+.discovery-spaces span {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--sage);
+  color: var(--forest);
+  font-size: 0.75rem;
+  text-align: center;
+}
+.discovery-spaces > button.active span {
+  background: #ffffff26;
+  color: #fff;
+}
+.discovery-spaces > a {
+  color: var(--forest);
+}
+.need-switch {
+  min-width: 240px;
+  font-size: 0.8rem;
+}
+@media (max-width: 760px) {
+  .discovery-spaces {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .discovery-spaces > button,
+  .discovery-spaces > a {
+    flex-shrink: 0;
+    padding: 8px 12px;
+  }
+  .need-switch {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* Faits saillants et liens avec les missions */
+.fact-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.fact-chips li {
+  padding: 4px 10px;
+  border: 1px solid #f0d5ce;
+  border-radius: 999px;
+  background: #fff4f0;
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.mission-summary {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.mission-links {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mission-links li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.mission-links li > svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.mission-links strong,
+.mission-links small {
+  display: block;
+}
+.mission-links strong {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.mission-links small {
+  font-size: 0.78rem;
+}
+.mission-links .link-acquired svg,
+.mission-links .link-experience svg {
+  color: #15803d;
+}
+.mission-links .link-acquired small,
+.mission-links .link-experience small {
+  color: #166534;
+}
+.mission-links .link-learning svg,
+.mission-links .link-learning small {
+  color: #1e40af;
+}
+.mission-links .link-unknown svg,
+.mission-links .link-unknown small {
+  color: var(--muted);
+}
+.deck-tile .deck-checks {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--line);
+}
+
+/* Cartes de la grille : états Passé / Dans ma sélection */
+.card-state {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.card-state.state-selected {
+  background: var(--brand-gradient);
+  color: #fff;
+}
+.card-state.state-passed {
+  background: #ffffffe6;
+  color: var(--muted);
+}
+body .talent-art .art-label {
+  top: 14px;
+  bottom: auto;
+  left: 14px;
+  background: #6c4ad6;
+}
+.talent-card.is-passed .talent-art {
+  filter: saturate(0.55);
+}
+
+/* Relais humain */
+.adviser-relay {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-top: 1.5rem;
+  padding: 20px 22px;
+  border: 1px solid #e4d8fb;
+  border-radius: 22px;
+  background: #f7f3ff;
+  text-align: left;
+}
+.adviser-relay .adviser-avatar {
+  flex-shrink: 0;
+}
+.adviser-relay h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.3rem;
+}
+.adviser-relay p {
+  margin-bottom: 0.8rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.adviser-relay .relay-sent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: #166534;
+  font-weight: 600;
+}
+.deck-column .adviser-relay {
+  margin-top: 1rem;
+}
+.relay-request {
+  margin: 0.75rem 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #fff4e5;
+  color: #7c2d12;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.relay-request strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.relay-request ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+}
+
+/* Fiche profil : onglets et lecture Glimlink */
+.profile-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 1rem 0 1.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.profile-tabs button {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.profile-tabs button.active {
+  background: var(--night);
+  border-color: var(--night);
+  color: #fff;
+}
+.declic-note {
+  margin-top: 0.75rem;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #f3edff;
+  color: #4c2f8f;
+}
+.reading-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 1rem 0;
+}
+.reading-columns > section {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+.reading-columns h4 {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+.reading-columns p {
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+@media (max-width: 760px) {
+  .reading-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Reformulation du besoin et profil entreprise : listes éditables */
+.mission-list ol {
+  display: grid;
+  gap: 8px;
+  margin: 0.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+.mission-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+body .mission-list li input {
+  flex: 1;
+  margin-top: 0;
+}
+.mission-list .icon-button {
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+}
+.presence-constraint .notice {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.constraint-detected {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  padding: 12px 14px;
+  border: 1px solid #fde68a;
+  border-radius: 16px;
+  background: #fffbeb;
+}
+.constraint-detected > svg {
+  flex-shrink: 0;
+  color: #b45309;
+}
+.constraint-detected p {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.brief-period,
+.brief-more {
+  margin-top: 0.5rem;
+}
+.brief-period summary,
+.brief-more summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--forest);
+}
+.brief-more > * + * {
+  margin-top: 1rem;
+}
+.human-knowledge {
+  margin: 1rem 0;
+  padding: 14px 16px;
+  border: 1px dashed #c4b5fd;
+  border-radius: 16px;
+  background: #faf7ff;
+}
+.human-knowledge .checkbox-label {
+  margin-top: 0.75rem;
+}
+.company-profile h2 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+.company-profile .mission-list {
+  margin-top: 1.25rem;
+}
+
+/* Menu « Plus » de l’espace entreprise */
+.mobile-more-button > span {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.mobile-more-button i {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  display: grid;
+  place-items: center;
+  min-width: 15px;
+  height: 15px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  background: var(--forest);
+  color: #fff;
+  font-size: 8px;
+  font-style: normal;
+}
+body .day-toggles input[type='radio'] {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--forest);
+}
+@media (max-width: 760px) {
+  body .mobile-nav .mobile-more-button.active,
+  body .mobile-nav .mobile-more-button[aria-expanded='true'] {
+    background: none;
+    color: var(--forest);
+    font-weight: 700;
+  }
+  body .mobile-nav .mobile-more-button.active > span,
+  body .mobile-nav .mobile-more-button[aria-expanded='true'] > span {
+    width: 52px;
+    height: 30px;
+    border-radius: 999px;
+    background: var(--brand-gradient);
+    color: #fff;
+  }
+}

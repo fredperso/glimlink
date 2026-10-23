@@ -79,6 +79,13 @@ if not pdf.exists() or hashlib.sha256(pdf.read_bytes()).hexdigest() not in sourc
     errors.append('Empreinte du PDF absente ou différente de l’archive')
 if {int(value) for value in re.findall(r'^## (\d+)\. ', source, re.M)} != set(range(1,21)):
     errors.append('Archive source : sections 1 à 20 incomplètes')
+# Archive V6 (USR-23) : empreinte et sections 1 à 22.
+source_v6 = (ROOT / 'SOURCE_V6.md').read_text() if (ROOT / 'SOURCE_V6.md').exists() else ''
+pdf_v6 = REPOSITORY / 'Glimlink_Specifications_Fonctionnelles_Detaillees_V6_Visuelle-1.pdf'
+if not pdf_v6.exists() or hashlib.sha256(pdf_v6.read_bytes()).hexdigest() not in source_v6:
+    errors.append('Empreinte du PDF V6 absente ou différente de SOURCE_V6.md')
+if {int(value) for value in re.findall(r'^## (\d+)\. ', source_v6, re.M)} != set(range(1, 23)):
+    errors.append('Archive V6 : sections 1 à 22 incomplètes')
 recipe = ROOT / 'spec-process-recette.md'
 if recipe.exists():
     text = recipe.read_text()

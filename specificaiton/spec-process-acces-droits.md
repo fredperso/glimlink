@@ -1,14 +1,14 @@
 ---
 title: 'Accès, invitation et droits'
-version: '1.2'
+version: '1.3'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [2, 3, 15, 16, 17]
-maquette_revision: travail-local-USR-17
+maquette_revision: travail-local-USR-23
 tags: [specification, process, glimlink]
 ---
 
@@ -50,6 +50,8 @@ Définir les acteurs, l’invitation entreprise et les règles de visibilité en
 | SEC-ACC-002 | PDF §16                      | Authentifier et revérifier autorisation/disponibilité à l’ouverture des liens.                                                 |
 | ACC-005     | Demande utilisateur          | Le conseiller peut voir et modifier les coordonnées personnelles des candidats de son vivier.                                  |
 | ACC-006     | Demande utilisateur du 08/10 | L’invitation rattache l’entreprise à son conseiller référent ; son inscription alerte ce conseiller pour un premier appel.     |
+| ACC-007     | V6 §2, §16                   | Architecture cible : Organisation → Campus → Écoles/Marques → Formations → Talents. Un même campus peut porter des filières concurrentes : on partage l’opportunité, pas les viviers. |
+| ACC-008     | V6 §13                       | Un conseiller ne voit jamais automatiquement les CV d’autres conseillers ou marques. |
 
 ## 4. Interfaces et contrats de données
 
@@ -70,6 +72,7 @@ USR-17 : l’administrateur gère les formations/plannings et ajoute les utilisa
 - **AC-ACC-003** : un changement de partenaire ne mélange pas ses besoins, demandes et alertes.
 - **AC-ACC-004** : un conseiller hors périmètre ne peut consulter/modifier une fiche.
 - **AC-ACC-005** : une ancienne notification ne réactive pas un profil retiré ou un besoin clôturé.
+- **AC-ACC-006** : un profil d’un autre campus n’apparaît ni dans le vivier conseiller ni dans la découverte entreprise, y compris dans Tous les profils.
 
 ## 6. Stratégie de test
 

@@ -1,7 +1,13 @@
+import { useApp } from '../context.tsx';
 import type { Need } from '../domain/model.ts';
 import { dateLabel } from './ui.tsx';
 
+export const contractLabel = (contract: string) =>
+  contract === 'Alternance' ? 'Alternance / CPRO' : contract;
+
 export default function ValidatedBrief({ need }: { need: Need }) {
+  const { store } = useApp();
+  const training = store.calendars.find((calendar) => calendar.id === need.suggestedTrainingId);
   return (
     <div className="validated-brief">
       <h3>Missions confirmées</h3>
@@ -16,22 +22,40 @@ export default function ValidatedBrief({ need }: { need: Need }) {
         <div>
           <dt>Contrat et lieu</dt>
           <dd>
-            {need.contract} · {need.location}
+            {contractLabel(need.contract)} · {need.location}
           </dd>
         </div>
         <div>
-          <dt>Période</dt>
+          <dt>Disponibilité</dt>
           <dd>
+            {need.availability === 'next-intake' ? 'Prochaine rentrée' : 'Besoin immédiat'} ·{' '}
             {dateLabel(need.start)} – {dateLabel(need.end)}
           </dd>
         </div>
         <div>
-          <dt>Présence obligatoire</dt>
-          <dd>{need.requiredDays.join(', ') || 'Aucun jour imposé'}</dd>
+          <dt>Niveaux acceptés</dt>
+          <dd>{need.levels?.join(', ') || 'Tous niveaux'}</dd>
         </div>
         <div>
-          <dt>Permis B</dt>
-          <dd>{need.licenseRequired ? 'Obligatoire' : 'Non obligatoire'}</dd>
+          <dt>Formation suggérée</dt>
+          <dd>{training?.title.split(' · ')[0] ?? 'Aucune préférence'}</dd>
+        </div>
+        <div>
+          <dt>Présence obligatoire</dt>
+          <dd>
+            {need.requiredDays.join(', ') || 'Aucune : le calendrier n’est pas utilisé'}
+          </dd>
+        </div>
+        <div>
+          <dt>Prérequis</dt>
+          <dd>
+            {[
+              need.licenseRequired ? 'Permis B obligatoire' : '',
+              need.language ? `${need.language} ${need.languageLevel ?? ''}`.trim() : '',
+            ]
+              .filter(Boolean)
+              .join(' · ') || 'Aucun'}
+          </dd>
         </div>
         <div>
           <dt>Mobilité demandée</dt>

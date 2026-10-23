@@ -23,17 +23,18 @@ import {
   publishStudent,
   requestSelection,
   saveDraft,
-  scoreFor,
   visibleStudents,
   type Student,
   type StudentDetails,
 } from '../domain/model.ts';
 import { initialStore } from '../domain/fixtures.ts';
+import { profileReading } from '../domain/reading.ts';
+import { proposeBrief } from '../domain/brief.ts';
 import { Avatar, Badge, Button, Empty, Icon, Modal, Week, dateLabel } from './ui.tsx';
 
 function Profile({ studentId, needId }: { studentId: string; needId: string }) {
   const { store, setStore, openModal, closeModal, notify } = useApp();
-  const [cv, setCv] = useState(false);
+  const [tab, setTab] = useState<'overview' | 'cv' | 'calendar'>('overview');
   const need = store.needs.find((n) => n.id === needId);
   const student = need && visibleStudents(store, need).find((s) => s.id === studentId);
   if (!need || !student)
@@ -48,7 +49,13 @@ function Profile({ studentId, needId }: { studentId: string; needId: string }) {
   const data = student.published!;
   const calendar = store.calendars.find((c) => c.id === data.trainingId);
   const checks = checkAvailability(data, calendar, need);
+  const reading = profileReading(student, need, store.calendars);
   const selected = need.selected.includes(student.id);
+  const tabs = [
+    ['overview', 'Vue d’ensemble'],
+    ['cv', 'CV anonymisé'],
+    ['calendar', 'Calendrier de formation'],
+  ] as const;
   return (
     <Modal title="Le talent, au-delà du CV" onClose={closeModal} wide>
       <div className="profile-header">
@@ -56,7 +63,7 @@ function Profile({ studentId, needId }: { studentId: string; needId: string }) {
         <div>
           <div className="profile-title">
             <h3>{data.firstName}</h3>
-            <Badge tone="green">Fiche validée</Badge>
+            <Badge tone="green">Fiche validée par le centre</Badge>
           </div>
           <p>{calendar?.title}</p>
           <span>
@@ -64,114 +71,158 @@ function Profile({ studentId, needId }: { studentId: string; needId: string }) {
             {data.location} · {data.mobility || 'Mobilité à vérifier'}
           </span>
         </div>
-        <span className="profile-score">
-          {scoreFor(student, need)}
-          <small>% de compatibilité</small>
-        </span>
       </div>
-      <section className="match-explanation">
-        <h3>
-          <Icon name="spark" /> Pourquoi ça matche ?
-        </h3>
-        <p>
-          {student.discoveryReason ??
-            `Les expériences et compétences validées de ${data.firstName} apportent des points d’appui pour les missions de votre brief.`}
-        </p>
-        <SkillList skills={data.skills} calendars={store.calendars} />
-        <ul className="check-list">
-          {checks.map((check, i) => (
-            <li key={i} className={`check-${check.kind}`}>
-              <Icon name={check.kind === 'ok' ? 'check' : 'alert'} size={17} />
-              <span>{check.text}</span>
-              <Badge tone={check.kind === 'ok' ? 'green' : 'warning'}>
-                {check.kind === 'ok'
+      <div className="profile-tabs" role="tablist" aria-label="Rubriques du profil">
+        {tabs.map(([id, text]) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            id={`profile-tab-${id}`}
+            aria-selected={tab === id}
+            aria-controls={`profile-panel-${id}`}
+            className={tab === id ? 'active' : ''}
+            onClick={() => setTab(id)}
+          >
+            {text}
+          </button>
+        ))}
+      </div>
+      {tab === 'overview' && (
+        <div role="tabpanel" id="profile-panel-overview" aria-labelledby="profile-tab-overview">
+          <section className="match-explanation">
+            <h3>
+              <Icon name="spark" /> Pourquoi ce profil pour votre besoin ?
+            </h3>
+            <p>{reading.why}</p>
+            {reading.declic && (
+              <p className="declic-note">
+                <strong>Déclic Glimlink</strong> {reading.declic}
+              </p>
+            )}
+          </section>
+          <div className="reading-columns">
+            <section>
+              <h4>Ce que la fiche prouve</h4>
+              <SkillList
+                skills={data.skills.filter((skill) => skill.status === 'acquired')}
+                calendars={store.calendars}
+              />
+              <p>{data.experience}</p>
+            </section>
+            <section>
+              <h4>Ce qui peut être transféré ou est en cours</h4>
+              {reading.transferable.length ? (
+                <SkillList
+                  skills={data.skills.filter((skill) => skill.status === 'learning')}
+                  calendars={store.calendars}
+                />
+              ) : (
+                <p className="micro">Aucune compétence en cours d’acquisition renseignée.</p>
+              )}
+              <p className="micro">
+                Une piste transférable n’est jamais présentée comme une compétence certaine.
+              </p>
+            </section>
+          </div>
+          <section className="profile-section">
+            <h3>
+              <Icon name="brief" /> En lien avec vos missions
+            </h3>
+            <ul className="mission-links">
+              {reading.missions.map((item) => (
+                <li key={item.mission} className={`link-${item.status}`}>
+                  <Icon name={item.status === 'unknown' ? 'help' : 'check'} size={15} />
+                  <span>
+                    <strong>{item.mission}</strong>
+                    <small>{item.label}</small>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {checks.length > 0 && (
+              <ul className="check-list">
+                {checks.map((check, i) => (
+                  <li key={i} className={`check-${check.kind}`}>
+                    <Icon name={check.kind === 'ok' ? 'check' : 'alert'} size={17} />
+                    <span>{check.text}</span>
+                    <Badge tone={check.kind === 'ok' ? 'green' : 'warning'}>
+                      {check.kind === 'ok'
+                        ? 'Renseigné'
+                        : check.kind === 'unknown'
+                          ? 'À vérifier'
+                          : 'Conflit'}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="profile-facts">
+              <span>
+                <strong>Disponibilité</strong>
+                {dateLabel(data.availableFrom)}
+              </span>
+              <span>
+                <strong>Permis B</strong>
+                {data.license === 'yes'
                   ? 'Renseigné'
-                  : check.kind === 'unknown'
-                    ? 'À vérifier'
-                    : 'Conflit'}
-              </Badge>
-            </li>
-          ))}
-        </ul>
-        <p className="micro">
-          Score illustratif pour ce besoin, sans valeur de probabilité de recrutement. La
-          disponibilité reste à confirmer.
-        </p>
-      </section>
-      <section className="profile-section">
-        <h3>
-          <Icon name="calendar" /> Son rythme, votre quotidien
-        </h3>
-        {calendar && (
-          <CalendarExplorer calendar={calendar} initialDate={need.start} availability={data} />
-        )}
-        <details>
-          <summary>Rythme hebdomadaire de référence</summary>
-          <Week
-            calendar={calendar}
-            required={need.requiredDays}
-            unavailable={data.unavailableDays}
-          />
-        </details>
-        <div className="profile-facts">
-          <span>
-            <strong>Disponibilité</strong>
-            {dateLabel(data.availableFrom)}
-          </span>
-          <span>
-            <strong>Permis B</strong>
-            {data.license === 'yes'
-              ? 'Renseigné'
-              : data.license === 'no'
-                ? 'Non détenu'
-                : 'Non renseigné'}
-          </span>
-          <span>
-            <strong>Période du calendrier</strong>
-            {calendar ? `${dateLabel(calendar.start)} – ${dateLabel(calendar.end)}` : 'À vérifier'}
-          </span>
+                  : data.license === 'no'
+                    ? 'Non détenu'
+                    : 'Non renseigné'}
+              </span>
+              <span>
+                <strong>Mobilité</strong>
+                {data.mobility || 'À vérifier'}
+              </span>
+            </div>
+            <p className="micro">
+              Lecture simulée à partir de la fiche validée. L’ordre de présentation reste interne :
+              aucun score n’est affiché. La disponibilité reste à confirmer avec le conseiller.
+            </p>
+          </section>
         </div>
-      </section>
-      <section className="profile-section">
-        <h3>
-          <Icon name="brief" /> Une expérience à mobiliser
-        </h3>
-        <p>{data.experience}</p>
-      </section>
-      <section className="counsellor-note">
-        <Icon name="message" />
-        <div>
-          <strong>Le regard de {student.validatedBy || 'votre conseiller'}</strong>
-          <p>{data.note || 'Échangez avec votre conseillère pour en savoir plus.'}</p>
-          <small>
-            Dernière validation : {dateLabel(student.validatedAt ?? '')} ·{' '}
-            {student.validatedBy || 'Validateur non renseigné'}
-          </small>
-        </div>
-      </section>
-      <section className="profile-section">
-        <button className="button button-secondary" onClick={() => setCv(!cv)} aria-expanded={cv}>
-          <Icon name="file" />
-          {cv ? 'Masquer le CV de démonstration' : 'Consulter le CV de démonstration'}
-        </button>
-        {cv && (
+      )}
+      {tab === 'cv' && (
+        <div role="tabpanel" id="profile-panel-cv" aria-labelledby="profile-tab-cv">
           <div className="demo-cv">
-            <Badge>Version entreprise · Exemple fictif</Badge>
+            <Badge>CV anonymisé · Exemple fictif</Badge>
             <h3>{data.firstName}</h3>
             <p>
               {calendar?.title} · {data.location}
             </p>
-            <h4>Compétences validées</h4>
+            <h4>Compétences</h4>
             <SkillList skills={data.skills} calendars={store.calendars} />
             <h4>Expérience</h4>
             <p>{data.experience}</p>
             <p className="micro">
-              Les informations personnelles sont absentes de cet exemple. Le traitement de vrais CV
-              devra être réalisé et vérifié côté serveur.
+              Nom, téléphone, e-mail et adresse précise sont masqués. L’anonymisation de vrais CV
+              devra être réalisée et vérifiée côté serveur.
             </p>
           </div>
-        )}
-      </section>
+        </div>
+      )}
+      {tab === 'calendar' && (
+        <div role="tabpanel" id="profile-panel-calendar" aria-labelledby="profile-tab-calendar">
+          <section className="profile-section">
+            <p className="micro">
+              {need.requiredDays.length
+                ? `Votre présence obligatoire (${need.requiredDays.join(', ')}) est comparée à ce calendrier.`
+                : 'Vous n’avez exprimé aucune présence obligatoire : ce calendrier n’a pas servi à la recherche et reste consultable.'}
+            </p>
+            {calendar && (
+              <CalendarExplorer calendar={calendar} initialDate={need.start} availability={data} />
+            )}
+            <details>
+              <summary>Rythme hebdomadaire de référence</summary>
+              <Week
+                calendar={calendar}
+                required={need.requiredDays}
+                unavailable={data.unavailableDays}
+              />
+            </details>
+          </section>
+        </div>
+      )}
       <div className="modal-footer">
         <span>
           <Icon name="shield" size={16} /> La mise en relation passe par Mathilde.
@@ -187,6 +238,7 @@ function Profile({ studentId, needId }: { studentId: string; needId: string }) {
                       selected: selected
                         ? n.selected.filter((id) => id !== student.id)
                         : [...n.selected, student.id],
+                      passed: n.passed.filter((id) => id !== student.id),
                     }
                   : n,
               ),
@@ -304,6 +356,7 @@ function StudentEditor({ studentId }: { studentId: string }) {
   const [error, setError] = useState('');
   const [withdraw, setWithdraw] = useState(false);
   const [proposeCv, setProposeCv] = useState(false);
+  const [highlight, setHighlight] = useState(!!student?.highlight);
   if (!student || !draft || role !== 'adviser')
     return (
       <Modal title="Fiche inaccessible" onClose={closeModal}>
@@ -319,7 +372,9 @@ function StudentEditor({ studentId }: { studentId: string }) {
   const save = () => {
     setStore((prev) => ({
       ...prev,
-      students: prev.students.map((s) => (s.id === studentId ? saveDraft(s, draft) : s)),
+      students: prev.students.map((s) =>
+        s.id === studentId ? { ...saveDraft(s, draft), highlight } : s,
+      ),
     }));
     notify('Brouillon enregistré. La fiche publiée reste inchangée.');
   };
@@ -341,7 +396,7 @@ function StudentEditor({ studentId }: { studentId: string }) {
           ...prev,
           students: prev.students.map((s) =>
             s.id === studentId
-              ? saveDraft(s, { ...draft, skills: normalizeSkills(draft.skills) })
+              ? { ...saveDraft(s, { ...draft, skills: normalizeSkills(draft.skills) }), highlight }
               : s,
           ),
         },
@@ -451,7 +506,7 @@ function StudentEditor({ studentId }: { studentId: string }) {
                     license: 'Permis',
                     availableFrom: 'Disponibilité',
                     unavailableDays: 'Indisponibilités',
-                    note: 'Commentaire',
+                    note: 'Observations',
                   };
                   const display = (value: unknown) => {
                     if (key === 'license')
@@ -573,16 +628,37 @@ function StudentEditor({ studentId }: { studentId: string }) {
             onChange={(e) => patch({ experience: e.target.value })}
           />
         </label>
-        <label>
-          Commentaire destiné aux entreprises
-          <textarea
-            name="note"
-            autoComplete="off"
-            rows={2}
-            value={draft.note}
-            onChange={(e) => patch({ note: e.target.value })}
-          />
-        </label>
+        <fieldset className="human-knowledge">
+          <legend>Connaissance humaine (facultatif)</legend>
+          <label>
+            Observations factuelles après entretien
+            <textarea
+              name="note"
+              autoComplete="off"
+              rows={2}
+              value={draft.note}
+              placeholder="Ex. : aisance orale observée, projet professionnel construit, écoute…"
+              onChange={(e) => patch({ note: e.target.value })}
+            />
+            <small>
+              Uniquement des faits observés. Glimlink les reprend dans une formulation neutre, sans
+              rubrique dédiée ni qualité supposée.
+            </small>
+          </label>
+          <label className="checkbox-label">
+            <input
+              name="highlight"
+              type="checkbox"
+              checked={highlight}
+              onChange={(e) => setHighlight(e.target.checked)}
+            />{' '}
+            Profil à valoriser (signal interne)
+          </label>
+          <small className="micro">
+            À utiliser exceptionnellement. Le signal reste invisible pour l’entreprise ; il compte
+            seulement dans l’ordre de présentation.
+          </small>
+        </fieldset>
         <div className="new-cv">
           <div>
             <Icon name="file" />
@@ -638,7 +714,7 @@ function StudentEditor({ studentId }: { studentId: string }) {
           />
           <span>
             <strong>J’ai vérifié les informations à publier.</strong>
-            <small>Compétences, disponibilité, calendrier et commentaire sont contrôlés.</small>
+            <small>Compétences, disponibilité, calendrier et observations sont contrôlés.</small>
           </span>
         </label>
         {error && (
@@ -893,8 +969,22 @@ function Invitation({
             const data = new FormData(e.currentTarget);
             const id = createId();
             const name = String(data.get('companyName') ?? '').trim();
+            const firstNeed = String(data.get('firstNeed') ?? '').trim();
             setStore((prev) => ({
               ...prev,
+              // Premier besoin préparé par le conseiller : l’entreprise confirme la reformulation.
+              needs:
+                firstNeed.length >= 20
+                  ? [
+                      proposeBrief(firstNeed, {
+                        companyId: id,
+                        sites: [],
+                        places: LOCATION_CHOICES,
+                        calendars: prev.calendars,
+                      }),
+                      ...prev.needs,
+                    ]
+                  : prev.needs,
               companies: [
                 ...getCompanies(prev),
                 {
@@ -954,6 +1044,19 @@ function Invitation({
                 <Select name="school">
                   <option>Atelier Campus · Montpellier</option>
                 </Select>
+              </label>
+              <label>
+                Premier besoin (facultatif)
+                <textarea
+                  name="firstNeed"
+                  rows={3}
+                  maxLength={2000}
+                  placeholder="Les missions évoquées avec l’entreprise, avec ses mots…"
+                />
+                <small>
+                  Glimlink prépare une reformulation que l’entreprise vérifiera et confirmera avant
+                  toute recherche.
+                </small>
               </label>
               <p className="micro">
                 Un utilisateur par entreprise en V1. Invitation de démonstration, sans envoi.
@@ -1136,7 +1239,7 @@ function Help() {
               <Icon name="spark" />
               <span>
                 <strong>Créer et valider un besoin</strong>
-                <small>Langage naturel, brief modifiable et confirmation.</small>
+                <small>Phrase libre, reformulation modifiable et confirmation.</small>
               </span>
               <Icon name="arrow" />
             </button>
@@ -1242,8 +1345,9 @@ function Help() {
       <details className="prototype-details">
         <summary>Ce que simule cette maquette</summary>
         <p>
-          Données fictives et stockage local au navigateur. Scores prédéfinis par profil et type de
-          besoin, préremplissage du brief simulé, aucun moteur IA, aucun envoi d’e-mail, aucune
+          Données fictives et stockage local au navigateur. Pertinence interne prédéfinie par
+          profil et type de besoin, jamais affichée ; reformulation et lecture personnalisée
+          simulées par des règles simples ; aucun moteur IA, aucun envoi d’e-mail, aucune
           authentification réelle, aucune analyse de CV.
         </p>
         <p>

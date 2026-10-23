@@ -1,14 +1,14 @@
 ---
 title: 'Gouvernance et mise à jour continue'
-version: '1.1'
+version: '1.2'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [18, 20]
-maquette_revision: d6f296f
+maquette_revision: travail-local-USR-23
 tags: [specification, process, glimlink]
 ---
 
@@ -54,6 +54,7 @@ Faire de `specificaiton/` la référence Markdown maintenue du produit V1. Cette
 | GOV-006 | Maintenabilité                    | Mettre à jour les critères de recette, liens, métadonnées et écarts en même temps que les règles.                                                                                                                                     |
 | GOV-007 | Fidélité au PDF                   | SOURCE_V3.md et le PDF demeurent des archives de référence, sans y insérer les demandes ultérieures.                                                                                                                                  |
 | GOV-008 | Demande utilisateur USR-19 | Chaque spécification thématique comporte une table des matières cliquable vers ses rubriques ; la table globale relie tous les documents et leurs rubriques. Les liens sont actualisés lors d’un changement de titre ou de structure. |
+| GOV-009 | Demande utilisateur USR-23 | Le PDF V6 visuel est archivé dans `SOURCE_V6.md` avec son empreinte ; il prévaut sur la V3 lorsqu’ils diffèrent. Les exigences touchées citent leur source V6 ; `SOURCE_V3.md` reste conservée. |
 
 La règle GOV-001 est aussi inscrite dans `AGENTS.md`. Une mise à jour purement documentaire ne nécessite pas de reconstruire `maquette.html`. Une évolution de la maquette implique la documentation correspondante dans la même livraison.
 
@@ -71,6 +72,7 @@ Ordre d’interprétation : demande explicite actuelle → décisions utilisateu
 - **AC-GOV-004** : aucune contradiction connue entre spécifications thématiques et dernière décision utilisateur ne reste masquée par une note historique.
 
 - **AC-GOV-005** : la table globale couvre les 16 spécifications maintenues ; chaque table locale donne accès aux 11 rubriques dans leur ordre, et tous les liens pointent vers des titres existants. Le PDF et SOURCE_V3.md restent inchangés.
+- **AC-GOV-006** : `spec:check` vérifie l’empreinte du PDF V6 dans `SOURCE_V6.md`.
 
 ## 6. Stratégie de test
 

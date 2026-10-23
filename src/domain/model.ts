@@ -1,9 +1,11 @@
 import { calendarDay, datesBetween, weekdayForDate } from './calendar.ts';
-import { normalizeSkills, type StudentSkill, type TrainingSkill } from './skills.ts';
+import { normalizeSkills, skillKey, type StudentSkill, type TrainingSkill } from './skills.ts';
 import { partnerCompanies, type PartnerCompany } from './partners.ts';
 
 export const DAYS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'] as const;
 export type Day = (typeof DAYS)[number];
+export const LEVELS = ['Bac+2', 'Bac+3', 'Bac+5'] as const;
+export type Level = (typeof LEVELS)[number];
 // getRandomValues fonctionne aussi sur une prévisualisation HTTP en réseau local.
 export function createId(): string {
   return typeof crypto.randomUUID === 'function'
@@ -65,6 +67,8 @@ export type Student = {
   adviserId?: string;
   avatar: number;
   discoveryReason?: string;
+  // Signal interne « profil à valoriser » du conseiller : jamais projeté vers l’entreprise.
+  highlight?: boolean;
   proposal?: string[];
   personalDetails?: StudentPersonalDetails;
 };
@@ -105,6 +109,15 @@ export type Need = {
   validated: boolean;
   selected: string[];
   passed: string[];
+  // Précisions V6 du brief : niveaux acceptés, langue requise, disponibilité et formation suggérée.
+  levels?: Level[];
+  language?: string;
+  languageLevel?: string;
+  availability?: 'immediate' | 'next-intake';
+  suggestedTrainingId?: string;
+  // Relais humain demandé par l’entreprise lorsqu’elle ne trouve pas le profil recherché.
+  helpRequestedAt?: string;
+  helpNotificationRead?: boolean;
 };
 export type Request = {
   id: string;
@@ -147,52 +160,53 @@ export function checkAvailability(
     checks.push({ kind: 'unknown', text: 'Date de disponibilité à vérifier' });
   else if (details.availableFrom > need.start)
     checks.push({ kind: 'conflict', text: 'Disponible après la date de début souhaitée' });
-  const requestedDates = datesBetween(need.start, need.end).filter((value) => {
-    const day = weekdayForDate(value);
-    return day !== null && need.requiredDays.includes(day);
-  });
-  const conflicts = calendar
-    ? requestedDates.filter((value) => calendarDay(calendar, value) === 'course')
-    : [];
-  const unknownDates = calendar
-    ? requestedDates.filter((value) =>
-        ['unknown', 'outside'].includes(calendarDay(calendar, value)),
-      )
-    : requestedDates;
-  if (
-    !calendar ||
-    calendar.start > need.start ||
-    calendar.end < need.end ||
-    unknownDates.length ||
-    (calendar.mode !== 'weekly' && !requestedDates.length)
-  ) {
-    checks.push({
-      kind: 'unknown',
-      text:
-        calendar?.mode === 'variable'
-          ? 'Rythme variable : présence à vérifier sur la période'
-          : 'Calendrier absent ou incomplet sur la période',
+  // V6 §6 : sans jour de présence obligatoire confirmé, le calendrier n’intervient pas.
+  if (need.requiredDays.length) {
+    const requestedDates = datesBetween(need.start, need.end).filter((value) => {
+      const day = weekdayForDate(value);
+      return day !== null && need.requiredDays.includes(day);
     });
-  }
-  if (conflicts.length) {
-    const days = [...new Set(conflicts.map((value) => weekdayForDate(value)!))];
-    checks.push({
-      kind: 'conflict',
-      text: `Cours le ${days.map((day) => day.toLowerCase()).join(' et le ')}${calendar?.exceptions?.length ? ` sur ${conflicts.length} date(s) de la période` : ''}`,
-    });
-  } else if (
-    calendar &&
-    !unknownDates.length &&
-    calendar.start <= need.start &&
-    calendar.end >= need.end &&
-    (calendar.mode === 'weekly' || requestedDates.length)
-  ) {
-    checks.push({
-      kind: 'ok',
-      text: need.requiredDays.length
-        ? `Pas de conflit scolaire le ${need.requiredDays.map((day) => day.toLowerCase()).join(' et le ')}`
-        : 'Calendrier scolaire renseigné',
-    });
+    const conflicts = calendar
+      ? requestedDates.filter((value) => calendarDay(calendar, value) === 'course')
+      : [];
+    const unknownDates = calendar
+      ? requestedDates.filter((value) =>
+          ['unknown', 'outside'].includes(calendarDay(calendar, value)),
+        )
+      : requestedDates;
+    if (
+      !calendar ||
+      calendar.start > need.start ||
+      calendar.end < need.end ||
+      unknownDates.length ||
+      (calendar.mode !== 'weekly' && !requestedDates.length)
+    ) {
+      checks.push({
+        kind: 'unknown',
+        text:
+          calendar?.mode === 'variable'
+            ? 'Rythme variable : présence à vérifier sur la période'
+            : 'Calendrier absent ou incomplet sur la période',
+      });
+    }
+    if (conflicts.length) {
+      const days = [...new Set(conflicts.map((value) => weekdayForDate(value)!))];
+      checks.push({
+        kind: 'conflict',
+        text: `Cours le ${days.map((day) => day.toLowerCase()).join(' et le ')}${calendar?.exceptions?.length ? ` sur ${conflicts.length} date(s) de la période` : ''}`,
+      });
+    } else if (
+      calendar &&
+      !unknownDates.length &&
+      calendar.start <= need.start &&
+      calendar.end >= need.end &&
+      (calendar.mode === 'weekly' || requestedDates.length)
+    ) {
+      checks.push({
+        kind: 'ok',
+        text: `Pas de conflit scolaire le ${need.requiredDays.map((day) => day.toLowerCase()).join(' et le ')}`,
+      });
+    }
   }
   const unavailable = need.requiredDays.filter((day) => details.unavailableDays.includes(day));
   if (unavailable.length)
@@ -208,7 +222,30 @@ export function checkAvailability(
           ? { kind: 'conflict', text: 'Permis B non détenu' }
           : { kind: 'unknown', text: 'Permis non renseigné : à vérifier' },
     );
+  if (need.levels?.length) {
+    const level = trainingLevel(calendar);
+    if (!level) checks.push({ kind: 'unknown', text: 'Niveau de formation à vérifier' });
+    else if (!need.levels.includes(level))
+      checks.push({ kind: 'conflict', text: `Niveau ${level} hors des niveaux acceptés` });
+  }
+  if (need.language) {
+    const known = details.skills.some((skill) => skillKey(skill.name) === skillKey(need.language!));
+    checks.push(
+      known
+        ? { kind: 'ok', text: `${need.language} renseigné sur la fiche` }
+        : { kind: 'unknown', text: `${need.language} : niveau à vérifier avec le conseiller` },
+    );
+  }
   return checks;
+}
+
+// Règle de maquette : le niveau se déduit de l’intitulé tant que le référentiel n’existe pas.
+export function trainingLevel(calendar?: Pick<Calendar, 'title'>): Level | undefined {
+  const title = calendar?.title ?? '';
+  if (/\b(master|mba|mastère)\b/i.test(title)) return 'Bac+5';
+  if (/\b(bachelor|licence|but)\b/i.test(title)) return 'Bac+3';
+  if (/\b(bts|dut|titre pro)\b/i.test(title)) return 'Bac+2';
+  return undefined;
 }
 
 export function visibleStudents(store: Store, need: Need): Student[] {
@@ -323,6 +360,47 @@ const demoScores: Record<string, number[]> = {
 };
 export function scoreFor(student: Student, need: Need): number {
   return demoScores[student.id]?.[need.contract === 'Stage' ? 1 : 0] ?? 74;
+}
+
+// Pertinence interne (V6 §7) : elle ordonne la découverte et n’est jamais affichée.
+export function relevance(store: Store, student: Student, need: Need): number {
+  const checks = checkAvailability(
+    student.published!,
+    store.calendars.find((c) => c.id === student.published!.trainingId),
+    need,
+  );
+  // Le signal conseiller est lu sur la fiche source, jamais sur la projection entreprise.
+  const highlight = store.students.find((item) => item.id === student.id)?.highlight;
+  return (
+    scoreFor(student, need) -
+    25 * checks.filter((c) => c.kind === 'conflict').length -
+    8 * checks.filter((c) => c.kind === 'unknown').length +
+    (highlight ? 3 : 0)
+  );
+}
+
+// Les évidences d’abord : à pertinence égale, un profil Déclic passe après un profil direct
+// et il ne devance jamais un profil objectivement plus proche. Aucun profil n’est exclu.
+export function discoveryOrder(store: Store, need: Need): Student[] {
+  return visibleStudents(store, need)
+    .map((student) => ({ student, score: relevance(store, student, need) }))
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        Number(!!a.student.discoveryReason) - Number(!!b.student.discoveryReason),
+    )
+    .map((item) => item.student);
+}
+
+export function requestAdviserHelp(store: Store, needId: string, date = new Date().toISOString()): Store {
+  const need = store.needs.find((item) => item.id === needId);
+  if (!need || need.status !== 'active' || !need.validated) return store;
+  return {
+    ...store,
+    needs: store.needs.map((item) =>
+      item.id === needId ? { ...item, helpRequestedAt: date, helpNotificationRead: false } : item,
+    ),
+  };
 }
 
 export function classifyStudent(

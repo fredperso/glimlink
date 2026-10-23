@@ -31,7 +31,12 @@ import {
   requestSelection,
   saveDraft,
   visibleStudents,
+  discoveryOrder,
+  relevance,
+  requestAdviserHelp,
 } from '../src/domain/model.ts';
+import { proposeBrief } from '../src/domain/brief.ts';
+import { profileReading } from '../src/domain/reading.ts';
 
 test('V3-01 — un brouillon ne produit ni résultat ni alerte avant publication', () => {
   const store = initialStore();
@@ -779,4 +784,132 @@ test('AC-ADM-003 — entreprise créée sans accès actif ni événement d’ins
   assert.equal(companyStore({ ...next, activeCompanyId: added.id }).students.length, 0);
   assert.equal(addManagedCompany(next, company, 'admin'), next);
   assert.equal(notifications(next, 'admin').length, 0);
+});
+
+const briefContext = {
+  companyId: 'maison-alba',
+  sites: ['Montpellier', 'Lattes'],
+  places: ['Montpellier', 'Lattes', 'Sète'],
+  calendars: [{ id: 'gpm' }, { id: 'mco' }, { id: 'com' }, { id: 'ndrc' }],
+  today: '2026-10-23',
+};
+
+test('V6 §4-5 — la phrase libre donne trois missions, le site principal et aucune contrainte inventée', () => {
+  const brief = proposeBrief(
+    'Je recherche quelqu’un pour faire de l’administratif, gérer un portefeuille clients et effectuer des relances commerciales.',
+    briefContext,
+  );
+  assert.equal(brief.missions.length, 3);
+  assert.ok(brief.missions.includes('Gérer un portefeuille clients'));
+  assert.equal(brief.location, 'Montpellier');
+  assert.deepEqual(brief.requiredDays, []);
+  assert.equal(brief.licenseRequired, false);
+  assert.deepEqual(brief.levels, ['Bac+2', 'Bac+3', 'Bac+5']);
+  assert.equal(brief.language, undefined);
+  assert.equal(brief.availability, 'immediate');
+  assert.equal(brief.validated, false);
+});
+
+test('V6 §6 — seule une présence obligatoire écrite devient une contrainte', () => {
+  const required = proposeBrief(
+    'J’ai besoin de quelqu’un pour accueillir mes clients, gérer des devis et m’aider sur l’administratif. Il faudrait qu’il soit présent le vendredi et qu’il ait le permis.',
+    briefContext,
+  );
+  assert.deepEqual(required.requiredDays, ['Vendredi']);
+  assert.equal(required.licenseRequired, true);
+  const wished = proposeBrief(
+    'Je cherche un alternant pour conseiller les clients en boutique et suivre les commandes à Lattes. Une présence le lundi serait utile.',
+    briefContext,
+  );
+  assert.deepEqual(wished.requiredDays, []);
+  assert.match(wished.wishes, /lundi souhaitable/);
+  assert.equal(wished.location, 'Lattes');
+  const nextYear = proposeBrief(
+    'Un stagiaire pour rédiger des contenus et préparer les publications, anglais courant, pour la rentrée.',
+    briefContext,
+  );
+  assert.equal(nextYear.availability, 'next-intake');
+  assert.equal(nextYear.start, '2027-09-01');
+  assert.deepEqual([nextYear.language, nextYear.languageLevel], ['Anglais', 'B2']);
+});
+
+test('V6 §6 — sans présence obligatoire, le calendrier n’intervient pas dans les contrôles', () => {
+  const store = initialStore();
+  const need = { ...store.needs[0], requiredDays: [], licenseRequired: false, levels: undefined };
+  for (const student of visibleStudents(store, need)) {
+    const calendar = store.calendars.find((c) => c.id === student.published!.trainingId);
+    const checks = checkAvailability(student.published!, calendar, need);
+    assert.ok(checks.every((check) => !/calendrier|cours|rythme/i.test(check.text)), student.id);
+  }
+});
+
+test('V6 §5 — un niveau hors des niveaux acceptés est signalé sans exclure le profil', () => {
+  const store = initialStore();
+  const need = { ...store.needs[0], levels: ['Bac+3' as const] };
+  const sophie = visibleStudents(store, need).find((s) => s.id === 'sophie')!;
+  const checks = checkAvailability(
+    sophie.published!,
+    store.calendars.find((c) => c.id === 'gpm'),
+    need,
+  );
+  assert.ok(checks.some((c) => c.kind === 'conflict' && c.text.includes('Bac+2')));
+  assert.ok(discoveryOrder(store, need).some((s) => s.id === 'sophie'));
+});
+
+test('V6 §7 — tous les profils restent accessibles, passés compris, du plus aligné au moins aligné', () => {
+  const store = initialStore();
+  const need = { ...store.needs[0], passed: ['leo'] };
+  const ordered = discoveryOrder(store, need);
+  assert.equal(ordered.length, visibleStudents(store, need).length);
+  assert.ok(ordered.some((s) => s.id === 'leo'));
+  const scores = ordered.map((s) => relevance(store, s, need));
+  assert.deepEqual(scores, [...scores].sort((a, b) => b - a));
+  // Le profil Déclic ne devance aucun profil plus proche.
+  const declic = ordered.findIndex((s) => s.discoveryReason);
+  assert.ok(ordered.slice(0, declic).every((s) => relevance(store, s, need) >= scores[declic]));
+});
+
+test('V6 §15 — le signal « à valoriser » compte dans l’ordre mais reste invisible côté entreprise', () => {
+  const store = initialStore();
+  const need = store.needs[0];
+  const adam = visibleStudents(companyStore(store), need).find((s) => s.id === 'adam')!;
+  assert.equal(adam.highlight, undefined);
+  assert.ok(!JSON.stringify(visibleStudents(companyStore(store), need)).includes('highlight'));
+  const withoutSignal = {
+    ...store,
+    students: store.students.map((s) => ({ ...s, highlight: false })),
+  };
+  assert.equal(relevance(store, adam, need) - relevance(withoutSignal, adam, need), 3);
+});
+
+test('V6 §8-9 — la lecture personnalisée n’invente aucune compétence', () => {
+  const store = initialStore();
+  const need = store.needs[0];
+  const sophie = visibleStudents(store, need).find((s) => s.id === 'sophie')!;
+  const reading = profileReading(sophie, need, store.calendars);
+  assert.equal(reading.missions.length, 3);
+  const admin = reading.missions.find((m) => m.mission.includes('administrative'))!;
+  assert.equal(admin.status, 'unknown');
+  assert.equal(admin.label, 'À explorer avec le conseiller');
+  assert.ok(reading.highlights.length >= 3 && reading.highlights.length <= 4);
+  assert.equal(reading.declic, undefined);
+  assert.ok(!/\d+ ?%/.test(reading.why));
+  const adam = visibleStudents(store, need).find((s) => s.id === 'adam')!;
+  assert.ok(profileReading(adam, need, store.calendars).declic);
+});
+
+test('V6 §11 — le relais humain alerte le conseiller une fois et se lit sans toucher aux autres besoins', () => {
+  const store = requestAdviserHelp(initialStore(), 'need-admin', '2026-10-23T10:00:00Z');
+  const help = notifications(store, 'adviser').filter((item) => item.help);
+  assert.equal(help.length, 1);
+  assert.equal(help[0].read, false);
+  const read = readNotifications(store, 'adviser', [help[0].id]);
+  assert.equal(read.needs.find((n) => n.id === 'need-admin')!.helpNotificationRead, true);
+  assert.deepEqual(
+    read.needs.filter((n) => n.id !== 'need-admin'),
+    store.needs.filter((n) => n.id !== 'need-admin'),
+  );
+  const closed = initialStore();
+  closed.needs[0].status = 'closed';
+  assert.equal(requestAdviserHelp(closed, 'need-admin'), closed);
 });

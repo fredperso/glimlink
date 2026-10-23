@@ -1,14 +1,14 @@
 ---
 title: 'Espace administrateur : formations, utilisateurs et entreprises'
-version: '1.1'
+version: '1.2'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [2, 6, 13, 15, 20, 'A', 'B']
-maquette_revision: travail-local-USR-17
+maquette_revision: travail-local-USR-23
 tags: [specification, design, glimlink]
 ---
 
@@ -50,6 +50,7 @@ Ajouter un espace administrateur pour créer les formations avec leur planning e
 | ADM-006 | Constat de maquette | Conserver les ajouts dans le stockage local existant sans réinitialiser profils, besoins, sélections ni instantanés. |
 | ADM-007 | Constat de maquette | Refuser les périodes incohérentes, compétences vides/doublonnées, e-mails de compte ou de partenaire doublonnés et rattachements entreprise absents. |
 | ADM-008 | Simulation / §20 ouvert | La création d’un utilisateur n’authentifie personne ; la création d’une entreprise ne lui donne pas de vivier actif et ne simule pas son inscription. |
+| ADM-009 | V6 §2 | Configuration cible des campus, marques, formations, calendriers, droits et règles d’isolation selon la hiérarchie Organisation → Campus → Écoles/Marques → Formations → Talents. La maquette couvre formations, utilisateurs et entreprises ; marques et règles d’isolation restent à réaliser (ARB-005). |
 
 ## 4. Interfaces et contrats de données
 

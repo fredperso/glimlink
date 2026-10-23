@@ -2,9 +2,9 @@
 
 ## Project Structure & Module Organization
 
-This repository currently contains the product specification, `Glimlink_Specifications_Fonctionnelles_Detaillees_V3.pdf`. It describes Glimlink’s MVP/V1 recruitment platform; “V3” refers to the document revision, not the software version.
+This repository contains the product specifications `Glimlink_Specifications_Fonctionnelles_Detaillees_V3.pdf` and `Glimlink_Specifications_Fonctionnelles_Detaillees_V6_Visuelle-1.pdf`. They describe Glimlink’s MVP/V1 recruitment platform; “V3” and “V6” refer to document revisions, not the software version.
 
-The repository now contains a React / HTML / TypeScript prototype. `src/components/` holds screens and reusable UI; `src/domain/` holds the model, fictional fixtures and deterministic rules; `tests/` covers business and browser journeys; `scripts/` packages the standalone preview; `docs/` records design, coverage and validation; `specificaiton/` contains the maintained Markdown functional specifications; `tools/skills/` contains retrieved design skills. Treat the PDF V3 and `specificaiton/README.md` as the product references. The Markdown specifications consolidate the PDF and later explicit user decisions; `specificaiton/spec-process-arbitrages.md` preserves unresolved decisions from section 20. `maquette.html` is generated and should not be edited manually.
+The repository now contains a React / HTML / TypeScript prototype. `src/components/` holds screens and reusable UI; `src/domain/` holds the model, fictional fixtures and deterministic rules; `tests/` covers business and browser journeys; `scripts/` packages the standalone preview; `docs/` records design, coverage and validation; `specificaiton/` contains the maintained Markdown functional specifications; `tools/skills/` contains retrieved design skills. Treat the PDF V3, the PDF V6 visuel (`Glimlink_Specifications_Fonctionnelles_Detaillees_V6_Visuelle-1.pdf`, which prevails where it differs) and `specificaiton/README.md` as the product references. The Markdown specifications consolidate the PDF and later explicit user decisions; `specificaiton/spec-process-arbitrages.md` preserves unresolved decisions from V3 section 20, V6 section 21 and the « Questions V1 » document. `maquette.html` is generated and should not be edited manually.
 
 ## Build, Test, and Development Commands
 
@@ -56,7 +56,7 @@ For **every new user request**, read `specificaiton/README.md` and check its imp
 - Record every request in `specificaiton/JOURNAL.md`: request, impact, decisions/open questions, affected files/requirements and validation actually performed. For a status question or operation with no product impact, record **Aucun changement fonctionnel** and its reason; do not invent functional changes.
 - Keep `specificaiton/TRACEABILITE.md` and the index consistent when coverage, structure or decisions change. Distinguish PDF requirements, explicit user decisions, implementation observations, simulations and unresolved assumptions. Never silently turn a prototype choice into an approved business rule.
 - Use the retrieved skills `tools/skills/create-specification/SKILL.md` and `tools/skills/update-specification/SKILL.md` for specification creation/maintenance. The user-requested `specificaiton/` path overrides their default `/spec/` path. The exact skill name `specifications` was unavailable when this structure was created.
-- Keep the PDF and `specificaiton/SOURCE_V3.md` as reference archives; put later decisions in the maintained thematic files.
+- Keep the PDFs, `specificaiton/SOURCE_V3.md` and `specificaiton/SOURCE_V6.md` as reference archives; put later decisions in the maintained thematic files.
 - Run `rtk npm run spec:check` after documentation updates. This checks document structure, links and coverage; it does not replace reviewing semantic consistency with the request and code.
 - In the final report, briefly mention which specifications were updated when the request changes the product. Do not report unexecuted application tests as passing.
 

@@ -1,14 +1,14 @@
 ---
 title: 'Spécifications fonctionnelles consolidées Glimlink V1'
-version: '1.2'
+version: '1.3'
 date_created: 2026-10-08
-last_updated: 2026-10-22
+last_updated: 2026-10-23
 status: reference-consolidee
 ---
 
 # Glimlink — spécifications consolidées V1
 
-Ce répertoire `specificaiton/` conserve l’orthographe demandée et constitue la référence Markdown maintenue. Il consolide le [PDF fonctionnel V3](../Glimlink_Specifications_Fonctionnelles_Detaillees_V3.pdf) du 7 octobre 2026, les décisions de la session utilisateur et la maquette applicative `d6f296f` du 8 octobre 2026. **V3 est la révision du PDF ; le logiciel reste le MVP/V1.**
+Ce répertoire `specificaiton/` conserve l’orthographe demandée et constitue la référence Markdown maintenue. Il consolide le [PDF fonctionnel V3](../Glimlink_Specifications_Fonctionnelles_Detaillees_V3.pdf) du 7 octobre 2026, le [PDF V6 visuel](../Glimlink_Specifications_Fonctionnelles_Detaillees_V6_Visuelle-1.pdf) du 21 octobre 2026 (intégré le 23 octobre, USR-23), les décisions de la session utilisateur et la maquette applicative. **V3 et V6 sont des révisions du document ; le logiciel reste le MVP/V1.** Lorsque la V6 diffère de la V3, la V6 fait foi ; la V3 reste archivée.
 
 ## Table des matières
 
@@ -55,7 +55,8 @@ Chaque fichier suit les 11 rubriques des skills de spécification : objet, défi
 
 ## Sources et statut des informations
 
-- [SOURCE_V3.md](SOURCE_V3.md) conserve une transcription textuelle du PDF, avec son empreinte SHA-256 ; aucune évolution ultérieure n’y est insérée. Le PDF reste l’original en cas de différence de présentation.
+- [SOURCE_V3.md](SOURCE_V3.md) et [SOURCE_V6.md](SOURCE_V6.md) conservent une transcription textuelle de chaque PDF, avec son empreinte SHA-256 ; aucune évolution ultérieure n’y est insérée. Les PDF restent les originaux en cas de différence de présentation. La V6 marque ses arbitrages par un surlignage, repris dans sa transcription.
+- Le document « Questions V1 » (23 octobre 2026) liste des questions ouvertes et des recommandations ; il enrichit le [registre des arbitrages](spec-process-arbitrages.md) sans y valoir décision.
 - Une **exigence PDF** reste la référence lorsqu’aucune décision utilisateur ne l’a fait évoluer.
 - Une **décision utilisateur** indique une évolution explicite ; l’état du code apporte une preuve de réalisation, pas une décision implicite.
 - Un **constat de maquette** peut être un choix illustratif à valider, notamment les niveaux de compétences, les scores, le découpage des données et certaines règles d’exceptions.
@@ -77,6 +78,8 @@ Le contrôle vérifie structure, dates, liens locaux, couverture des 20 sections
 La maquette d6f296f : accueil entreprise sans profils, swipe dans chaque besoin, sélection résumée avec suggestions distinctes des Talent Alerts, clôture à mise en relation confirmée, inscription entreprise notifiée au conseiller, vivier paginé, compétences avec niveaux/états, calendriers mois/année et sélecteurs accessibles. La validation précédente documente 48 tests métier réussis et des parcours navigateur MCP ; la suite CLI Playwright n’est pas déclarée exécutée.
 
 Évolution USR-21 (22 octobre 2026) : habillage inspiré des applications de rencontre (palette corail, cartes immersives, boutons ronds, écran de sélection façon « match ») ; voir [ergonomie](spec-design-ergonomie-mobile.md) et [espace entreprise](spec-design-espace-entreprise.md).
+
+Évolution USR-23 (23 octobre 2026) : intégration de la V6. Aucun score visible, trois espaces de découverte sur le même vivier, passer ≠ refuser, reformulation « Est-ce que j’ai bien compris ? » (3 missions minimum, lieu prérempli multi-sites, niveaux, langue, disponibilité), calendrier utilisé seulement si une présence obligatoire est exprimée, lecture personnalisée et Déclic Glimlink, relais humain vers le conseiller, observations et signal interne du conseiller, Mon profil. Voir [besoins et matching](spec-process-besoins-matching.md), [espace entreprise](spec-design-espace-entreprise.md) et [arbitrages](spec-process-arbitrages.md).
 
 Contrainte acquise USR-20 : hébergement de production sur un cloud souverain européen, avec préférence pour la France. Le fournisseur et le périmètre de souveraineté restent à valider ; voir PRO-008 dans la [vision produit](spec-design-produit.md) et ARB-011 dans les [arbitrages](spec-process-arbitrages.md).
 

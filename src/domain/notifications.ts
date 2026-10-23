@@ -21,6 +21,7 @@ export type NotificationItem = {
   welcome?: boolean;
   studentId?: string;
   simulated?: boolean;
+  help?: boolean;
 };
 export function notifications(store: Store, role: Role): NotificationItem[] {
   if (role === 'admin') return [];
@@ -86,7 +87,25 @@ export function notifications(store: Store, role: Role): NotificationItem[] {
             simulated: true,
           }))
       : [];
-  return [...events, ...registrations, welcome].sort((a, b) => b.date.localeCompare(a.date));
+  // Relais humain (V6 §11) : l’entreprise n’a retenu personne et sollicite son conseiller.
+  const helps: NotificationItem[] =
+    role === 'adviser'
+      ? scoped.needs
+          .filter((need) => need.helpRequestedAt)
+          .map((need) => ({
+            id: `help-${need.id}`,
+            needId: need.id,
+            companyId: need.companyId,
+            title: 'Relais demandé : aucun profil retenu',
+            message: `${getCompany(scoped, need.companyId).name} · ${need.title}. L’entreprise souhaite affiner son besoin avec vous.`,
+            date: need.helpRequestedAt!,
+            read: need.helpNotificationRead ?? false,
+            help: true,
+          }))
+      : [];
+  return [...events, ...registrations, ...helps, welcome].sort((a, b) =>
+    b.date.localeCompare(a.date),
+  );
 }
 export function readNotifications(store: Store, role: Role, ids: string[]): Store {
   const allowed = new Set(
@@ -121,6 +140,9 @@ export function readNotifications(store: Store, role: Role, ids: string[]): Stor
         ),
         requests: store.requests.map((request) =>
           allowed.has(request.id) ? { ...request, adviserNotificationRead: true } : request,
+        ),
+        needs: store.needs.map((need) =>
+          allowed.has(`help-${need.id}`) ? { ...need, helpNotificationRead: true } : need,
         ),
       };
 }

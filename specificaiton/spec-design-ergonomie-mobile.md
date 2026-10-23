@@ -1,14 +1,14 @@
 ---
 title: 'Ergonomie, sélecteurs et navigation mobile'
-version: '1.4'
+version: '1.5'
 date_created: 2026-10-08
-last_updated: 2026-10-22
+last_updated: 2026-10-23
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [1, 7, 18]
-maquette_revision: travail-local-USR-22
+maquette_revision: travail-local-USR-23
 tags: [specification, design, glimlink]
 ---
 
@@ -51,10 +51,10 @@ Garantir une lecture et des actions simples sur PC et téléphone : navigation t
 | UX-007 | Accessibilité retenue             | Fournir labels, navigation clavier, fermeture par Échap, focus restauré et alternative aux gestes.          |
 | UX-008 | Constat de maquette               | Les listes ouvertes restent dans l’écran et au-dessus de la barre inférieure.                               |
 | UX-009 | Demande utilisateur USR-21        | Le look and feel s’inspire des applications de rencontre : palette chaude corail, cartes de profil immersives, formes arrondies, gestes et boutons d’action ronds. Les couleurs de disponibilité et de compétences ne changent pas de sens. |
-| UX-010 | Constat de maquette USR-21        | Sur téléphone, les actions du swipe (Annuler, Passer, Sélectionner, Fiche complète) restent visibles au-dessus de la barre inférieure pendant la lecture de la carte. |
+| UX-010 | Constat de maquette USR-21        | Sur téléphone, les actions du swipe (Annuler, Passer, Sélectionner, Profil & CV) restent visibles au-dessus de la barre inférieure pendant la lecture de la carte. |
 | UX-011 | Constat de maquette USR-21        | Les couleurs d’action conservent un contraste d’au moins 4,5:1 avec leur texte ; les dégradés vifs restent décoratifs. |
 | UX-012 | Demande utilisateur USR-22        | Sur téléphone, le swipe est fluide : la carte suit le doigt sans re-rendu, tient compte de la vitesse (un geste rapide et court suffit), revient en place avec un effet ressort sous le seuil et révèle la carte suivante déjà affichée. |
-| UX-013 | Demande utilisateur USR-22        | Sur ordinateur, la découverte n’impose pas le geste : fiche à tuiles (visuel, pourquoi ça matche, compétences, rythme), file d’attente cliquable, plateau « Ma sélection » et raccourcis clavier affichés (← passer, → sélectionner, ↑ fiche complète, retour arrière annuler). |
+| UX-013 | Demande utilisateur USR-22        | Sur ordinateur, la découverte n’impose pas le geste : fiche à tuiles (visuel, pourquoi ce profil, en lien avec vos missions, rythme), file d’attente cliquable, plateau « Ma sélection » et raccourcis clavier affichés (← passer, → sélectionner, ↑ fiche complète, retour arrière annuler). |
 
 ## 4. Interfaces et contrats de données
 
@@ -66,7 +66,7 @@ Navigation : liens avec URL hash, état actualisé dès l’activation, focus co
 
 Dans l’espace conseiller, ouvrir Plus sélectionne visuellement ce bouton et retire la surbrillance des onglets directs, sans changer la page ni son URL. Fermer Plus restaure l’onglet correspondant à la page courante ; choisir Demandes ou Entreprises maintient Plus sélectionné après fermeture. `aria-expanded` décrit le menu et `aria-current="page"` conserve la page réellement affichée.
 
-Identité « rencontre » (USR-21) : couleur d’action corail `#cc1a47`, dégradé d’action `#e0264a → #cf3d23` (texte blanc lisible), dégradé décoratif `#ff4f6d → #ff8a4c`, encre aubergine `#2b1d2c` et fond crème `#fff8f5`. Chaque carte de profil présente l’avatar non identifiant sur un dégradé propre à la variante, le prénom, la formation et la ville en surimpression, et la compatibilité illustrative dans une pastille cœur. Boutons, onglets, pastilles et navigation active sont arrondis ; l’onglet actif de la navigation porte le dégradé d’action. Les jetons sont définis dans `src/styles.css` et l’habillage dans `src/rencontre.css` et `src/swipe.css`.
+Identité « rencontre » (USR-21) : couleur d’action corail `#cc1a47`, dégradé d’action `#e0264a → #cf3d23` (texte blanc lisible), dégradé décoratif `#ff4f6d → #ff8a4c`, encre aubergine `#2b1d2c` et fond crème `#fff8f5`. Chaque carte de profil présente l’avatar non identifiant sur un dégradé propre à la variante, le prénom, la formation et la ville en surimpression, sans pourcentage de compatibilité depuis l’intégration de la V6 (USR-23). Sur téléphone, le contenu de la carte (pourquoi ce profil, faits saillants, en lien avec vos missions, Déclic) défile à l’intérieur de la carte ; un geste vertical lit, un geste horizontal décide. Boutons, onglets, pastilles et navigation active sont arrondis ; l’onglet actif de la navigation porte le dégradé d’action. Les jetons sont définis dans `src/styles.css` et l’habillage dans `src/rencontre.css` et `src/swipe.css`.
 
 Mesures de maquette : contrôles tactiles d’au moins 44 px, options de liste 48 px, champs mobiles à 16 px. Ces valeurs sont des choix de réalisation, pas une règle métier du PDF. Le mouvement réduit est respecté ; les couleurs ont des libellés et ne sont pas l’unique information.
 

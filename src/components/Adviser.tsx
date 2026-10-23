@@ -11,6 +11,7 @@ import {
   getCompanies,
   getCompany,
   pendingCorrections,
+  relaxationSuggestions,
 } from '../domain/model.ts';
 import ValidatedBrief from './ValidatedBrief.tsx';
 
@@ -297,10 +298,39 @@ function Needs() {
           .filter((n) => n.schools.includes('campus-a'))
           .map((n) => (
             <article className="panel adviser-need" key={n.id}>
-              <Badge tone={n.status === 'active' ? 'green' : 'neutral'}>
-                {n.status === 'active' ? 'Actif' : 'Fermé'}
+              <Badge tone={n.status !== 'active' ? 'neutral' : n.validated ? 'green' : 'warning'}>
+                {n.status !== 'active'
+                  ? 'Fermé'
+                  : n.validated
+                    ? 'Actif'
+                    : 'À confirmer par l’entreprise'}
               </Badge>
               <h2>{n.title}</h2>
+              {n.helpRequestedAt && (
+                <div className="relay-request">
+                  <strong>
+                    <Icon name="message" size={17} /> Relais demandé le{' '}
+                    {dateLabel(n.helpRequestedAt)}
+                  </strong>
+                  <p>
+                    L’entreprise n’a retenu aucun profil et souhaite affiner son besoin avec vous.
+                  </p>
+                  {relaxationSuggestions(store, n).length ? (
+                    <ul>
+                      {relaxationSuggestions(store, n).map((piste) => (
+                        <li key={piste.label}>
+                          {piste.label} : +{piste.count} profil{piste.count > 1 ? 's' : ''} sans
+                          conflit connu
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="micro">
+                      Aucune piste calculable : échangez sur les missions et le vivier autorisé.
+                    </p>
+                  )}
+                </div>
+              )}
               <p>
                 {getCompany(store, n.companyId).name} · {n.contract} · {n.location}
               </p>
@@ -315,7 +345,8 @@ function Needs() {
                 {dateLabel(n.start)} au {dateLabel(n.end)}
               </p>
               <p className="micro">
-                {n.selected.length} profils retenus par l’entreprise · Brief confirmé
+                {n.selected.length} profils retenus par l’entreprise ·{' '}
+                {n.validated ? 'Besoin confirmé' : 'Reformulation à confirmer'}
               </p>
               <Button
                 variant="secondary"

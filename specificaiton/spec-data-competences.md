@@ -87,7 +87,7 @@ La demande s’inspire des éditeurs de CV avec compétences structurées et niv
 
 ## 8. Dépendances et intégrations
 
-Catalogue métier de compétences, formations et validation conseiller. La contribution exacte des compétences acquises/en acquisition au matching réel n’est pas définie ; les scores actuels ne démontrent pas ce calcul.
+Catalogue métier de compétences, formations et validation conseiller. La contribution exacte des compétences acquises/en acquisition au matching réel n’est pas définie ; la pertinence interne illustrative de la maquette ne démontre pas ce calcul.
 
 ## 9. Exemples et cas limites
 
