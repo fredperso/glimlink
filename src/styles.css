@@ -2542,9 +2542,10 @@ dl > div {
   width: 840px;
   max-width: min(840px, calc(100vw - 40px));
 }
+/* Voile sans flou : un backdrop-filter plein écran est recalculé à chaque image du défilement
+   de la fenêtre (mesuré : 23 → 60 images/s sur la fiche conseiller). */
 .modal::backdrop {
-  background: #37252f73;
-  backdrop-filter: blur(4px);
+  background: #2b1d2c8c;
 }
 .modal-header {
   display: flex;

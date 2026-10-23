@@ -236,3 +236,12 @@ Pour la date et un identifiant unique, consigner : demande ; sources/impact ; d�
 - **Fichiers / exigences** : nouveau `spec-architecture-technique.md` (ARC, AUT, AUZ, PER, FCH, IAG, FRT, INF, LIV, EXP, AC-ARC-001–018) ; accès-droits ACC-009, AC-ACC-007 et §8 ; arbitrages ARB-021 et §8 ; gouvernance AC-GOV-005 (17 spécifications) ; README, TABLE_DES_MATIERES, TRACEABILITE, JOURNAL.
 - **Validation exécutée** : relecture des spécifications d’accès, de données, de CV, d’arbitrages et de la V6 (§2, §14, §15, §18, §21, §22) ; vérification des sources Spring Security (MFA, passkeys), Spring Boot et Scaleway citées dans ANAL-005/ANAL-006 ; spec:check. Aucun test applicatif ni build, car le code ne change pas ; aucune API Spring n’a été compilée.
 
+
+## 2026-10-23 — USR-25 — Fluidité du défilement des fiches candidat
+
+- **Demande** : « le scroll sur la fiche candidat semble un peu lent. Est-ce qu’il y a des façons d’optimiser cette maquette sur ce point ? »
+- **Impact** : présentation uniquement ; aucune règle métier modifiée.
+- **Diagnostic mesuré** : défilement de la fiche entreprise et de la fiche conseiller avec un processeur ralenti 4 fois, variantes CSS comparées. Le flou d’arrière-plan des fenêtres (`backdrop-filter: blur(4px)`) était la seule cause : 23 images/s et 48 images lentes sur 83 pour la fiche conseiller sur ordinateur, 44 images/s pour la fiche entreprise ; sans ce flou, 60 images/s. L’ombre, le masquage du contenu hors écran, le style, la mise en page et le script n’avaient pas d’effet notable. Sur mobile, la fiche occupe tout l’écran et le flou coûtait peu. La barre d’actions floutée du swipe n’a pas d’impact mesurable (59 images/s avec ou sans).
+- **Réalisation** : voile `#2b1d2c8c` sans flou derrière les fenêtres (`src/styles.css`).
+- **Fichiers / exigences** : UX-014, AC-UX-013 ; JOURNAL.
+- **Validation exécutée** : mesure après correction : 60 images/s sur les deux fiches (ordinateur et iPhone 13 émulé), aucune image lente sur ordinateur ; `npm test` 59 réussis ; Playwright 22 réussis et 2 ignorés ; capture revue ; spec:check. Mesures en Chromium sans tête : un essai sur appareil réel reste utile.

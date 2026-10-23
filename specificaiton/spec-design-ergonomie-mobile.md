@@ -1,6 +1,6 @@
 ---
 title: 'Ergonomie, sélecteurs et navigation mobile'
-version: '1.5'
+version: '1.6'
 date_created: 2026-10-08
 last_updated: 2026-10-23
 owner: Glimlink
@@ -8,7 +8,7 @@ status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [1, 7, 18]
-maquette_revision: travail-local-USR-23
+maquette_revision: travail-local-USR-25
 tags: [specification, design, glimlink]
 ---
 
@@ -55,6 +55,7 @@ Garantir une lecture et des actions simples sur PC et téléphone : navigation t
 | UX-011 | Constat de maquette USR-21        | Les couleurs d’action conservent un contraste d’au moins 4,5:1 avec leur texte ; les dégradés vifs restent décoratifs. |
 | UX-012 | Demande utilisateur USR-22        | Sur téléphone, le swipe est fluide : la carte suit le doigt sans re-rendu, tient compte de la vitesse (un geste rapide et court suffit), revient en place avec un effet ressort sous le seuil et révèle la carte suivante déjà affichée. |
 | UX-013 | Demande utilisateur USR-22        | Sur ordinateur, la découverte n’impose pas le geste : fiche à tuiles (visuel, pourquoi ce profil, en lien avec vos missions, rythme), file d’attente cliquable, plateau « Ma sélection » et raccourcis clavier affichés (← passer, → sélectionner, ↑ fiche complète, retour arrière annuler). |
+| UX-014 | Constat de maquette USR-25        | Le défilement des fiches reste fluide : aucun flou plein écran (`backdrop-filter`) derrière une zone qui défile ; un voile coloré le remplace. |
 
 ## 4. Interfaces et contrats de données
 
@@ -87,6 +88,7 @@ Mesures de maquette : contrôles tactiles d’au moins 44 px, options de liste 4
 - **AC-UX-012** : à 1440 px, flèches gauche/droite, flèche haut et retour arrière passent, sélectionnent, ouvrent la fiche et annulent, hors champs de saisie et dialogues ; la file d’attente permet d’ouvrir un autre profil ; un profil retenu rejoint le plateau.
 
 - **AC-UX-007** : depuis Besoins, ouvrir Plus ne laisse qu’un seul bouton sélectionné visuellement (Plus). Refermer le menu ou activer Besoins restaure sa sélection. Choisir Demandes/Entreprises ferme le menu et conserve Plus sélectionné. Vérifier à 320/390 px et en paysage 740×390.
+- **AC-UX-013** : avec un processeur ralenti 4 fois, la fiche conseiller et la fiche entreprise défilent à environ 60 images/s sur ordinateur, sans image de plus de 33 ms.
 
 ## 6. Stratégie de test
 
