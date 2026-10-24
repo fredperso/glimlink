@@ -291,3 +291,108 @@ Pour la date et un identifiant unique, consigner : demande ; sources/impact ; d�
 - **Sources vérifiées** : https://docs.ovhcloud.com/fr/guides/public-cloud/databases/concepts-security-overview ; https://docs.ovhcloud.com/fr/guides/public-cloud/ai-machine-learning/ai-endpoints-capabilities ; https://docs.ovhcloud.com/en/guides/account-and-service-management/reversibility/object-storage-3az-reversibility-policy ; https://blog.ovhcloud.com/en/posts/discover-the-external-secret-operator-eso-ovhcloud-provider-to-manage-your-kubernetes-secrets/ ; https://corporate.ovhcloud.com/en/newsroom/news/ovhcloud-obtains-secnumcloud-qualification-snc-cloud-platform/ ; https://www.brevo.com/fr/securite/ ; https://www.brevo.com/fr/blog/conversation-avec-les-experts-partie-1/.
 - **Fichiers / exigences** : architecture technique v1.3 (statut, §1, IAG-002, §3.8, INF-004–007, EXP-002, §3.11 DCK-001, DCK-003–004, DCK-006–007, DCK-010–011, DCK-014–015, nouveau DCK-016, §4, §7, §8, §11) ; arbitrages ARB-011 et §8 ; TRACEABILITE ; JOURNAL.
 - **Validation exécutée** : spec:check ; recherche des mentions Scaleway restantes (uniquement la variante A historique). Aucun test applicatif ni build, car le code ne change pas.
+
+
+## 2026-10-24 — OPS-002 — Achat des ressources OVHcloud depuis la console
+
+- **Demande** : acheter, depuis la console OVHcloud ouverte dans Chrome, les éléments nécessaires à l’hébergement (variante B, USR-30).
+- **Impact** : Aucun changement fonctionnel ; opération sur le compte du fournisseur.
+- **Constat** : la console ne contient encore aucun projet Public Cloud (page d’accueil de création, avec acceptation des conditions contractuelles). Aucune action effectuée : ni acceptation de conditions, ni création, ni achat.
+- **Questions ouvertes** : accord explicite sur l’acceptation des conditions Public Cloud et sur le périmètre à créer maintenant ; recommandation de ne créer que le projet et de provisionner le reste par OpenTofu au lot 0 (DCK-010), pour ne pas payer de ressources inutilisées pendant le développement.
+- **Fichiers / exigences** : JOURNAL.md uniquement.
+- **Validation exécutée** : consultation en lecture seule de la console OVHcloud ; spec:check.
+
+
+## 2026-10-24 — OPS-003 — Nom de domaine de l’application
+
+- **Demande** : glimlink.com (déjà acheté) portera le site institutionnel ; acheter glimlink.io pour l’application.
+- **Impact** : Aucun changement fonctionnel à ce stade ; aucun achat effectué.
+- **Constat** (console OVHcloud, 24 octobre 2026) : glimlink.io est déjà réservé par un tiers (seul un transfert est proposé). Disponibles : glimlink.app à 8,49 € HT la première année puis 18,09 € HT/an ; glimlink.eu à 7,49 € HT puis 8,59 € HT/an. Option sans achat : sous-domaine `app.glimlink.com`.
+- **Questions ouvertes** : choix du domaine de l’application avant toute mise en production, car les passkeys FIDO2 sont liées au domaine (RP ID, AUT-007) ; un changement ultérieur imposerait de réenregistrer toutes les passkeys. Mise à jour d’INF-004 et d’AUT-007 après décision.
+- **Fichiers / exigences** : JOURNAL.md uniquement.
+- **Validation exécutée** : recherche de disponibilité dans le tunnel de commande OVHcloud, sans ajout au panier ; spec:check.
+
+
+## 2026-10-24 — OPS-004 — Titulaire et date d’achat de glimlink.io
+
+- **Demande** : savoir quand et par qui glimlink.io a été acheté.
+- **Impact** : Aucun changement fonctionnel ; consultation WHOIS publique.
+- **Constat** : création le 13 août 2025 chez Namecheap ; titulaire masqué par un service de confidentialité (Withheld for Privacy), pays déclaré Allemagne (NRW) ; expiration le 13 août 2026 non renouvelée ; statut `redemptionPeriod` depuis le 24 septembre 2026 ; aucun site publié. Libération estimée vers la fin octobre 2026 si le titulaire ne le restaure pas (estimation fondée sur les délais usuels, non garantie).
+- **Fichiers / exigences** : JOURNAL.md uniquement.
+- **Complément** : glimlink.fr est libre (aucun enregistrement au WHOIS de l’AFNIC) ; prix OVHcloud 4,99 € HT la première année, puis 7,79 € HT/an. Aucun achat effectué.
+- **Validation exécutée** : `whois` (registre whois.nic.io) et whois.nic.fr, résolution DNS, tunnel de commande OVHcloud sans ajout au panier ; spec:check.
+
+
+## 2026-10-24 — OPS-005 — Commande du domaine glimlink.fr
+
+- **Demande** : acheter glimlink.fr seul, pour l’application ; l’utilisateur a confirmé le prix (5,99 € TTC la première année, 1 an, DNSSEC inclus) et les engagements de la commande.
+- **Impact** : Aucun changement fonctionnel ; achat chez le registraire.
+- **Réalisé** : panier composé de glimlink.fr (1 an au lieu des 3 ans présélectionnés) et DNSSEC inclus ; compte e-mail Zimbra, DNS Anycast et hébergement web refusés ; titulaire, contacts et facturation laissés au profil OVHcloud de l’utilisateur ; paiement par défaut PayPal. Trois des quatre engagements cochés.
+- **Non réalisé** : l’engagement personnel d’exactitude des coordonnées du titulaire et le paiement, bloqués par le contrôle d’autorisation de l’outil ; l’utilisateur termine lui-même dans l’onglet ouvert. Le domaine n’est pas acheté tant que le paiement n’est pas validé.
+- **Suite** : après achat, mettre à jour INF-004 et AUT-007 (domaine de l’application glimlink.fr, site institutionnel glimlink.com).
+- **Fichiers / exigences** : JOURNAL.md uniquement.
+- **Validation exécutée** : récapitulatif OVHcloud vérifié (4,99 € HT, 1,00 € de TVA, 5,99 € TTC) ; spec:check.
+
+
+## 2026-10-24 — USR-31 — Application sur app.glimlink.com et achat de l’hébergement
+
+- **Demande** : « on utilisera app.glimlink.com pour l’hébergement dans un premier temps. occupe toi d’acheter le nécessaire pour l’hébergement ».
+- **Impact** : décision de domaine ; aucun changement fonctionnel des parcours ni du code.
+- **Décision acquise** : application sur `app.glimlink.com`, site institutionnel sur `glimlink.com`. RP ID WebAuthn = `app.glimlink.com` (AUT-007) ; un changement de domaine ultérieur imposera de réenregistrer les passkeys. La commande glimlink.fr (OPS-005) reste en attente de l’utilisateur.
+- **Prix relevés le 24 octobre 2026** (page tarifaire OVHcloud, HT, facturation à l’heure) : instance b3-8 (2 vCore, 8 Go) 0,0512 €/h, environ 37,4 €/mois (31,77 €/mois avec engagement 12 mois) ; d2-8 (Discovery) 0,0372 €/h ; PostgreSQL Essential DB1-4 (1 nœud, 4 Go, 80 Gio) environ 54,46 €/mois ; Business DB1-4 (2 nœuds) environ 138,55 €/mois ; Managed Private Registry S environ 17,30 €/mois ; Object Storage 3-AZ Standard 0,0139941 €/Go/mois. Crédit de 200 € annoncé pour un premier projet Public Cloud.
+- **Questions ouvertes** : périmètre à créer maintenant (recette seule ou production) ; registre OVHcloud ou GitHub Container Registry ; acceptation des conditions Public Cloud par l’utilisateur. Aucun achat ni création effectués.
+- **Fichiers / exigences** : architecture technique v1.4 (INF-004, AUT-007) ; TRACEABILITE ; JOURNAL.
+- **Validation exécutée** : consultation de la page tarifaire OVHcloud ; spec:check. Aucun test applicatif ni build.
+
+
+## 2026-10-24 — OPS-006 — Création du projet Public Cloud de recette
+
+- **Demande** : « ok recette seule avec GitHub Container Registry, j’accepte les conditions ».
+- **Impact** : Aucun changement fonctionnel ; opération chez le fournisseur. Choix de GitHub Container Registry pour la recette, à reporter dans DCK-006 (aujourd’hui : registre OVHcloud).
+- **Réalisé** : conditions contractuelles Public Cloud acceptées au nom de l’utilisateur, qui l’a autorisé explicitement ; projet créé en mode découverte (nom par défaut « Project 2026-10-24 », renommage possible seulement après activation).
+- **Activation** : bloquée une première fois par le contrôle d’autorisation de l’outil, puis réalisée sur instruction explicite de l’utilisateur (« active-le toi-même ») avec le PayPal par défaut ; projet renommé `glimlink-recette`. La console signale des quotas proches du maximum, à vérifier avant la création de l’instance.
+- **Non réalisé** : instance, stockage et enregistrement DNS restent à créer.
+- **Fichiers / exigences** : JOURNAL.md uniquement.
+- **Validation exécutée** : contrôle visuel de la console OVHcloud ; spec:check.
+
+
+## 2026-10-24 — OPS-007 — Ressources de la recette : serveur, stockage, DNS
+
+- **Demande** : « lance les trois étapes » (serveur, stockage des CV, enregistrement DNS de la recette).
+- **Impact** : Aucun changement fonctionnel ; opération chez le fournisseur.
+- **Serveur** : formulaire complété sans validation : `glimlink-recette-01`, b3-8, Paris EU-WEST-PAR (3-AZ), Debian 13 UEFI, clé SSH publique `fred-macbook-ed25519`, sauvegarde automatique désactivée, réseau privé créé par défaut, IP publique simple. Prix affiché : 0,0612 € HT/h, environ 44,67 € HT/mois (instance 0,0512 € + disque local 50 Go 0,0073 € + IP publique 0,0027 €), au lieu des 37,40 € HT annoncés pour l’instance seule : nouvelle confirmation demandée.
+- **Stockage** : conteneur `glimlink-recette-cv` préparé (API S3, Paris 3-AZ, versionnage activé, chiffrement SSE-OMK, réplication et Object Lock désactivés) mais non créé : OVHcloud exige de rattacher un utilisateur OpenStack, dont la création génère des identifiants que l’utilisateur doit créer et conserver lui-même.
+- **DNS** : en attente de l’adresse IP du serveur.
+- **Suite** (confirmation « oui je confirme, lance le serveur ») : serveur `glimlink-recette-01` créé et actif (eu-west-par-b, IP publique 57.130.88.180, IP privée 10.1.3.226, port SSH joignable) ; enregistrement A `recette.app.glimlink.com` → 57.130.88.180 ajouté dans la zone OVHcloud de glimlink.com et vérifié par `dig`. Le formulaire du conteneur de stockage a été refermé : l’utilisateur le crée avec son utilisateur technique.
+- **Fichiers / exigences** : JOURNAL.md uniquement.
+- **Validation exécutée** : contrôle visuel des formulaires OVHcloud ; spec:check.
+
+
+## 2026-10-24 — USR-32 — Recette seule et GitHub Container Registry
+
+- **Demande** : « ok recette seule avec GitHub Container Registry, j’accepte les conditions ».
+- **Impact** : décision d’hébergement de la recette ; aucun changement fonctionnel.
+- **Décision acquise** : seul l’environnement de recette est créé pour l’instant, avec PostgreSQL en conteneur (DCK-003) ; les images de recette sont publiées sur GitHub Container Registry, paquet privé ; le registre OVHcloud reste prévu pour la production (DCK-006).
+- **Fichiers / exigences** : architecture technique v1.5 (DCK-006) ; TRACEABILITE ; JOURNAL.
+- **Validation exécutée** : spec:check.
+
+
+## 2026-10-24 — OPS-008 — Script de durcissement du serveur de recette et commande glimlink.fr
+
+- **Demandes** : « prépare le script de durcissement du serveur » ; puis « commande glimlink.fr aussi ».
+- **Impact** : Aucun changement fonctionnel ; outillage d’exploitation conforme à DCK-004, DCK-005 et DCK-009, sans modification d’exigence.
+- **Réalisé** : `infra/recette/durcissement.sh` (mise à jour, mises à jour de sécurité automatiques avec redémarrage à 04:00 UTC, SSH par clé uniquement et limité à `debian`, pare-feu nftables dans une table dédiée qui préserve les règles Docker : 80/443 publics, SSH limité à `ADMIN_CIDRS`, paramètres noyau sans couper le routage nécessaire à Docker, Docker officiel avec vérification de l’empreinte de clé, journaux limités, `no-new-privileges`, `live-restore`) et `infra/recette/README.md`. Script non exécuté sur le serveur.
+- **glimlink.fr** : la case d’engagement sur l’exactitude des coordonnées du titulaire est de nouveau bloquée par le contrôle d’autorisation de l’outil ; l’utilisateur la coche et paie lui-même (5,99 € TTC).
+- **Fichiers / exigences** : `infra/recette/` ; JOURNAL.md.
+- **Validation exécutée** : `bash -n` ; test local de la génération des règles SSH (IPv4 et IPv6) ; spec:check. Pas de shellcheck disponible ; aucun essai sur le serveur.
+
+
+## 2026-10-24 — OPS-009 — Exécution du durcissement sur le serveur de recette
+
+- **Demande** : « demandé glimlink.fr, peux-tu lancer le script de durcissement ? », puis « c’est fait, lance le durcissement » après chargement de la clé SSH dans l’agent par l’utilisateur.
+- **Impact** : Aucun changement fonctionnel ; exploitation de la recette.
+- **Réalisé** : script exécuté avec `ADMIN_CIDRS` réduit à l’adresse IP publique de l’utilisateur, relevée côté serveur (non consignée ici) ; Docker 29.9.2 et Docker Compose v5.6.1 installés. Corrections ajoutées au script puis seconde exécution réussie (idempotence) : démarrage effectif du service nftables, désactivation de LLMNR et mDNS. Redémarrage pour le nouveau noyau (6.12.113+deb13-cloud-amd64).
+- **Vérifié après redémarrage** : nftables, docker, unattended-upgrades et ssh actifs ; politique d’entrée `drop`, SSH limité à l’adresse d’administration, 80/443 ouverts ; seuls SSH (22) et le résolveur local (127.0.0.53/54) écoutent ; depuis l’extérieur, 22 ouvert et 80, 443, 2375, 5432, 8080 fermés ; connexions par mot de passe et en root refusées ; `sshd -T` conforme (clé uniquement, `AllowUsers debian`).
+- **glimlink.fr** : commandé par l’utilisateur ; WHOIS AFNIC : actif chez OVH, créé le 24 octobre 2026, expiration le 24 octobre 2027.
+- **Fichiers / exigences** : `infra/recette/durcissement.sh` ; JOURNAL.md.
+- **Validation exécutée** : contrôles ci-dessus ; spec:check.
