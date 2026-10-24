@@ -1,6 +1,6 @@
 import Select from './Select.tsx';
 import { ChoiceSelect, SKILL_CHOICES } from './Choices.tsx';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { Calendar } from '../domain/model.ts';
 import { createId } from '../domain/model.ts';
 import {
@@ -83,6 +83,9 @@ export default function SkillsEditor({
   const [linked, setLinked] = useState(false);
   const [error, setError] = useState('');
   const [removed, setRemoved] = useState<{ skill: StudentSkill; index: number } | null>(null);
+  // Formulaire d’ajout replié : la liste reste au premier plan, sauf pour une fiche encore vide.
+  const [adding, setAdding] = useState(!skills.length);
+  const addPanelId = useId();
   const training = calendars.find((calendar) => calendar.id === trainingId);
   const suggestions = (training?.learningSkills ?? []).filter(
     (item) => !skills.some((skill) => skillKey(skill.name) === skillKey(item.name)),
@@ -124,75 +127,94 @@ export default function SkillsEditor({
           {skills.filter((skill) => skill.status === 'learning').length} en cours
         </Badge>
       </div>
-      <div className="skill-add-panel">
-        <h4>Ajouter une compétence</h4>
-        <div className="skill-add-fields">
-          <label>
-            Nom de la compétence
-            <ChoiceSelect
-              name="skillName"
-              value={name}
-              options={[
-                ...SKILL_CHOICES,
-                ...calendars.flatMap((calendar) =>
-                  (calendar.learningSkills ?? []).map((skill) => skill.name),
-                ),
-              ].filter(
-                (option) => !skills.some((skill) => skillKey(skill.name) === skillKey(option)),
+      <div className={`skill-add ${adding ? 'is-open' : ''}`}>
+        <button
+          type="button"
+          className="skill-add-toggle"
+          aria-expanded={adding}
+          aria-controls={addPanelId}
+          onClick={() => {
+            setAdding(!adding);
+            setError('');
+          }}
+        >
+          <Icon name="plus" />
+          Ajouter une compétence
+          <span className="skill-add-chevron" aria-hidden="true">
+            <Icon name="chevron" size={18} />
+          </span>
+        </button>
+        {adding && (
+          <div className="skill-add-panel" id={addPanelId}>
+            <div className="skill-add-fields">
+              <label>
+                Nom de la compétence
+                <ChoiceSelect
+                  name="skillName"
+                  value={name}
+                  options={[
+                    ...SKILL_CHOICES,
+                    ...calendars.flatMap((calendar) =>
+                      (calendar.learningSkills ?? []).map((skill) => skill.name),
+                    ),
+                  ].filter(
+                    (option) => !skills.some((skill) => skillKey(skill.name) === skillKey(option)),
+                  )}
+                  allowCustom
+                  onChange={(value) => {
+                    setName(value);
+                    setError('');
+                  }}
+                />
+              </label>
+              <label>
+                Niveau actuel
+                <Select
+                  aria-label="Niveau actuel"
+                  value={level}
+                  onChange={(event) => setLevel(event.target.value as SkillLevel)}
+                >
+                  {Object.entries(SKILL_LEVELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </Select>
+              </label>
+              <label>
+                État d’acquisition
+                <Select
+                  aria-label="État d’acquisition"
+                  value={status}
+                  onChange={(event) => setStatus(event.target.value as StudentSkill['status'])}
+                >
+                  <option value="acquired">Acquise</option>
+                  <option value="learning">En cours d’acquisition</option>
+                </Select>
+              </label>
+            </div>
+            <div className="skill-add-actions">
+              {training && (
+                <label className="skill-training-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={linked}
+                    onChange={(event) => setLinked(event.target.checked)}
+                  />
+                  Associer à la formation actuelle
+                </label>
               )}
-              allowCustom
-              onChange={(value) => {
-                setName(value);
-                setError('');
-              }}
-            />
-          </label>
-          <label>
-            Niveau actuel
-            <Select
-              aria-label="Niveau actuel"
-              value={level}
-              onChange={(event) => setLevel(event.target.value as SkillLevel)}
-            >
-              {Object.entries(SKILL_LEVELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </Select>
-          </label>
-          <label>
-            État d’acquisition
-            <Select
-              aria-label="État d’acquisition"
-              value={status}
-              onChange={(event) => setStatus(event.target.value as StudentSkill['status'])}
-            >
-              <option value="acquired">Acquise</option>
-              <option value="learning">En cours d’acquisition</option>
-            </Select>
-          </label>
-        </div>
-        <div className="skill-add-actions">
-          {training && (
-            <label className="skill-training-checkbox">
-              <input
-                type="checkbox"
-                checked={linked}
-                onChange={(event) => setLinked(event.target.checked)}
-              />
-              Associer à la formation actuelle
-            </label>
-          )}
-          <Button onClick={add}>
-            <Icon name="plus" />
-            Ajouter la compétence
-          </Button>
-        </div>
-        {error && (
-          <p className="form-error" role="alert">
-            {error}
-          </p>
+              <Button onClick={add}>
+                <Icon name="plus" />
+                Ajouter la compétence
+              </Button>
+            </div>
+            {error && (
+              <p className="form-error" role="alert">
+                {error}
+              </p>
+            )}
+          </div>
         )}
       </div>
       <details className="skill-level-help">

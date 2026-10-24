@@ -1,14 +1,14 @@
 ---
 title: 'Compétences acquises et acquisitions en cours'
-version: '1.1'
+version: '1.2'
 date_created: 2026-10-08
-last_updated: 2026-10-08
+last_updated: 2026-10-24
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [5, 14, 20]
-maquette_revision: travail-local-USR-17
+maquette_revision: travail-local-USR-29
 tags: [specification, data, glimlink]
 ---
 
@@ -50,6 +50,7 @@ Décrire l’extension utilisateur permettant d’ajouter/supprimer des compéte
 | CMP-006 | Constat de maquette | Empêcher un doublon de libellé normalisé ; ne pas créer une évaluation connue en migration.      |
 | CMP-007 | Cohérence métier    | La fin d’une formation ne valide pas automatiquement un acquis ni son niveau.                    |
 | CMP-008 | PDF §20             | Référentiel, preuve d’évaluation et effet sur le matching à arbitrer.                            |
+| CMP-009 | Demande utilisateur USR-29 | Dans la fiche conseiller, le formulaire « Ajouter une compétence » est replié derrière un bouton dépliable ; la liste des compétences existantes reste au premier plan. Il s’ouvre d’emblée lorsque la fiche ne contient encore aucune compétence. |
 
 ## 4. Interfaces et contrats de données
 
@@ -76,6 +77,7 @@ USR-17 : l’administrateur crée/édite les compétences visées des formations
 - **AC-CMP-003** : une proposition issue de formation conserve acquisition en cours et niveau inconnu tant qu’aucune évaluation n’est renseignée.
 - **AC-CMP-004** : saisir un doublon normalisé n’ajoute pas une deuxième compétence.
 - **AC-CMP-005** : les anciennes données ne reçoivent ni niveau connu ni lien de formation fictif.
+- **AC-CMP-006** : sur une fiche qui a déjà des compétences, la rubrique Compétences affiche le bouton « Ajouter une compétence » (`aria-expanded=\"false\"`) sans les champs d’ajout ; l’activer révèle nom, niveau, état et « Ajouter la compétence » ; le replier conserve la saisie en cours (USR-29).
 
 ## 6. Stratégie de test
 

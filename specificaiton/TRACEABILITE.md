@@ -76,6 +76,8 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md) et le PDF V6 visuel du 
 
 | USR-26 | Éviter le long défilement des fiches en popin (onglets ou autre) | UX-015, AC-UX-014, ENT-014, AC-ENT-014, CON-013, AC-CON-009 ; ergonomie, entreprise, conseiller | SheetTabs, Modals (Profile, StudentEditor), ui.tsx (Modal `sheet`), rencontre.css ; test E2E UX-015 |
 
+| USR-29 | Replier le formulaire d’ajout dans la rubrique Compétences | CMP-009, AC-CMP-006 ; compétences | Skills.tsx (bouton dépliable), skills.css ; test E2E UX-015 |
+
 USR-14 traduit la demande de clôture dans un état explicite confirmé par le conseiller ; elle ne signifie pas clôture dès l’envoi d’une demande. Les règles de réouverture restent ouvertes. Les premières demandes évoquant un « espace candidat » n’ajoutent pas de compte étudiant : aucun écran de ce rôle n’existe dans la V1 actuelle.
 
 ## Couverture du PDF V6

@@ -256,3 +256,13 @@ Pour la date et un identifiant unique, consigner : demande ; sources/impact ; d�
 - **Décisions / questions ouvertes** : ordre et libellés des rubriques ; rubrique Compétences encore longue (formulaire d’ajout repliable possible) ; pastille orange pour « Mobilité à vérifier » et « Permis à vérifier », signal d’aide et non condition de publication.
 - **Fichiers / exigences** : UX-015, AC-UX-014 ; ENT-014, AC-ENT-014 ; CON-013, AC-CON-009 ; TRACEABILITE (USR-25 ajouté, USR-26) ; JOURNAL. Code : `SheetTabs.tsx` (nouveau), `Modals.tsx`, `ui.tsx` (option `sheet` de `Modal`, attribut `form` de `Button`), `rencontre.css`, `skills.css` ; scripts QA adaptés aux onglets.
 - **Validation exécutée** : TypeScript et build réussis ; `npm test` 59 réussis ; Playwright 24 réussis et 2 ignorés (ordinateur + iPhone 13), dont le nouveau test UX-015 ; captures des rubriques revues sur ordinateur et iPhone 13 ; aucun débordement horizontal ; spec:check. Les scripts `qa-*.js` adaptés n’ont pas été relancés.
+
+
+## 2026-10-24 — USR-29 — Formulaire d’ajout de compétence replié
+
+- **Demande** : « replie le formulaire d’ajout dans la rubrique Compétences », suite de USR-26.
+- **Impact** : présentation uniquement ; champs, contrôle des doublons et publication inchangés.
+- **Réalisation** : bouton « Ajouter une compétence » en pointillés avec chevron (`aria-expanded`, `aria-controls`) ; le panneau s’ouvre sous le bouton, se replie au second appui et garde la saisie en cours ; ouvert d’emblée si la fiche n’a aucune compétence (import de CV).
+- **Mesures** : rubrique Compétences ramenée de 1 681 à 1 506 px sur ordinateur (1440×900) et de 2 386 à 2 012 px sur iPhone 13.
+- **Fichiers / exigences** : CMP-009, AC-CMP-006 ; TRACEABILITE ; JOURNAL. Code : `Skills.tsx`, `skills.css` ; test E2E UX-015 complété ; scripts `qa-skills.js`, `qa-choices.js`, `qa-selects.js` adaptés.
+- **Validation exécutée** : TypeScript et build réussis ; `npm test` 59 réussis ; Playwright 24 réussis et 2 ignorés (ordinateur + iPhone 13) ; capture revue ; spec:check. Les scripts `qa-*.js` n’ont pas été relancés.

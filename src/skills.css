@@ -29,12 +29,48 @@ body .skills-editor h4,
   margin: 0 0 16px;
   line-height: 1.5;
 }
+.skill-add {
+  margin: 20px 0;
+}
+.skill-add-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 1.5px dashed #e3b9b1;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--forest);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.skill-add-toggle:hover {
+  background: #fcf5f4;
+}
+.skill-add-chevron {
+  display: inline-flex;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+.skill-add.is-open .skill-add-toggle {
+  border: 1px solid #eadcd9;
+  border-bottom: 0;
+  border-radius: 12px 12px 0 0;
+  background: #fcf5f4;
+}
+.skill-add.is-open .skill-add-chevron {
+  transform: rotate(180deg);
+}
 .skill-add-panel {
-  padding: 20px;
+  padding: 4px 20px 20px;
   background: #fcf5f4;
   border: 1px solid #eadcd9;
-  border-radius: 12px;
-  margin: 20px 0;
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
 }
 .skill-add-fields {
   display: grid;
@@ -268,9 +304,11 @@ body .skills-editor h4,
   .skills-editor {
     padding: 16px;
   }
-  .skill-add-panel,
   .training-skill-suggestions {
     padding: 16px;
+  }
+  .skill-add-panel {
+    padding: 4px 16px 16px;
   }
   .skill-add-fields,
   .skill-edit-fields {

@@ -17,7 +17,7 @@ async (page) => {
   await page.locator('select[name=status]').selectOption('pending');await check('Filtre long');
   await page.locator('select[name=status]').selectOption('all');
   await page.locator('.student-row').first().getByRole('button',{name:'Ouvrir la fiche'}).click();
-  await page.getByRole('tab',{name:'Compétences'}).click();
+  await page.getByRole('tab',{name:'Compétences'}).click();await page.getByRole('button',{name:'Ajouter une compétence',exact:true}).click();
   const level=page.getByLabel('Niveau actuel',{exact:true});await level.selectOption('intermediate');
   await page.locator('select[name=skillName]').selectOption('Communication digitale');
   await page.getByLabel('Formation associée à Relation client',{exact:true}).selectOption({label:'Bachelor Communication · Promotion 2026'});

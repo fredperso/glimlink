@@ -11,7 +11,7 @@ async (page) => {
   assert(await page.locator('input[name="mobility"]').count() === 0, 'Mobilité en saisie libre');
   await page.locator('select[name="mobility"]').selectOption('Jusqu’à 50 km du domicile');
   await page.locator('select[name="location"]').selectOption('Lattes');
-  await page.getByRole('tab', {name: 'Compétences'}).click();
+  await page.getByRole('tab', {name: 'Compétences'}).click(); await page.getByRole('button', {name: 'Ajouter une compétence', exact: true}).click();
   await page.locator('select[name="skillName"]').selectOption('Excel');
   await page.getByRole('button', {name: 'Ajouter la compétence', exact: true}).click();
   assert(await page.getByLabel('Niveau de Excel', {exact: true}).count() === 1, 'Compétence sélectionnée non ajoutée');

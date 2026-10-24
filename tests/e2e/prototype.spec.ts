@@ -246,6 +246,14 @@ test('UX-015 : fiches en popin organisées en rubriques, actions toujours visibl
   await expect(dialog.getByRole('alert')).toContainText('Confirmez le contrôle');
   await expect(dialog.locator('#student-confirmation')).toBeFocused();
   await expect(dialog.getByText('Corrections en attente de publication')).toBeVisible();
+  await dialog.getByRole('tab', { name: /Compétences/ }).click();
+  const addSkill = dialog.getByRole('button', { name: 'Ajouter une compétence', exact: true });
+  await expect(addSkill).toHaveAttribute('aria-expanded', 'false');
+  await expect(dialog.getByLabel('Niveau actuel', { exact: true })).toHaveCount(0);
+  await addSkill.click();
+  await expect(addSkill).toHaveAttribute('aria-expanded', 'true');
+  await expect(dialog.getByRole('button', { name: 'Ajouter la compétence' })).toBeVisible();
+  await dialog.getByRole('tab', { name: /Publication/ }).click();
   await dialog.locator('#student-confirmation').check();
   await dialog.getByRole('button', { name: 'Valider et publier' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
