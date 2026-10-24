@@ -76,6 +76,8 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md) et le PDF V6 visuel du 
 
 | USR-28 | Retenir la variante B (Docker Compose sur une instance) | DCK-001–015, AC-ARC-019–023, ARB-011 ; architecture technique, arbitrages | spec-architecture-technique.md v1.2 ; décision d’hébergement, aucune infrastructure créée |
 
+| USR-30 | Héberger chez OVHcloud (compte et domaine existants) avec Brevo pour les e-mails | IAG-002, INF-004–007, EXP-002, DCK-001, DCK-003–004, DCK-006–007, DCK-010–011, DCK-014–016, ARB-011 ; architecture technique, arbitrages | spec-architecture-technique.md v1.3 ; décision de fournisseur, aucune infrastructure créée |
+
 USR-14 traduit la demande de clôture dans un état explicite confirmé par le conseiller ; elle ne signifie pas clôture dès l’envoi d’une demande. Les règles de réouverture restent ouvertes. Les premières demandes évoquant un « espace candidat » n’ajoutent pas de compte étudiant : aucun écran de ce rôle n’existe dans la V1 actuelle.
 
 ## Couverture du PDF V6

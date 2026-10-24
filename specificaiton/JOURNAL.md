@@ -268,3 +268,26 @@ Pour la date et un identifiant unique, consigner : demande ; sources/impact ; d�
 - **Sources vérifiées** : https://www.scaleway.com/en/docs/managed-databases-for-postgresql-and-mysql/concepts/ ; https://www.scaleway.com/en/docs/object-storage/faq/ ; https://www.scaleway.com/en/docs/object-storage/how-to/enable-sse-one/ ; https://www.scaleway.com/en/blog/secnumcloud-qualification-trusted-cloud/.
 - **Fichiers / exigences** : architecture technique v1.2 (§1, §3.8, §3.11, EXP-003, lots, §7, §10) ; arbitrages ARB-011 ; TRACEABILITE ; JOURNAL.
 - **Validation exécutée** : spec:check ; revue des sources ci-dessus. Aucun test applicatif ni build, car le code ne change pas.
+
+
+## 2026-10-24 — ANAL-007 — Rester chez OVHcloud plutôt que Scaleway ?
+
+- **Demande** : l’utilisateur a déjà un compte OVH et y a acheté le nom de domaine ; il demande s’il serait plus simple de rester chez cet hébergeur.
+- **Impact** : Aucun changement fonctionnel ; analyse comparative. La variante B (USR-28) et Scaleway restent la référence de la spécification technique tant qu’aucun changement de fournisseur n’est décidé.
+- **Constats** : le nom de domaine n’impose pas l’hébergeur (DNS pointable vers tout fournisseur). La variante B est transposable chez OVHcloud : instance Public Cloud, Public Cloud Databases PostgreSQL (chiffrement LUKS des volumes et des sauvegardes, réseau privé vRack, pas de clé fournie par le client), Object Storage S3, AI Endpoints (Gravelines, données ni conservées ni partagées selon OVHcloud). Écart principal : pas de service d’e-mail transactionnel identifié chez OVHcloud, donc un sous-traitant d’envoi supplémentaire. OVHcloud annonce le 1er septembre 2026 la qualification SecNumCloud de son offre SNC Cloud Platform ; Scaleway reste « en cours ».
+- **Recommandation non approuvée** : OVHcloud est un choix cohérent (un seul fournisseur, trajectoire SecNumCloud plus avancée) ; décision attendue avant toute modification de DCK-001, DCK-014, DCK-015, INF-005 et IAG-002.
+- **Sources vérifiées** : https://docs.ovhcloud.com/fr/guides/public-cloud/databases/concepts-security-overview ; https://docs.ovhcloud.com/fr/guides/public-cloud/ai-machine-learning/ai-endpoints-capabilities ; https://corporate.ovhcloud.com/en/newsroom/news/ovhcloud-obtains-secnumcloud-qualification-snc-cloud-platform/.
+- **Fichiers / exigences** : JOURNAL.md uniquement.
+- **Validation exécutée** : revue des sources ci-dessus ; spec:check. Aucun test applicatif ni build, car le code ne change pas.
+
+
+## 2026-10-24 — USR-30 — Hébergement OVHcloud et e-mails Brevo
+
+- **Demande** : « ok on part sur OVH avec Brevo, adapte la spec et commite ».
+- **Impact** : décision de fournisseur ; aucun changement fonctionnel des parcours ni du code.
+- **Décision acquise** : variante B (USR-28) hébergée chez OVHcloud, où se trouvent déjà le compte et le nom de domaine ; e-mails transactionnels par Brevo. La variante A reste décrite pour Scaleway comme alternative historique.
+- **Adaptations** : instance Public Cloud en région Paris 3-AZ (Gravelines à défaut, choix au lot 0) ; vRack ; Public Cloud Databases for PostgreSQL (volumes et sauvegardes chiffrés par le service, sans clé client) ; Object Storage S3 3-AZ avec chiffrement, versionnage et Object Lock pour les exports ; Secret Manager ; Managed Private Registry ; Logs Data Platform ; OpenTofu (fournisseurs OVH et OpenStack) ; AI Endpoints (Gravelines) ; DNS et DNSSEC chez OVHcloud ; API Brevo depuis un sous-domaine authentifié SPF/DKIM/DMARC.
+- **Questions ouvertes** : région exacte selon la disponibilité de Public Cloud Databases ; rétention des sauvegardes selon l’offre ; haute disponibilité de la base ; exception PRO-008 liée à l’infrastructure Google Cloud déclarée par Brevo (DCK-016, à vérifier dans son DPA et sa liste de sous-traitants) ; l’offre Public Cloud standard n’est pas l’offre SecNumCloud SNC Cloud Platform.
+- **Sources vérifiées** : https://docs.ovhcloud.com/fr/guides/public-cloud/databases/concepts-security-overview ; https://docs.ovhcloud.com/fr/guides/public-cloud/ai-machine-learning/ai-endpoints-capabilities ; https://docs.ovhcloud.com/en/guides/account-and-service-management/reversibility/object-storage-3az-reversibility-policy ; https://blog.ovhcloud.com/en/posts/discover-the-external-secret-operator-eso-ovhcloud-provider-to-manage-your-kubernetes-secrets/ ; https://corporate.ovhcloud.com/en/newsroom/news/ovhcloud-obtains-secnumcloud-qualification-snc-cloud-platform/ ; https://www.brevo.com/fr/securite/ ; https://www.brevo.com/fr/blog/conversation-avec-les-experts-partie-1/.
+- **Fichiers / exigences** : architecture technique v1.3 (statut, §1, IAG-002, §3.8, INF-004–007, EXP-002, §3.11 DCK-001, DCK-003–004, DCK-006–007, DCK-010–011, DCK-014–015, nouveau DCK-016, §4, §7, §8, §11) ; arbitrages ARB-011 et §8 ; TRACEABILITE ; JOURNAL.
+- **Validation exécutée** : spec:check ; recherche des mentions Scaleway restantes (uniquement la variante A historique). Aucun test applicatif ni build, car le code ne change pas.

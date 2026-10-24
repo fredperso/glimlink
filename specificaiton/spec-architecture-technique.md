@@ -1,6 +1,6 @@
 ---
 title: 'Architecture technique de production'
-version: '1.2'
+version: '1.3'
 date_created: 2026-10-23
 last_updated: 2026-10-24
 owner: Glimlink
@@ -20,6 +20,7 @@ Statut des informations, à lire avant toute exigence :
 
 - **Décision utilisateur USR-24 (23 octobre 2026)** : back en Java ; front sans framework JavaScript applicatif, Bootstrap suffisant ; MFA intégrée à l’application ; FIDO2.
 - **Contrainte acquise** : PRO-008, cloud souverain européen, préférence France (USR-20).
+- **Décision utilisateur USR-30 (24 octobre 2026)** : hébergement chez OVHcloud (compte et nom de domaine existants), e-mails transactionnels par Brevo.
 - **Choix de conception** (source « Conception ») : proposition de cette spécification, à valider en revue technique avant le lot 0. Ce n’est pas une décision métier.
 - **Point ouvert** : renvoi explicite à un arbitrage (ARB-xxx). Aucune valeur proposée ici ne clôt un arbitrage.
 
@@ -43,7 +44,7 @@ Versions vérifiées le 23 octobre 2026 : Java 25 LTS, Spring Boot 4.1, Spring S
 
 **Objet** : définir l’architecture de production de la V1, de façon à réduire au minimum la surface d’attaque et les erreurs de sécurité écrites à la main.
 
-**Périmètre** : composants applicatifs, authentification et MFA, autorisations et isolation des viviers, persistance, fichiers CV, IA générative, front, infrastructure Scaleway, chaîne de livraison, exploitation, tests et découpage en lots. Deux variantes d’hébergement sont décrites pour la même application et la même image Docker : variante A, conteneurs serverless (section 3.8) ; variante B, Docker Compose sur une instance (section 3.11, USR-27). **La variante B est retenue (USR-28, 24 octobre 2026)** ; la variante A reste documentée comme alternative.
+**Périmètre** : composants applicatifs, authentification et MFA, autorisations et isolation des viviers, persistance, fichiers CV, IA générative, front, infrastructure OVHcloud, chaîne de livraison, exploitation, tests et découpage en lots. Deux variantes d’hébergement sont décrites pour la même application et la même image Docker : variante A, conteneurs serverless, décrite pour Scaleway (section 3.8) ; variante B, Docker Compose sur une instance (section 3.11, USR-27). **La variante B est retenue (USR-28, 24 octobre 2026), chez OVHcloud avec Brevo pour les e-mails (USR-30)** ; la variante A reste documentée comme alternative historique.
 
 **Hors périmètre** : règles métier (spécifications fonctionnelles thématiques) ; choix contractuel final du fournisseur et qualification SecNumCloud (ARB-011) ; qualification juridique RGPD et AI Act (ARB-008, ARB-009) ; compte étudiant (ACC-003) ; intégrations externes (ARB-005).
 
@@ -138,7 +139,7 @@ Versions vérifiées le 23 octobre 2026 : Java 25 LTS, Spring Boot 4.1, Spring S
 | ID      | Source                          | Exigence                                                                                                                                                                                                                        |
 | ------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | IAG-001 | V6 §1, §5, §8, §14, §15         | Quatre usages, chacun avec son modèle de prompt versionné et son modèle configurable : reformulation du besoin, extraction de CV, lecture personnalisée (pourquoi ce profil, en lien avec vos missions), formulation neutre des observations et comptes rendus du conseiller. |
-| IAG-002 | PRO-008                         | Fournisseur : Scaleway Generative APIs (Paris), appelé par Spring AI avec le client compatible OpenAI. Tout autre fournisseur exige une revue PRO-008. La non-conservation des prompts est vérifiée contractuellement.      |
+| IAG-002 | PRO-008, USR-30 | Fournisseur : OVHcloud AI Endpoints (infrastructure de Gravelines, France), appelé par Spring AI avec le client compatible OpenAI. Selon OVHcloud, les données ne sont ni conservées ni partagées : point vérifié contractuellement. Tout autre fournisseur exige une revue PRO-008. Le catalogue de modèles est revu au lot 2. |
 | IAG-003 | V6 §1                           | Sorties structurées en JSON conformes à un schéma (record Java validé par Bean Validation). Une sortie invalide est rejetée et tracée ; la saisie manuelle reste possible (FIC-002). Aucune sortie IA n’est publiée sans validation humaine : conseiller pour les CV et les observations, entreprise pour la reformulation. |
 | IAG-004 | Conception                      | Le LLM n’a ni outil, ni accès à la base, ni action déclenchable. Les contenus de CV et de besoin sont traités comme des données non fiables et délimités dans le prompt. La sortie est échappée à l’affichage ; elle n’est jamais rendue en HTML ou Markdown. |
 | IAG-005 | ARB-008, SEC-ACC-001            | Minimisation : e-mail, téléphone, adresse et nom de famille connus sont retirés avant l’envoi d’un CV. La lecture personnalisée n’utilise que la version publiée et le besoin validé. Le signal « à valoriser » n’est jamais transmis dans un texte destiné à l’entreprise. |
@@ -159,19 +160,19 @@ Versions vérifiées le 23 octobre 2026 : Java 25 LTS, Spring Boot 4.1, Spring S
 | FRT-006 | UX-001–013          | Amélioration progressive : les parcours essentiels fonctionnent sans JavaScript, sauf le geste de swipe, remplacé par des boutons. Objectif d’accessibilité : WCAG 2.2 AA.                                                    |
 | FRT-007 | Conception          | En-têtes : HSTS (1 an, `includeSubDomains`), `X-Content-Type-Options: nosniff`, `Referrer-Policy: same-origin`, `Cross-Origin-Opener-Policy: same-origin`, `Permissions-Policy` qui interdit caméra, micro et géolocalisation et réserve `publickey-credentials-get` et `publickey-credentials-create` à l’origine. |
 
-### 3.8 Infrastructure, variante A : conteneurs serverless (alternative non retenue)
+### 3.8 Infrastructure, variante A : conteneurs serverless Scaleway (alternative non retenue)
 
-Les exigences ARC, AUT, AUZ, PER, FCH, IAG, FRT, LIV et EXP s’appliquent aux deux variantes. INF-001 à INF-007 décrivent la variante A ; INF-002 et INF-004 à INF-007 s’appliquent aussi à la variante B.
+Les exigences ARC, AUT, AUZ, PER, FCH, IAG, FRT, LIV et EXP s’appliquent aux deux variantes. INF-001 et INF-003 ne concernent que la variante A, décrite pour Scaleway avant USR-30. INF-002 et INF-004 à INF-007 s’appliquent à la variante B retenue, chez OVHcloud.
 
 | ID      | Source              | Exigence                                                                                                                                                                                                                                                         |
 | ------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | INF-001 | PRO-008, ANAL-003   | Scaleway, région fr-par, projet dédié dans le compte existant. Services : Serverless Containers (`web`, `worker`) rattachés à un Private Network ; Managed Database for PostgreSQL joignable uniquement par ce réseau privé ; Object Storage ; Transactional Email ; Secret Manager ; Container Registry ; Cockpit ; Generative APIs. |
 | INF-002 | Conception          | Environnements `recette` et `production` séparés : projets, bases, buckets, clés et domaines distincts. Données fictives uniquement en recette ; aucune copie de la production vers la recette.                                                                   |
 | INF-003 | Conception          | Une instance minimum toujours active (`min-scale=1`) pour `web` et `worker` en production, afin d’éviter le démarrage à froid et de garantir le traitement de la file.                                                                                            |
-| INF-004 | Conception          | Domaine personnalisé, certificat TLS géré, TLS 1.2 au minimum, enregistrement DNS CAA ; DNSSEC si le registraire le permet.                                                                                                                                      |
-| INF-005 | NOT-001–010         | E-mails envoyés depuis un domaine authentifié par SPF, DKIM et DMARC (`p=reject` après une période d’observation). Ils ne contiennent aucune donnée de candidat : seulement un libellé d’événement et un lien vers l’application.                                 |
-| INF-006 | Conception          | Secrets dans Secret Manager, lus au démarrage. Aucun secret dans le dépôt, l’image ou les journaux. Procédure de rotation documentée.                                                                                                                             |
-| INF-007 | Conception          | IAM Scaleway : comptes nominatifs avec MFA ; une clé d’API par usage avec les droits minimaux (la clé de déploiement ne peut que publier une image et déployer les conteneurs du projet).                                                                         |
+| INF-004 | Conception, USR-30 | Nom de domaine et zone DNS chez OVHcloud. DNSSEC activé, enregistrement CAA limitant les autorités de certification, certificat TLS automatique, TLS 1.2 au minimum. Accès au compte OVHcloud protégé par MFA. |
+| INF-005 | NOT-001–010, USR-30 | E-mails envoyés par l’API transactionnelle HTTPS de Brevo depuis un sous-domaine dédié (par exemple `notifications.<domaine>`), authentifié par SPF, DKIM et DMARC (`p=reject` après une période d’observation). Ils ne contiennent aucune donnée de candidat : seulement un libellé d’événement et un lien vers l’application. Brevo est un sous-traitant RGPD distinct, à déclarer. |
+| INF-006 | Conception | Secrets dans le gestionnaire de secrets du fournisseur (OVHcloud Secret Manager en variante B), lus au démarrage. Aucun secret dans le dépôt, l’image ou les journaux. Procédure de rotation documentée. |
+| INF-007 | Conception | Accès au fournisseur : comptes nominatifs avec MFA (IAM OVHcloud) ; une clé ou un utilisateur d’API par usage avec des droits minimaux. La clé de déploiement ne peut que publier une image ; l’accès à l’instance passe par DCK-008. |
 
 ### 3.9 Chaîne de livraison
 
@@ -188,37 +189,38 @@ Les exigences ARC, AUT, AUZ, PER, FCH, IAG, FRT, LIV et EXP s’appliquent aux d
 | ID      | Source              | Exigence                                                                                                                                                                                                                  |
 | ------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | EXP-001 | FIC-004, V6 §21     | Journal d’audit applicatif en ajout seul (le rôle applicatif ne peut qu’insérer). Événements : connexions et échecs, enrôlement et révocation de passkey, consultation d’une fiche complète ou d’un CV source, publication, retrait, export, changement de droits, réinitialisation d’accès. |
-| EXP-002 | Conception          | Journaux techniques structurés (JSON) envoyés vers Cockpit, avec identifiant de corrélation. Ils ne contiennent ni donnée de candidat, ni jeton, ni contenu IA.                                                          |
+| EXP-002 | Conception | Journaux techniques structurés (JSON) envoyés au service de journaux du fournisseur (OVHcloud Logs Data Platform en variante B), avec identifiant de corrélation. Ils ne contiennent ni donnée de candidat, ni jeton, ni contenu IA. |
 | EXP-003 | ARB-011             | Sauvegardes automatiques de la base (rétention proposée : 14 jours, DCK-014) dont la localisation est vérifiée. Versionnage des buckets. Test de restauration trimestriel documenté.                                               |
 | EXP-004 | Conception          | Alertes : taux d’erreurs, échecs d’authentification anormaux, file de tâches bloquée, quota IA atteint, expiration de certificat.                                                                                        |
 | EXP-005 | Conception          | Correctifs de sécurité critiques déployés sous 7 jours (proposition). Revue mensuelle des dépendances et suivi des fins de support de Java, Spring et PostgreSQL.                                                         |
 | EXP-006 | Conception, ARB-008 | Avant l’ouverture : analyse de risques, analyse d’impact relative à la protection des données (AIPD) à évaluer avec le référent données, test d’intrusion externe. Les vulnérabilités élevées sont corrigées avant la mise en production. |
 
-### 3.11 Infrastructure, variante B retenue : Docker Compose sur une instance
+### 3.11 Infrastructure, variante B retenue : Docker Compose sur une instance OVHcloud
 
 Principe : l’instance ne contient aucune donnée métier. Base de données, CV et sauvegardes sont dans des services managés ; l’instance peut être détruite et reconstruite à tout moment depuis le dépôt.
 
 | ID      | Source            | Exigence                                                                                                                                                                                                                                                                   |
 | ------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DCK-001 | USR-28, PRO-008   | Une instance Scaleway (machine virtuelle) en fr-par, système Debian stable minimal, Docker Engine et Docker Compose v2. Dimensionnement proposé : 4 vCPU dédiés et 8 Go de mémoire, à confirmer par l’essai de charge.                                                    |
+| DCK-001 | USR-28, USR-30, PRO-008 | Une instance OVHcloud Public Cloud, système Debian stable minimal, Docker Engine et Docker Compose v2. Région Paris (3-AZ) privilégiée, Gravelines à défaut ; l’instance, la base, le stockage et le réseau privé sont dans la même région, choisie au lot 0 selon la disponibilité de Public Cloud Databases. Dimensionnement proposé : 4 vCPU et 8 Go de mémoire, à confirmer par l’essai de charge. |
 | DCK-002 | USR-27, USR-28    | Un fichier `compose.yaml` versionné décrit quatre services : `proxy` (Caddy, terminaison TLS), `web` et `worker` (même image applicative, profils différents), `migrate` (Flyway, lancé uniquement au déploiement).                                                       |
-| DCK-003 | Conception        | Production : PostgreSQL managé joint par le Private Network, Object Storage pour les CV. Aucun volume Docker ne contient de donnée métier. Un conteneur PostgreSQL n’est utilisé qu’en local et en recette jetable.                                                        |
-| DCK-004 | Conception        | Seul `proxy` publie des ports (80 et 443) ; `web` et `worker` n’exposent rien sur l’hôte. Le pare-feu est le groupe de sécurité Scaleway, car Docker contourne les règles locales de type ufw : entrées autorisées 80 et 443 ; 22 uniquement depuis les adresses d’administration ; tout le reste refusé. |
+| DCK-003 | Conception | Production : PostgreSQL managé joint par le réseau privé vRack, Object Storage pour les CV. Aucun volume Docker ne contient de donnée métier. Un conteneur PostgreSQL n’est utilisé qu’en local et en recette jetable. |
+| DCK-004 | Conception        | Seul `proxy` publie des ports (80 et 443) ; `web` et `worker` n’exposent rien sur l’hôte. Le pare-feu est le groupe de sécurité de l’instance Public Cloud OVHcloud, car Docker contourne les règles locales de type ufw : entrées autorisées 80 et 443 ; 22 uniquement depuis les adresses d’administration ; tout le reste refusé. |
 | DCK-005 | Conception        | Durcissement de chaque conteneur : utilisateur non root, `read_only: true`, `tmpfs` pour `/tmp`, `cap_drop: [ALL]` (seul `proxy` reçoit `NET_BIND_SERVICE`), `no-new-privileges`, limites de mémoire et de CPU, `restart: unless-stopped`. L’image sans shell ne peut pas exécuter de `healthcheck` interne : la santé de `web` est contrôlée par Caddy (vérification active de l’amont) et par le script de déploiement. Le socket Docker n’est jamais monté dans un conteneur. |
-| DCK-006 | Conception        | Images référencées par empreinte (`@sha256:`), jamais par une étiquette mobile. L’image applicative vient du Container Registry privé Scaleway ; les images tierces (Caddy) sont figées et mises à jour par Renovate.                                                       |
-| DCK-007 | Conception, INF-006 | Secrets fournis par `secrets:` de Compose (fichiers de l’hôte en mode 0400, propriété root), créés une fois par l’administrateur depuis Secret Manager. Spring Boot les lit par `configtree:/run/secrets/`. Aucun secret dans `compose.yaml`, dans le dépôt ni dans GitHub, hors clé de déploiement. |
+| DCK-006 | Conception        | Images référencées par empreinte (`@sha256:`), jamais par une étiquette mobile. L’image applicative vient du registre privé OVHcloud (Managed Private Registry) ; les images tierces (Caddy) sont figées et mises à jour par Renovate.                                                       |
+| DCK-007 | Conception, INF-006 | Secrets fournis par `secrets:` de Compose (fichiers de l’hôte en mode 0400, propriété root), créés une fois par l’administrateur depuis OVHcloud Secret Manager. Spring Boot les lit par `configtree:/run/secrets/`. Aucun secret dans `compose.yaml`, dans le dépôt ni dans GitHub, hors clé de déploiement. |
 | DCK-008 | Conception        | Déploiement : GitHub Actions construit et analyse l’image, la publie au registre, puis se connecte en SSH avec un compte `deploy` dont la clé est restreinte à une commande forcée (`command="…/deploy",restrict`). Cette commande n’accepte qu’une empreinte d’image ; elle lance `migrate`, redémarre `worker` puis `web`, vérifie la santé et revient à l’empreinte précédente en cas d’échec. |
 | DCK-009 | Conception        | Hôte : connexion SSH par clé uniquement, connexion root interdite, mises à jour de sécurité automatiques (unattended-upgrades) avec fenêtre de redémarrage, rotation des journaux Docker (`max-size`, `max-file`), `live-restore` activé. Compte administrateur nominatif ; le groupe `docker` vaut des droits root et est limité aux comptes `deploy` et d’administration. |
-| DCK-010 | Conception        | Reconstruction : l’instance, le groupe de sécurité et le Private Network sont décrits en infrastructure as code (OpenTofu, fournisseur Scaleway) et initialisés par cloud-init. Une reconstruction complète depuis zéro est testée chaque trimestre. Objectif proposé : service rétabli en moins de 4 heures. |
-| DCK-011 | Conception, EXP-002 | Journaux et métriques : un agent de collecte (Grafana Alloy) transmet les journaux des conteneurs et les métriques de l’hôte à Cockpit. Une sonde externe vérifie la disponibilité de la page de santé publique.                                                         |
+| DCK-010 | Conception        | Reconstruction : l’instance, le groupe de sécurité, le vRack, la base et les buckets sont décrits en infrastructure as code (OpenTofu, fournisseurs OVH et OpenStack) et initialisés par cloud-init. Une reconstruction complète depuis zéro est testée chaque trimestre. Objectif proposé : service rétabli en moins de 4 heures. |
+| DCK-011 | Conception, EXP-002 | Journaux : un agent de collecte (Fluent Bit ou Grafana Alloy) transmet les journaux des conteneurs à OVHcloud Logs Data Platform. Les métriques de l’hôte et de la base sont suivies par la supervision OVHcloud. Une sonde externe vérifie la disponibilité de la page de santé publique. |
 | DCK-012 | Conception        | Interruption acceptée de quelques secondes au déploiement, compte tenu de la volumétrie. Les déploiements de production ont lieu hors des heures d’usage principales.                                                                                                    |
 | DCK-013 | Conception        | Le même `compose.yaml`, complété par `compose.override.yaml` en local, lance l’application complète sur un poste : PostgreSQL de la même version majeure, Mailpit pour les e-mails, stockage des CV sur disque local, réponses IA enregistrées. Aucune donnée réelle en local. |
-| DCK-014 | PRO-008, PER-004  | Base : Managed Database for PostgreSQL en fr-par, joignable uniquement par le Private Network ; chiffrement au repos activé dès la création (volume chiffré, clé gérée par Scaleway, irréversible une fois activé) ; sauvegardes automatiques quotidiennes conservées 14 jours ; nœud de secours en haute disponibilité optionnel, à décider selon le coût. Les sauvegardes logiques n’étant pas chiffrées par le service, un export complémentaire éventuel est chiffré par l’application avant dépôt. |
-| DCK-015 | PRO-008, FCH-002  | Fichiers : Object Storage en fr-par, classe Standard Multi-AZ (trois zones de disponibilité), bucket privé, chiffrement côté serveur SSE-ONE activé, versionnage activé. Un bucket distinct, sans droit de suppression pour l’application, reçoit les exports chiffrés. La disponibilité de SSE-KMS et du verrouillage d’objets est vérifiée au lot 0. |
+| DCK-014 | PRO-008, PER-004, USR-30 | Base : OVHcloud Public Cloud Databases for PostgreSQL, dans la région de l’instance, joignable uniquement par le vRack et par la liste des adresses autorisées. Les volumes et les sauvegardes sont chiffrés par le service (LUKS, clé propre à chaque instance, sans clé fournie par le client). Sauvegardes automatiques, dont la rétention dépend de l’offre et est vérifiée au lot 0. Une offre à plusieurs nœuds pour la haute disponibilité reste optionnelle, à décider selon le coût. Un export complémentaire éventuel est chiffré par l’application avant dépôt. |
+| DCK-015 | PRO-008, FCH-002, USR-30 | Fichiers : OVHcloud Object Storage S3, classe 3-AZ en région Paris (trois zones de disponibilité), ou Standard dans la région retenue. Bucket privé, chiffrement côté serveur activé, versionnage activé. Le bucket des exports chiffrés est créé avec le verrouillage d’objets (Object Lock, mode WORM), qui ne peut être activé qu’à la création ; l’application ne peut pas y supprimer d’objet. |
+| DCK-016 | USR-30, AC-ARB-005 | Brevo est hors du périmètre OVHcloud : selon Brevo, ses serveurs sont dans l’UE et une partie de son infrastructure repose sur Google Cloud en Belgique. Comme les e-mails ne contiennent que l’adresse du destinataire et un lien (INF-005), cette dépendance est documentée comme exception à PRO-008 dans le dossier AC-ARB-005, après vérification du DPA et de la liste des sous-traitants ultérieurs de Brevo. |
 
 ## 4. Interfaces et contrats de données
 
-### Vue d’ensemble, variante A
+### Vue d’ensemble, variante A (Scaleway, non retenue)
 
 ```text
 Navigateur (HTML + Bootstrap + htmx + modules ES)
@@ -236,22 +238,23 @@ Serverless Container « web » (Spring Boot)      Serverless Container « worker
    web/worker ─► Secret Manager             web/worker ─► Cockpit (journaux, métriques)
 ```
 
-### Vue d’ensemble, variante B
+### Vue d’ensemble, variante B retenue (OVHcloud)
 
 ```text
 Internet ── groupe de sécurité (80, 443 ; 22 depuis l’administration)
    ▼
-Instance Scaleway fr-par (Debian, Docker Compose) — aucune donnée métier
+Instance OVHcloud Public Cloud, Paris 3-AZ (Debian, Docker Compose) — aucune donnée métier
    ├─ proxy  (Caddy, TLS)        ports 80/443 publiés
    ├─ web    (Spring Boot)       réseau Docker interne, aucun port publié
    ├─ worker (Spring Boot)       réseau Docker interne, aucun port publié
    ├─ migrate (Flyway)           lancé seulement au déploiement
-   └─ alloy  (collecte)          journaux et métriques vers Cockpit
-   │ Private Network (TLS)
+   └─ collecte (Fluent Bit / Alloy) journaux vers Logs Data Platform
+   │ vRack (réseau privé, TLS)
    ▼
-Managed PostgreSQL (sauvegardes managées)     Object Storage privé (CV)
-worker ─► Generative APIs, Transactional Email (fr-par)
-GitHub Actions ─► Container Registry ─► SSH à commande forcée ─► script deploy
+Public Cloud Databases PostgreSQL     Object Storage S3 3-AZ privé (CV)
+worker ─► AI Endpoints (Gravelines)   worker ─► API Brevo (e-mails, hors OVHcloud)
+DNS, DNSSEC et domaine : OVHcloud      Secrets : OVHcloud Secret Manager
+GitHub Actions ─► Managed Private Registry ─► SSH à commande forcée ─► script deploy
 ```
 
 ### Modules et correspondance avec la maquette
@@ -317,12 +320,14 @@ Règles : un champ non trouvé vaut `unknown` ou est absent, jamais une valeur s
 
 ### Configuration et secrets
 
+En variante B, « Secret Manager » désigne OVHcloud Secret Manager ; les valeurs sont matérialisées en fichiers Compose (DCK-007).
+
 | Nom                         | Nature     | Source            |
 | --------------------------- | ---------- | ----------------- |
 | `GLIMLINK_DB_URL`, `GLIMLINK_DB_USER`, `GLIMLINK_DB_PASSWORD` | Secret | Secret Manager |
 | `GLIMLINK_S3_ACCESS_KEY`, `GLIMLINK_S3_SECRET_KEY`, `GLIMLINK_S3_BUCKET` | Secret | Secret Manager |
 | `GLIMLINK_AI_API_KEY`, `GLIMLINK_AI_MODEL_*`  | Secret / paramètre | Secret Manager |
-| `GLIMLINK_MAIL_API_KEY`     | Secret     | Secret Manager    |
+| `GLIMLINK_MAIL_API_KEY` (clé API Brevo) | Secret     | Secret Manager    |
 | `GLIMLINK_PII_KEY`          | Secret (si PER-004 est retenu) | Secret Manager |
 | `GLIMLINK_RP_ID`, `GLIMLINK_ALLOWED_ORIGIN` | Paramètre | Configuration du conteneur |
 
@@ -332,7 +337,7 @@ Le découpage suit les priorités V6 §22, précédé d’un socle de sécurité
 
 | Lot | Contenu                                                                                         | Priorités V6 couvertes |
 | --- | ----------------------------------------------------------------------------------------------- | ---------------------- |
-| 0   | Infrastructure de recette (variante B, OpenTofu et cloud-init), `compose.yaml` local, intégration continue, socle Spring, FIDO2, sessions, audit, en-têtes | Préalable              |
+| 0   | Infrastructure de recette OVHcloud (variante B, OpenTofu et cloud-init), choix de la région, domaine d’envoi Brevo, `compose.yaml` local, intégration continue, socle Spring, FIDO2, sessions, audit, en-têtes | Préalable              |
 | 1   | Organisation, droits, RLS, invitation entreprise, profil multi-sites, administration            | 1                      |
 | 2   | Import de CV, extraction IA, validation et publication conseiller, observations, signal interne  | 5, 8                   |
 | 3   | Besoin libre, reformulation IA, brief complet, calendrier si exprimé                            | 2, 3, 4                |
@@ -388,7 +393,7 @@ Le découpage suit les priorités V6 §22, précédé d’un socle de sécurité
 - **Instantané publié et RLS** : le risque principal de Glimlink est une fuite de données entre viviers ou vers l’entreprise. Une entreprise ne lit que des vues sans colonne privée, et PostgreSQL filtre les lignes : une erreur dans le code applicatif ne suffit pas à exposer une donnée.
 - **CV anonymisé généré** : expurger un fichier source laisse des risques (calques, métadonnées, texte masqué). Générer le CV depuis la version publiée reprend le comportement de la maquette.
 - **Monolithe modulaire** : un seul déploiement, une seule base, exploitation simple, adaptés à la volumétrie visée.
-- **Scaleway** : PRO-008 et compte existant (ANAL-003).
+- **OVHcloud et Brevo (USR-30)** : compte et nom de domaine déjà chez OVHcloud, donc un seul fournisseur pour le domaine, le DNS et l’hébergement. OVHcloud annonce le 1er septembre 2026 la qualification SecNumCloud de son offre SNC Cloud Platform ; l’offre Public Cloud standard retenue ici n’est pas cette offre qualifiée, mais une migration resterait possible si SecNumCloud devenait exigé (ARB-011). OVHcloud n’offrant pas de service d’e-mail transactionnel identifié, Brevo (société française) assure l’envoi (DCK-016). Scaleway était la proposition précédente (ANAL-003, USR-28).
 - **Deux variantes d’hébergement (USR-27)** : les deux exécutent la même image Docker ; Scaleway accepte une image Docker en conteneur serverless (A) comme sur une instance (B).
 
 | Critère                         | A : conteneurs serverless                          | B : Docker Compose sur instance                                        |
@@ -401,7 +406,7 @@ Le découpage suit les priorités V6 §22, précédé d’un socle de sécurité
 | Disponibilité                   | Redémarrage et mise à l’échelle gérés              | Une seule instance ; reconstruction en moins de 4 heures (DCK-010)     |
 | Coût                            | À l’usage, avec instances minimales actives        | Prix fixe d’une instance                                               |
 
-Décision USR-28 : variante B retenue. Recommandation initiale : la variante B si la simplicité de compréhension, l’identité local/production et la portabilité priment, à condition d’accepter l’entretien de l’hôte. La variante A si l’on veut supprimer toute administration système. Dans les deux cas, base et fichiers restent dans des services managés : la donnée ne dépend jamais de l’instance.
+Décision USR-28 : variante B retenue ; USR-30 : chez OVHcloud. Le tableau compare les variantes telles que décrites pour Scaleway ; les critères restent valables chez OVHcloud. Recommandation initiale : la variante B si la simplicité de compréhension, l’identité local/production et la portabilité priment, à condition d’accepter l’entretien de l’hôte. La variante A si l’on veut supprimer toute administration système. Dans les deux cas, base et fichiers restent dans des services managés : la donnée ne dépend jamais de l’instance.
 - **Alternatives écartées** : Django (ANAL-005) et Node.js (ANAL-003), remplacés par la décision Java ; SPA React, surface plus large ; fournisseur d’identité externe (Keycloak), écarté car la MFA est demandée dans l’application, mais il reste une solution de repli si le besoin d’authentification grandit (fédération, SSO des écoles).
 
 ## 8. Dépendances et intégrations
@@ -412,14 +417,14 @@ Décision USR-28 : variante B retenue. Recommandation initiale : la variante B s
 
 ### Services tiers
 
-- **SVC-001** : Scaleway Generative APIs, inférence LLM en région Paris, sans conservation des prompts selon le fournisseur (à vérifier contractuellement).
-- **SVC-002** : Scaleway Transactional Email, envoi des invitations, liens de connexion et notifications.
+- **SVC-001** : OVHcloud AI Endpoints, inférence LLM à Gravelines, sans conservation ni partage des données selon le fournisseur (à vérifier contractuellement).
+- **SVC-002** : Brevo, API d’e-mails transactionnels pour les invitations, liens de connexion et notifications ; sous-traitant distinct d’OVHcloud (DCK-016).
 
 ### Dépendances d’infrastructure
 
-- **INF-DEP-001** : Serverless Containers avec Private Network. Limite connue : pas de trafic entrant depuis le réseau privé, un seul réseau privé par conteneur ; le worker consulte la file et n’a pas besoin de trafic entrant.
-- **INF-DEP-002** : Managed Database for PostgreSQL (accès privé, sauvegardes), Object Storage, Secret Manager, Container Registry, Cockpit.
-- **INF-DEP-003** (variante B) : Instances Scaleway avec groupe de sécurité et Private Network ; Docker Engine et Docker Compose v2 ; Caddy ; autorité de certification ACME pour les certificats TLS (elle ne reçoit aucune donnée applicative) ; OpenTofu et cloud-init.
+- **INF-DEP-001** (variante A, Scaleway, non retenue) : Serverless Containers avec Private Network. Limite connue : pas de trafic entrant depuis le réseau privé, un seul réseau privé par conteneur ; le worker consulte la file et n’a pas besoin de trafic entrant.
+- **INF-DEP-002** (variante A, Scaleway, non retenue) : Managed Database for PostgreSQL, Object Storage, Secret Manager, Container Registry, Cockpit.
+- **INF-DEP-003** (variante B retenue) : OVHcloud Public Cloud (instance, groupe de sécurité, vRack), Public Cloud Databases for PostgreSQL, Object Storage S3, Secret Manager, Managed Private Registry, Logs Data Platform, DNS du domaine ; Docker Engine et Docker Compose v2 ; Caddy ; autorité de certification ACME pour les certificats TLS (elle ne reçoit aucune donnée applicative) ; OpenTofu et cloud-init.
 
 ### Dépendances de données
 
@@ -433,7 +438,7 @@ Décision USR-28 : variante B retenue. Recommandation initiale : la variante B s
 
 - **COM-001** : RGPD : base légale, information des candidats sans compte, conservation, droits, AIPD (ARB-008).
 - **COM-002** : AI Act : qualification de l’usage en recrutement (ARB-009).
-- **COM-003** : souveraineté et éventuelle qualification SecNumCloud (PRO-008, ARB-011, AC-ARB-005).
+- **COM-003** : souveraineté et éventuelle qualification SecNumCloud (PRO-008, ARB-011, AC-ARB-005), y compris l’exception Brevo (DCK-016).
 
 ## 9. Exemples et cas limites
 
@@ -488,7 +493,7 @@ services:
 
   web:
     <<: *hardening
-    image: rg.fr-par.scw.cloud/glimlink/app@sha256:${APP_DIGEST}
+    image: <registre>.container-registry.ovh.net/glimlink/app@sha256:${APP_DIGEST}
     command: ['--spring.profiles.active=production,web']
     env_file: ./app.env
     secrets: [db_password, s3_secret_key, ai_api_key, mail_api_key]
@@ -497,7 +502,7 @@ services:
 
   worker:
     <<: *hardening
-    image: rg.fr-par.scw.cloud/glimlink/app@sha256:${APP_DIGEST}
+    image: <registre>.container-registry.ovh.net/glimlink/app@sha256:${APP_DIGEST}
     command: ['--spring.profiles.active=production,worker']
     env_file: ./app.env
     secrets: [db_password, s3_secret_key, ai_api_key, mail_api_key]
@@ -506,7 +511,7 @@ services:
 
   migrate:
     <<: *hardening
-    image: rg.fr-par.scw.cloud/glimlink/app@sha256:${APP_DIGEST}
+    image: <registre>.container-registry.ovh.net/glimlink/app@sha256:${APP_DIGEST}
     command: ['--spring.profiles.active=production,migrate']
     env_file: ./migrate.env
     secrets: [db_owner_password]
@@ -574,6 +579,11 @@ Avant l’ouverture de la production :
 - [Recette fonctionnelle](spec-process-recette.md)
 - Spring Security, MFA : https://docs.spring.io/spring-security/reference/7.1/servlet/authentication/mfa.html
 - Spring Security, passkeys : https://docs.spring.io/spring-security/reference/7.0/servlet/authentication/passkeys.html
-- Scaleway Generative APIs, confidentialité : https://www.scaleway.com/en/docs/generative-apis/reference-content/data-privacy/
-- Scaleway Serverless Containers et Private Network : https://www.scaleway.com/en/docs/serverless-containers/reference-content/containers-private-networks/
+- OVHcloud Public Cloud Databases, sécurité : https://docs.ovhcloud.com/fr/guides/public-cloud/databases/concepts-security-overview
+- OVHcloud AI Endpoints : https://docs.ovhcloud.com/fr/guides/public-cloud/ai-machine-learning/ai-endpoints-capabilities
+- OVHcloud Object Storage 3-AZ, réversibilité et fonctions : https://docs.ovhcloud.com/en/guides/account-and-service-management/reversibility/object-storage-3az-reversibility-policy
+- OVHcloud Secret Manager : https://docs.ovhcloud.com/fr/guides/manage-and-operate/secret-manager/third-party-integrations.md
+- OVHcloud SecNumCloud SNC Cloud Platform : https://corporate.ovhcloud.com/en/newsroom/news/ovhcloud-obtains-secnumcloud-qualification-snc-cloud-platform/
+- Brevo, sécurité et confidentialité : https://www.brevo.com/fr/securite/
+- Variante A historique, Scaleway Serverless Containers : https://www.scaleway.com/en/docs/serverless-containers/reference-content/containers-private-networks/
 - OWASP ASVS : https://owasp.org/www-project-application-security-verification-standard/
