@@ -1,15 +1,15 @@
 ---
 title: 'Espace entreprise et accueil simplifié'
-version: '1.4'
+version: '1.5'
 date_created: 2026-10-08
-last_updated: 2026-10-23
+last_updated: 2026-10-24
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [4, 7, 9, 10, 11, 12]
 pdf_v6_sections: [2, 3, 4, 9, 10, 11, 19, 20]
-maquette_revision: travail-local-USR-23
+maquette_revision: travail-local-USR-26
 tags: [specification, design, glimlink]
 ---
 
@@ -56,7 +56,7 @@ Spécifier le parcours entreprise consolidé au 8 octobre puis aligné sur le [P
 | ENT-011 | V6 §9                         | Trois espaces seulement : Découvrir (swipe), Tous les profils (grille) et Ma sélection, sur le même vivier ordonné ; Découvrir est accessible depuis la navigation et permet de changer de besoin actif. |
 | ENT-012 | V6 §9                         | La carte swipe montre prénom, formation, zone géographique large, sans photo ; « Pourquoi ce profil pour votre besoin ? » en 2-3 phrases ; 3-4 éléments factuels ; « En lien avec vos missions » ; Déclic seulement si utile ; actions Passer, Profil & CV, Sélectionner. |
 | ENT-013 | V6 §9, §19                    | Passer ≠ refuser : un profil passé reste dans Tous les profils avec la mention Passé, peut être sélectionné et peut revenir dans Découvrir (« Revoir les profils passés »). |
-| ENT-014 | V6 §9                         | La fiche détaillée présente la lecture Glimlink personnalisée, le CV anonymisé en un clic et le calendrier de formation dans des onglets ; nom, téléphone, e-mail et adresse précise restent masqués. |
+| ENT-014 | V6 §9                         | La fiche détaillée présente la lecture Glimlink personnalisée, le CV anonymisé en un clic et le calendrier de formation dans des onglets (Vue d’ensemble, Compétences, CV anonymisé, Calendrier ; USR-26) ; nom, téléphone, e-mail et adresse précise restent masqués. |
 | ENT-015 | V6 §2                         | La navigation entreprise donne accès à Mes besoins, Découvrir, Ma sélection, Talent Alerts et Mon profil ; l’accueil reste la porte d’entrée de la phrase libre et les mises en relation se suivent depuis Ma sélection. |
 | ENT-016 | V6 §3                         | Mon profil porte raison sociale, SIRET, secteur, contact, coordonnées professionnelles et plusieurs sites ; le premier site préremplit le lieu de chaque nouveau besoin, modifiable. |
 | ENT-017 | V6 §20                        | Aucune rubrique visible « Pépite / Regard conseiller » ; aucune messagerie avec l’étudiant ; aucun score public. |
@@ -95,6 +95,7 @@ Les avancements représentés : recherche à confirmer, profils à explorer, dem
 - **AC-ENT-011** : sans profil retenu, le relais humain est proposé ; « Être accompagné par Mathilde » confirme l’envoi et le besoin affiche « Relais demandé » côté conseiller.
 - **AC-ENT-012** : modifier le site principal dans Mon profil préremplit ce lieu lors de la reformulation d’un nouveau besoin.
 - **AC-ENT-013** : la fiche détaillée ouvre l’onglet CV anonymisé sans nom de famille ni coordonnée de l’étudiant.
+- **AC-ENT-014** : dans la fiche détaillée, la Vue d’ensemble réunit pourquoi ce profil, faits saillants, missions en lien, disponibilité et conditions ; l’onglet Compétences sépare ce que la fiche prouve et ce qui est transférable ; « Ajouter à ma sélection » reste visible pendant la lecture (USR-26).
 
 ## 6. Stratégie de test
 

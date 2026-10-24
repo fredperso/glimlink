@@ -3,7 +3,7 @@ async (page) => {
  const report=[];
  const response=await page.request.get('https://unpkg.com/axe-core@4.10.3/axe.min.js');const axe=await response.text();
  async function audit(name,width){await page.addScriptTag({content:axe});const result=await page.evaluate(async()=>await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}));report.push({name,width,violations:result.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary}))}))});}
- async function open(){await page.goto('http://glimlink.demo/#/adviser/students');await page.locator('.student-row').filter({hasText:'Sophie'}).getByRole('button',{name:'Ouvrir la fiche'}).click();await page.getByRole('button',{name:'Gérer les compétences'}).click();}
+ async function open(){await page.goto('http://glimlink.demo/#/adviser/students');await page.locator('.student-row').filter({hasText:'Sophie'}).getByRole('button',{name:'Ouvrir la fiche'}).click();await page.getByRole('tab',{name:'Compétences'}).click();}
  for(const width of [1440,390,320]){
   await page.setViewportSize({width,height:width===1440?1000:844});await page.evaluate(()=>localStorage.clear());await page.reload();await open();
   const dialog=page.getByRole('dialog');
@@ -28,7 +28,7 @@ async (page) => {
   await dialog.getByLabel('Niveau de Relation client',{exact:true}).selectOption('advanced');
   await audit('Éditeur de compétences',width);
   assert(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth),'Débordement éditeur');
-  await page.getByRole('button',{name:'Gérer les compétences'}).click();
+  await page.getByRole('tab',{name:'Compétences'}).click();
   if(width!==320)await page.screenshot({path:'/home/fjeanne/dev/projets/glimlink/docs/screenshots/skills-editor'+(width===390?'-mobile':'')+'.png',fullPage:false});
   await dialog.getByRole('button',{name:'Enregistrer le brouillon',exact:true}).click();
   await dialog.getByRole('button',{name:'Fermer la fenêtre'}).click();
@@ -38,7 +38,7 @@ async (page) => {
   await page.getByRole('button',{name:'Fermer la fenêtre'}).click();
   await page.reload();await open();
   assert(await page.getByLabel('Niveau de Power BI',{exact:true}).inputValue()==='intermediate','Niveau non conservé après rechargement');
-  await page.locator('#student-confirmation').check();
+  await page.getByRole('tab', { name: 'Publication' }).click(); await page.locator('#student-confirmation').check();
   await page.getByRole('button',{name:'Valider et publier',exact:true}).click();
   await page.goto('http://glimlink.demo/#/company/discover?need=need-admin');
   await page.locator('.talent-card').filter({hasText:'Sophie'}).getByRole('button',{name:'Voir le profil'}).click();

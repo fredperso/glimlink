@@ -1,14 +1,14 @@
 ---
 title: 'Ergonomie, sélecteurs et navigation mobile'
-version: '1.6'
+version: '1.7'
 date_created: 2026-10-08
-last_updated: 2026-10-23
+last_updated: 2026-10-24
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [1, 7, 18]
-maquette_revision: travail-local-USR-25
+maquette_revision: travail-local-USR-26
 tags: [specification, design, glimlink]
 ---
 
@@ -56,6 +56,7 @@ Garantir une lecture et des actions simples sur PC et téléphone : navigation t
 | UX-012 | Demande utilisateur USR-22        | Sur téléphone, le swipe est fluide : la carte suit le doigt sans re-rendu, tient compte de la vitesse (un geste rapide et court suffit), revient en place avec un effet ressort sous le seuil et révèle la carte suivante déjà affichée. |
 | UX-013 | Demande utilisateur USR-22        | Sur ordinateur, la découverte n’impose pas le geste : fiche à tuiles (visuel, pourquoi ce profil, en lien avec vos missions, rythme), file d’attente cliquable, plateau « Ma sélection » et raccourcis clavier affichés (← passer, → sélectionner, ↑ fiche complète, retour arrière annuler). |
 | UX-014 | Constat de maquette USR-25        | Le défilement des fiches reste fluide : aucun flou plein écran (`backdrop-filter`) derrière une zone qui défile ; un voile coloré le remplace. |
+| UX-015 | Demande utilisateur USR-26        | Les fiches en popin longues (fiche conseiller, fiche entreprise) sont organisées en rubriques : en-tête d’identité, onglets et barre d’actions restent visibles, seul le contenu de la rubrique active défile. Chaque rubrique de la fiche conseiller résume son état (pastille « complet » / « à vérifier », mention « Modifié » face à la version publiée). |
 
 ## 4. Interfaces et contrats de données
 
@@ -68,6 +69,8 @@ Navigation : liens avec URL hash, état actualisé dès l’activation, focus co
 Dans l’espace conseiller, ouvrir Plus sélectionne visuellement ce bouton et retire la surbrillance des onglets directs, sans changer la page ni son URL. Fermer Plus restaure l’onglet correspondant à la page courante ; choisir Demandes ou Entreprises maintient Plus sélectionné après fermeture. `aria-expanded` décrit le menu et `aria-current="page"` conserve la page réellement affichée.
 
 Identité « rencontre » (USR-21) : couleur d’action corail `#cc1a47`, dégradé d’action `#e0264a → #cf3d23` (texte blanc lisible), dégradé décoratif `#ff4f6d → #ff8a4c`, encre aubergine `#2b1d2c` et fond crème `#fff8f5`. Chaque carte de profil présente l’avatar non identifiant sur un dégradé propre à la variante, le prénom, la formation et la ville en surimpression, sans pourcentage de compatibilité depuis l’intégration de la V6 (USR-23). Sur téléphone, le contenu de la carte (pourquoi ce profil, faits saillants, en lien avec vos missions, Déclic) défile à l’intérieur de la carte ; un geste vertical lit, un geste horizontal décide. Boutons, onglets, pastilles et navigation active sont arrondis ; l’onglet actif de la navigation porte le dégradé d’action. Les jetons sont définis dans `src/styles.css` et l’habillage dans `src/rencontre.css` et `src/swipe.css`.
+
+Fiches à rubriques (USR-26) : la fenêtre a une hauteur fixe (860 px au plus sur ordinateur, plein écran sur téléphone) pour que le changement de rubrique ne la fasse pas sauter. Sur ordinateur, la fiche conseiller présente ses rubriques dans une colonne verticale (Identité, Formation & rythme, Compétences, Parcours & regard, Coordonnées privées, Publication), avec une ligne de résumé par rubrique ; sur téléphone, elles deviennent des pastilles défilantes et la mention « Modifié » devient un point. La barre d’actions (« Suivant : rubrique », Enregistrer le brouillon, Valider et publier) reste en bas ; une erreur de publication ouvre la rubrique concernée et place le focus sur le champ en cause. La fiche entreprise suit le même principe avec des onglets horizontaux (Vue d’ensemble, Compétences, CV anonymisé, Calendrier) et l’action « Ajouter à ma sélection » toujours visible. Les onglets suivent le motif ARIA « tabs » : flèches, Début et Fin changent de rubrique ; les rubriques inactives restent montées pour conserver les saisies.
 
 Mesures de maquette : contrôles tactiles d’au moins 44 px, options de liste 48 px, champs mobiles à 16 px. Ces valeurs sont des choix de réalisation, pas une règle métier du PDF. Le mouvement réduit est respecté ; les couleurs ont des libellés et ne sont pas l’unique information.
 
@@ -88,11 +91,12 @@ Mesures de maquette : contrôles tactiles d’au moins 44 px, options de liste 4
 - **AC-UX-012** : à 1440 px, flèches gauche/droite, flèche haut et retour arrière passent, sélectionnent, ouvrent la fiche et annulent, hors champs de saisie et dialogues ; la file d’attente permet d’ouvrir un autre profil ; un profil retenu rejoint le plateau.
 
 - **AC-UX-007** : depuis Besoins, ouvrir Plus ne laisse qu’un seul bouton sélectionné visuellement (Plus). Refermer le menu ou activer Besoins restaure sa sélection. Choisir Demandes/Entreprises ferme le menu et conserve Plus sélectionné. Vérifier à 320/390 px et en paysage 740×390.
+- **AC-UX-014** : à 1440×900, chaque rubrique de la fiche conseiller sauf Compétences tient sans défilement, comme les onglets Vue d’ensemble et Compétences de la fiche entreprise (fiche conseiller : environ 5,4 hauteurs d’écran de défilement auparavant) ; à 390 px comme à 1440 px, « Valider et publier », « Enregistrer le brouillon » et « Ajouter à ma sélection » restent visibles quelle que soit la rubrique ; publier sans confirmation ouvre la rubrique Publication et place le focus sur la case de contrôle.
 - **AC-UX-013** : avec un processeur ralenti 4 fois, la fiche conseiller et la fiche entreprise défilent à environ 60 images/s sur ordinateur, sans image de plus de 33 ms.
 
 ## 6. Stratégie de test
 
-`qa-mobile.js`, `qa-mobile-navigation.js`, `qa-selects.js`, `qa-role-picker.js`, `qa-swipe.js` et contrôles axe. Le test Playwright « Swipe : sélectionner ouvre le match, puis le choix reste annulable » couvre AC-ENT-008 sur ordinateur et téléphone, et « Swipe : raccourcis clavier et match limité à la première sélection » couvre AC-UX-012 ; AC-UX-011 a été vérifié par gestes simulés (Playwright, iPhone 13) ; les contrastes d’AC-UX-010 ont été calculés sur les jetons de couleur. Formats déjà contrôlés : jusqu’à 1920 px pour listes ; 320/375/390/430 et 740×390 pour mobile. Les émulations Chromium ne constituent pas une validation sur un iPhone physique/Safari.
+`qa-mobile.js`, `qa-mobile-navigation.js`, `qa-selects.js`, `qa-role-picker.js`, `qa-swipe.js` et contrôles axe. Le test Playwright « Swipe : sélectionner ouvre le match, puis le choix reste annulable » couvre AC-ENT-008 sur ordinateur et téléphone, et « Swipe : raccourcis clavier et match limité à la première sélection » couvre AC-UX-012 ; « UX-015 : fiches en popin organisées en rubriques, actions toujours visibles » couvre AC-UX-014 sur ordinateur et téléphone ; AC-UX-011 a été vérifié par gestes simulés (Playwright, iPhone 13) ; les contrastes d’AC-UX-010 ont été calculés sur les jetons de couleur. Formats déjà contrôlés : jusqu’à 1920 px pour listes ; 320/375/390/430 et 740×390 pour mobile. Les émulations Chromium ne constituent pas une validation sur un iPhone physique/Safari.
 
 ## 7. Justification et contexte
 

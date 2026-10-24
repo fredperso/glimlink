@@ -215,6 +215,7 @@ export function Button({
   disabled = false,
   type = 'button',
   className = '',
+  form,
 }: {
   children: ReactNode;
   onClick?: () => void;
@@ -222,10 +223,12 @@ export function Button({
   disabled?: boolean;
   type?: 'button' | 'submit';
   className?: string;
+  form?: string;
 }) {
   return (
     <button
       type={type}
+      form={form}
       className={`button button-${variant} ${className}`}
       onClick={onClick}
       disabled={disabled}
@@ -260,11 +263,14 @@ export function Modal({
   children,
   onClose,
   wide = false,
+  sheet = false,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
+  // Fiche à rubriques : hauteur fixe, en-tête et actions fixes, seul le panneau actif défile.
+  sheet?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -281,7 +287,7 @@ export function Modal({
   return (
     <dialog
       ref={ref}
-      className={`modal ${wide ? 'modal-wide' : ''}`}
+      className={`modal ${wide ? 'modal-wide' : ''} ${sheet ? 'modal-sheet' : ''}`}
       aria-labelledby="modal-title"
       onCancel={onClose}
       onClick={(e) => {

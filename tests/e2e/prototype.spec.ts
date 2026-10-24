@@ -215,3 +215,45 @@ test('V6 — Mon profil : un site ajouté préremplit le lieu d’un nouveau bes
   await page.getByRole('button', { name: 'Comprendre mon besoin' }).click();
   await expect(page.locator('select[name="location"]')).toHaveValue('Sète');
 });
+
+test('UX-015 : fiches en popin organisées en rubriques, actions toujours visibles', async ({
+  page,
+}) => {
+  await page.goto('http://glimlink.demo/#/adviser/students');
+  await page
+    .locator('.student-row')
+    .filter({ hasText: 'Sophie' })
+    .getByRole('button', { name: 'Ouvrir la fiche' })
+    .click();
+  const dialog = page.getByRole('dialog');
+  const identity = dialog.getByRole('tab', { name: /Identité/ });
+  await expect(identity).toHaveAttribute('aria-selected', 'true');
+  await expect(dialog.getByRole('tabpanel')).toHaveCount(1);
+  await identity.focus();
+  await page.keyboard.press('ArrowDown');
+  await expect(dialog.getByRole('tab', { name: /Formation/ })).toBeFocused();
+  await expect(dialog.getByLabel('Disponible à partir du')).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Valider et publier' })).toBeInViewport();
+  await expect(dialog.getByRole('button', { name: 'Enregistrer le brouillon' })).toBeInViewport();
+  await identity.click();
+  await dialog.locator('#student-firstName').fill('Sophia');
+  await expect(identity).toContainText('Modifié');
+  await dialog.getByRole('button', { name: 'Valider et publier' }).click();
+  await expect(dialog.getByRole('tab', { name: /Publication/ })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(dialog.getByRole('alert')).toContainText('Confirmez le contrôle');
+  await expect(dialog.locator('#student-confirmation')).toBeFocused();
+  await expect(dialog.getByText('Corrections en attente de publication')).toBeVisible();
+  await dialog.locator('#student-confirmation').check();
+  await dialog.getByRole('button', { name: 'Valider et publier' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+
+  await page.goto('http://glimlink.demo/#/company/discover?need=need-admin&view=grid');
+  await page.locator('.talent-card').first().getByRole('button', { name: /Voir le profil/ }).click();
+  await expect(dialog.getByRole('button', { name: /ma sélection/ })).toBeInViewport();
+  await dialog.getByRole('tab', { name: 'Compétences' }).click();
+  await expect(dialog.getByText('Ce que la fiche prouve')).toBeVisible();
+  await expect(dialog.getByRole('button', { name: /ma sélection/ })).toBeInViewport();
+});

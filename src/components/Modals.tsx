@@ -14,7 +14,8 @@ import { CalendarExplorer } from './CalendarViews.tsx';
 import { getCompanies, getCompany } from '../domain/model.ts';
 import CalendarEditor from './CalendarEditor.tsx';
 import PersonalDetailsEditor from './PersonalDetailsEditor.tsx';
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
+import { SheetPanel, SheetTabs, type SheetTab } from './SheetTabs.tsx';
 import { useApp, type ModalState } from '../context.tsx';
 import {
   DAYS,
@@ -32,9 +33,12 @@ import { profileReading } from '../domain/reading.ts';
 import { proposeBrief } from '../domain/brief.ts';
 import { Avatar, Badge, Button, Empty, Icon, Modal, Week, dateLabel } from './ui.tsx';
 
+type ProfileTab = 'overview' | 'skills' | 'cv' | 'calendar';
+
 function Profile({ studentId, needId }: { studentId: string; needId: string }) {
   const { store, setStore, openModal, closeModal, notify } = useApp();
-  const [tab, setTab] = useState<'overview' | 'cv' | 'calendar'>('overview');
+  const [tab, setTab] = useState<ProfileTab>('overview');
+  const panel = useRef<HTMLDivElement>(null);
   const need = store.needs.find((n) => n.id === needId);
   const student = need && visibleStudents(store, need).find((s) => s.id === studentId);
   if (!need || !student)
@@ -51,45 +55,59 @@ function Profile({ studentId, needId }: { studentId: string; needId: string }) {
   const checks = checkAvailability(data, calendar, need);
   const reading = profileReading(student, need, store.calendars);
   const selected = need.selected.includes(student.id);
-  const tabs = [
-    ['overview', 'Vue d’ensemble'],
-    ['cv', 'CV anonymisé'],
-    ['calendar', 'Calendrier de formation'],
-  ] as const;
+  const tabs: SheetTab<ProfileTab>[] = [
+    { id: 'overview', label: 'Vue d’ensemble' },
+    { id: 'skills', label: 'Compétences' },
+    { id: 'cv', label: 'CV anonymisé' },
+    { id: 'calendar', label: 'Calendrier' },
+  ];
+  const toggle = () => {
+    setStore((prev) => ({
+      ...prev,
+      needs: prev.needs.map((n) =>
+        n.id === need.id
+          ? {
+              ...n,
+              selected: selected
+                ? n.selected.filter((id) => id !== student.id)
+                : [...n.selected, student.id],
+              passed: n.passed.filter((id) => id !== student.id),
+            }
+          : n,
+      ),
+    }));
+    notify(selected ? 'Profil retiré de la sélection' : `${data.firstName} ajouté à la sélection`);
+  };
   return (
-    <Modal title="Le talent, au-delà du CV" onClose={closeModal} wide>
-      <div className="profile-header">
-        <Avatar variant={student.avatar} />
-        <div>
-          <div className="profile-title">
-            <h3>{data.firstName}</h3>
-            <Badge tone="green">Fiche validée par le centre</Badge>
+    <Modal title="Le talent, au-delà du CV" onClose={closeModal} wide sheet>
+      <div className="sheet-head">
+        <div className="profile-header">
+          <Avatar variant={student.avatar} />
+          <div>
+            <div className="profile-title">
+              <h3>{data.firstName}</h3>
+              <Badge tone="green">Fiche validée par le centre</Badge>
+            </div>
+            <p>{calendar?.title}</p>
+            <span>
+              <Icon name="pin" size={16} />
+              {data.location} · {data.mobility || 'Mobilité à vérifier'}
+            </span>
           </div>
-          <p>{calendar?.title}</p>
-          <span>
-            <Icon name="pin" size={16} />
-            {data.location} · {data.mobility || 'Mobilité à vérifier'}
-          </span>
         </div>
+        <SheetTabs
+          id="profile"
+          label="Rubriques du profil"
+          tabs={tabs}
+          active={tab}
+          onChange={(next) => {
+            setTab(next);
+            panel.current?.scrollTo({ top: 0 });
+          }}
+        />
       </div>
-      <div className="profile-tabs" role="tablist" aria-label="Rubriques du profil">
-        {tabs.map(([id, text]) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            id={`profile-tab-${id}`}
-            aria-selected={tab === id}
-            aria-controls={`profile-panel-${id}`}
-            className={tab === id ? 'active' : ''}
-            onClick={() => setTab(id)}
-          >
-            {text}
-          </button>
-        ))}
-      </div>
-      {tab === 'overview' && (
-        <div role="tabpanel" id="profile-panel-overview" aria-labelledby="profile-tab-overview">
+      <div className="sheet-panel" ref={panel}>
+        <SheetPanel id="profile" tab="overview" active={tab}>
           <section className="match-explanation">
             <h3>
               <Icon name="spark" /> Pourquoi ce profil pour votre besoin ?
@@ -100,7 +118,76 @@ function Profile({ studentId, needId }: { studentId: string; needId: string }) {
                 <strong>Déclic Glimlink</strong> {reading.declic}
               </p>
             )}
+            <ul className="fact-chips" aria-label="Ce qui ressort">
+              {reading.highlights.map((fact) => (
+                <li key={fact}>{fact}</li>
+              ))}
+            </ul>
           </section>
+          <div className="overview-grid">
+            <section className="profile-section">
+              <h4>
+                <Icon name="brief" size={17} /> En lien avec vos missions
+              </h4>
+              <ul className="mission-links">
+                {reading.missions.map((item) => (
+                  <li key={item.mission} className={`link-${item.status}`}>
+                    <Icon name={item.status === 'unknown' ? 'help' : 'check'} size={15} />
+                    <span>
+                      <strong>{item.mission}</strong>
+                      <small>{item.label}</small>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+            <section className="profile-section">
+              <h4>
+                <Icon name="calendar" size={17} /> Disponibilité et conditions
+              </h4>
+              <div className="profile-facts">
+                <span>
+                  <strong>Disponibilité</strong>
+                  {dateLabel(data.availableFrom)}
+                </span>
+                <span>
+                  <strong>Permis B</strong>
+                  {data.license === 'yes'
+                    ? 'Renseigné'
+                    : data.license === 'no'
+                      ? 'Non détenu'
+                      : 'Non renseigné'}
+                </span>
+                <span>
+                  <strong>Mobilité</strong>
+                  {data.mobility || 'À vérifier'}
+                </span>
+              </div>
+              {checks.length > 0 && (
+                <ul className="check-list">
+                  {checks.map((check, i) => (
+                    <li key={i} className={`check-${check.kind}`}>
+                      <Icon name={check.kind === 'ok' ? 'check' : 'alert'} size={17} />
+                      <span>{check.text}</span>
+                      <Badge tone={check.kind === 'ok' ? 'green' : 'warning'}>
+                        {check.kind === 'ok'
+                          ? 'Renseigné'
+                          : check.kind === 'unknown'
+                            ? 'À vérifier'
+                            : 'Conflit'}
+                      </Badge>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
+          <p className="micro">
+            Lecture simulée à partir de la fiche validée. L’ordre de présentation reste interne :
+            aucun score n’est affiché. La disponibilité reste à confirmer avec le conseiller.
+          </p>
+        </SheetPanel>
+        <SheetPanel id="profile" tab="skills" active={tab}>
           <div className="reading-columns">
             <section>
               <h4>Ce que la fiche prouve</h4>
@@ -125,65 +212,8 @@ function Profile({ studentId, needId }: { studentId: string; needId: string }) {
               </p>
             </section>
           </div>
-          <section className="profile-section">
-            <h3>
-              <Icon name="brief" /> En lien avec vos missions
-            </h3>
-            <ul className="mission-links">
-              {reading.missions.map((item) => (
-                <li key={item.mission} className={`link-${item.status}`}>
-                  <Icon name={item.status === 'unknown' ? 'help' : 'check'} size={15} />
-                  <span>
-                    <strong>{item.mission}</strong>
-                    <small>{item.label}</small>
-                  </span>
-                </li>
-              ))}
-            </ul>
-            {checks.length > 0 && (
-              <ul className="check-list">
-                {checks.map((check, i) => (
-                  <li key={i} className={`check-${check.kind}`}>
-                    <Icon name={check.kind === 'ok' ? 'check' : 'alert'} size={17} />
-                    <span>{check.text}</span>
-                    <Badge tone={check.kind === 'ok' ? 'green' : 'warning'}>
-                      {check.kind === 'ok'
-                        ? 'Renseigné'
-                        : check.kind === 'unknown'
-                          ? 'À vérifier'
-                          : 'Conflit'}
-                    </Badge>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <div className="profile-facts">
-              <span>
-                <strong>Disponibilité</strong>
-                {dateLabel(data.availableFrom)}
-              </span>
-              <span>
-                <strong>Permis B</strong>
-                {data.license === 'yes'
-                  ? 'Renseigné'
-                  : data.license === 'no'
-                    ? 'Non détenu'
-                    : 'Non renseigné'}
-              </span>
-              <span>
-                <strong>Mobilité</strong>
-                {data.mobility || 'À vérifier'}
-              </span>
-            </div>
-            <p className="micro">
-              Lecture simulée à partir de la fiche validée. L’ordre de présentation reste interne :
-              aucun score n’est affiché. La disponibilité reste à confirmer avec le conseiller.
-            </p>
-          </section>
-        </div>
-      )}
-      {tab === 'cv' && (
-        <div role="tabpanel" id="profile-panel-cv" aria-labelledby="profile-tab-cv">
+        </SheetPanel>
+        <SheetPanel id="profile" tab="cv" active={tab}>
           <div className="demo-cv">
             <Badge>CV anonymisé · Exemple fictif</Badge>
             <h3>{data.firstName}</h3>
@@ -199,17 +229,15 @@ function Profile({ studentId, needId }: { studentId: string; needId: string }) {
               devra être réalisée et vérifiée côté serveur.
             </p>
           </div>
-        </div>
-      )}
-      {tab === 'calendar' && (
-        <div role="tabpanel" id="profile-panel-calendar" aria-labelledby="profile-tab-calendar">
+        </SheetPanel>
+        <SheetPanel id="profile" tab="calendar" active={tab}>
           <section className="profile-section">
             <p className="micro">
               {need.requiredDays.length
                 ? `Votre présence obligatoire (${need.requiredDays.join(', ')}) est comparée à ce calendrier.`
                 : 'Vous n’avez exprimé aucune présence obligatoire : ce calendrier n’a pas servi à la recherche et reste consultable.'}
             </p>
-            {calendar && (
+            {calendar && tab === 'calendar' && (
               <CalendarExplorer calendar={calendar} initialDate={need.start} availability={data} />
             )}
             <details>
@@ -221,47 +249,27 @@ function Profile({ studentId, needId }: { studentId: string; needId: string }) {
               />
             </details>
           </section>
-        </div>
-      )}
-      <div className="modal-footer">
-        <span>
+        </SheetPanel>
+      </div>
+      <footer className="sheet-footer">
+        <span className="sheet-footer-note">
           <Icon name="shield" size={16} /> La mise en relation passe par Mathilde.
         </span>
-        <Button
-          onClick={() => {
-            setStore((prev) => ({
-              ...prev,
-              needs: prev.needs.map((n) =>
-                n.id === need.id
-                  ? {
-                      ...n,
-                      selected: selected
-                        ? n.selected.filter((id) => id !== student.id)
-                        : [...n.selected, student.id],
-                      passed: n.passed.filter((id) => id !== student.id),
-                    }
-                  : n,
-              ),
-            }));
-            notify(
-              selected
-                ? 'Profil retiré de la sélection'
-                : `${data.firstName} ajouté à la sélection`,
-            );
-          }}
-        >
-          <Icon name={selected ? 'check' : 'heart'} />
-          {selected ? 'Retirer de la sélection' : 'Ajouter à ma sélection'}
-        </Button>
-        {selected && (
-          <Button
-            variant="secondary"
-            onClick={() => openModal({ kind: 'request', needId: need.id })}
-          >
-            Faire le lien
+        <div className="sheet-actions">
+          {selected && (
+            <Button
+              variant="secondary"
+              onClick={() => openModal({ kind: 'request', needId: need.id })}
+            >
+              Faire le lien
+            </Button>
+          )}
+          <Button onClick={toggle}>
+            <Icon name={selected ? 'check' : 'heart'} />
+            {selected ? 'Retirer de la sélection' : 'Ajouter à ma sélection'}
           </Button>
-        )}
-      </div>
+        </div>
+      </footer>
     </Modal>
   );
 }
@@ -346,6 +354,21 @@ function RequestModal({ needId }: { needId: string }) {
   );
 }
 
+const FIELD_LABELS: Record<keyof StudentDetails, string> = {
+  firstName: 'Prénom',
+  location: 'Localisation',
+  mobility: 'Mobilité',
+  trainingId: 'Formation',
+  skills: 'Compétences',
+  experience: 'Expérience',
+  license: 'Permis',
+  availableFrom: 'Disponibilité',
+  unavailableDays: 'Indisponibilités',
+  note: 'Observations',
+};
+
+type EditorSection = 'identity' | 'training' | 'skills' | 'story' | 'contact' | 'publish';
+
 function StudentEditor({ studentId }: { studentId: string }) {
   const { store, setStore, closeModal, notify, role } = useApp();
   const student = store.students.find((s) => s.id === studentId && s.school === 'campus-a');
@@ -357,6 +380,8 @@ function StudentEditor({ studentId }: { studentId: string }) {
   const [withdraw, setWithdraw] = useState(false);
   const [proposeCv, setProposeCv] = useState(false);
   const [highlight, setHighlight] = useState(!!student?.highlight);
+  const [section, setSection] = useState<EditorSection>('identity');
+  const panel = useRef<HTMLDivElement>(null);
   if (!student || !draft || role !== 'adviser')
     return (
       <Modal title="Fiche inaccessible" onClose={closeModal}>
@@ -364,6 +389,78 @@ function StudentEditor({ studentId }: { studentId: string }) {
       </Modal>
     );
   const calendar = store.calendars.find((c) => c.id === draft.trainingId);
+  const published = student.published;
+  const pending = published
+    ? (Object.keys(draft) as (keyof StudentDetails)[]).filter(
+        (key) => JSON.stringify(draft[key]) !== JSON.stringify(published[key]),
+      )
+    : [];
+  const changed = (...keys: (keyof StudentDetails)[]) => keys.some((key) => pending.includes(key));
+  const skillCount = normalizeSkills(draft.skills).length;
+  const toAssess = draft.skills.filter((skill) => skill.level === 'unknown').length;
+  const sections: SheetTab<EditorSection>[] = [
+    {
+      id: 'identity',
+      label: 'Identité',
+      tone: draft.firstName.trim() && draft.location && draft.mobility ? 'ok' : 'todo',
+      hint: !draft.firstName.trim() || !draft.location
+        ? 'Prénom ou lieu manquant'
+        : draft.mobility
+          ? draft.location
+          : 'Mobilité à vérifier',
+      changed: changed('firstName', 'location', 'mobility'),
+    },
+    {
+      id: 'training',
+      label: 'Formation & rythme',
+      tone: draft.trainingId && calendar?.mode === 'weekly' && draft.license !== 'unknown' ? 'ok' : 'todo',
+      hint: !draft.trainingId
+        ? 'Formation à choisir'
+        : calendar?.mode !== 'weekly'
+          ? 'Calendrier à vérifier'
+          : draft.license === 'unknown'
+            ? 'Permis à vérifier'
+            : `Dès le ${dateLabel(draft.availableFrom)}`,
+      changed: changed('trainingId', 'availableFrom', 'license', 'unavailableDays'),
+    },
+    {
+      id: 'skills',
+      label: 'Compétences',
+      tone: skillCount && !toAssess ? 'ok' : 'todo',
+      hint: !skillCount
+        ? 'Aucune compétence'
+        : `${skillCount} renseignée${skillCount > 1 ? 's' : ''}${toAssess ? ` · ${toAssess} à évaluer` : ''}`,
+      changed: changed('skills'),
+    },
+    {
+      id: 'story',
+      label: 'Parcours & regard',
+      tone: draft.experience.trim() ? 'ok' : 'todo',
+      hint: !draft.experience.trim()
+        ? 'Expérience à préciser'
+        : highlight
+          ? 'Profil à valoriser'
+          : 'Expérience renseignée',
+      changed: changed('experience', 'note'),
+    },
+    { id: 'contact', label: 'Coordonnées privées', hint: 'Jamais publiées' },
+    {
+      id: 'publish',
+      label: 'Publication',
+      tone: confirmed ? 'ok' : 'todo',
+      hint: pending.length
+        ? `${pending.length} correction${pending.length > 1 ? 's' : ''} à valider`
+        : student.status === 'published'
+          ? 'Version publiée à jour'
+          : 'À vérifier puis publier',
+    },
+  ];
+  const current = sections.findIndex((item) => item.id === section);
+  const next = sections[current + 1];
+  const select = (target: EditorSection) => {
+    setSection(target);
+    panel.current?.scrollTo({ top: 0 });
+  };
   const patch = (data: Partial<StudentDetails>) => {
     setDraft({ ...draft, ...data });
     setConfirmed(false);
@@ -378,18 +475,26 @@ function StudentEditor({ studentId }: { studentId: string }) {
     }));
     notify('Brouillon enregistré. La fiche publiée reste inchangée.');
   };
+  // L’erreur reste affichée dans la barre d’actions et la rubrique concernée s’ouvre.
+  const fail = (message: string, target: EditorSection, focus: string) => {
+    setError(message);
+    select(target);
+    requestAnimationFrame(() =>
+      document.querySelector<HTMLElement>(`#editor-panel-${target} ${focus}`)?.focus(),
+    );
+  };
   const publish = (e: FormEvent) => {
     e.preventDefault();
-    if (!draft.firstName.trim() || !draft.trainingId || !normalizeSkills(draft.skills).length) {
-      setError('Renseignez un prénom, une formation et au moins une compétence.');
-      document.getElementById('student-firstName')?.focus();
-      return;
-    }
-    if (!confirmed) {
-      setError('Confirmez le contrôle des données destinées aux entreprises avant la publication.');
-      document.getElementById('student-confirmation')?.focus();
-      return;
-    }
+    const missing = 'Renseignez un prénom, une formation et au moins une compétence.';
+    if (!draft.firstName.trim()) return fail(missing, 'identity', '#student-firstName');
+    if (!draft.trainingId) return fail(missing, 'training', 'button, select');
+    if (!skillCount) return fail(missing, 'skills', 'input');
+    if (!confirmed)
+      return fail(
+        'Confirmez le contrôle des données destinées aux entreprises avant la publication.',
+        'publish',
+        '#student-confirmation',
+      );
     setStore((prev) =>
       publishStudent(
         {
@@ -406,9 +511,25 @@ function StudentEditor({ studentId }: { studentId: string }) {
     closeModal();
     notify('Fiche validée et publiée dans le vivier autorisé.');
   };
+  const display = (key: keyof StudentDetails, value: unknown) => {
+    if (key === 'license')
+      return value === 'yes' ? 'Renseigné' : value === 'no' ? 'Non détenu' : 'À vérifier';
+    if (key === 'trainingId')
+      return store.calendars.find((c) => c.id === value)?.title ?? 'Non renseignée';
+    if (key === 'availableFrom') return dateLabel(String(value ?? ''));
+    return Array.isArray(value)
+      ? value
+          .map((v) =>
+            typeof v === 'object' && v
+              ? `${v.name} (${SKILL_LEVELS[v.level as SkillLevel] ?? 'À évaluer'}, ${v.status === 'learning' ? 'en acquisition' : 'acquise'})`
+              : v,
+          )
+          .join(', ') || 'Aucune'
+      : String(value || 'Non renseigné');
+  };
   return (
-    <Modal title="Vérifier et enrichir la fiche" onClose={closeModal} wide>
-      <div className="editor-header">
+    <Modal title="Vérifier et enrichir la fiche" onClose={closeModal} wide sheet>
+      <div className="editor-header sheet-head">
         <Avatar variant={student.avatar} small />
         <div>
           <h3>
@@ -424,347 +545,355 @@ function StudentEditor({ studentId }: { studentId: string }) {
               : 'Brouillon privé'}
         </Badge>
       </div>
-      <nav className="editor-section-shortcuts" aria-label="Rubriques de la fiche candidat">
-        <Button
-          variant="secondary"
-          onClick={() =>
-            document.getElementById('personal-details-title')?.scrollIntoView({ block: 'start' })
-          }
-        >
-          Coordonnées
-        </Button>
-        <Button
-          variant="secondary"
-          onClick={() =>
-            document.getElementById('skills-title')?.scrollIntoView({ block: 'start' })
-          }
-        >
-          Gérer les compétences
-        </Button>
-      </nav>
-      <PersonalDetailsEditor student={student} />
-      <h3 className="public-details-title">Fiche destinée aux entreprises</h3>
-      <p className="notice">
-        <Icon name="file" size={18} /> Les propositions issues du CV nécessitent votre vérification.
-        La fiche validée est la référence du matching.
-      </p>
-      <form onSubmit={publish}>
-        <div className="form-grid">
-          <label htmlFor="student-firstName">
-            Prénom
-            <input
-              id="student-firstName"
-              name="firstName"
-              autoComplete="off"
-              value={draft.firstName}
-              maxLength={80}
-              onChange={(e) => patch({ firstName: e.target.value })}
-            />
-          </label>
-          <label>
-            Localisation générale
-            <ChoiceSelect
-              name="location"
-              value={draft.location}
-              options={LOCATION_CHOICES}
-              allowCustom
-              onChange={(location) => patch({ location })}
-            />
-          </label>
-        </div>
-        <label>
-          Mobilité du candidat
-          <ChoiceSelect
-            name="mobility"
-            options={CANDIDATE_MOBILITY}
-            value={draft.mobility ?? ''}
-            placeholder="À vérifier"
-            onChange={(mobility) => patch({ mobility })}
-          />
-          <small>
-            Distance acceptée depuis le domicile. Choisir uniquement une mobilité confirmée avec le
-            candidat ; le permis reste une information distincte.
-          </small>
-        </label>
-        {student.published && JSON.stringify(draft) !== JSON.stringify(student.published) && (
-          <details className="pending-comparison" open>
-            <summary>Corrections en attente de publication</summary>
-            <p>La version entreprise est conservée jusqu’à votre validation.</p>
-            <ul>
-              {(Object.keys(draft) as (keyof StudentDetails)[])
-                .filter(
-                  (key) => JSON.stringify(draft[key]) !== JSON.stringify(student.published![key]),
-                )
-                .map((key) => {
-                  const labels: Record<string, string> = {
-                    firstName: 'Prénom',
-                    location: 'Localisation',
-                    mobility: 'Mobilité',
-                    trainingId: 'Formation',
-                    skills: 'Compétences',
-                    experience: 'Expérience',
-                    license: 'Permis',
-                    availableFrom: 'Disponibilité',
-                    unavailableDays: 'Indisponibilités',
-                    note: 'Observations',
-                  };
-                  const display = (value: unknown) => {
-                    if (key === 'license')
-                      return value === 'yes'
-                        ? 'Renseigné'
-                        : value === 'no'
-                          ? 'Non détenu'
-                          : 'À vérifier';
-                    if (key === 'trainingId')
-                      return store.calendars.find((c) => c.id === value)?.title ?? 'Non renseignée';
-                    if (key === 'availableFrom') return dateLabel(String(value ?? ''));
-                    return Array.isArray(value)
-                      ? value
-                          .map((v) =>
-                            typeof v === 'object' && v
-                              ? `${v.name} (${SKILL_LEVELS[v.level as SkillLevel] ?? 'À évaluer'}, ${v.status === 'learning' ? 'en acquisition' : 'acquise'})`
-                              : v,
-                          )
-                          .join(', ') || 'Aucune'
-                      : String(value || 'Non renseigné');
-                  };
-                  return (
-                    <li key={key}>
-                      <strong>{labels[key] ?? key}</strong>
-                      <p>Publié : {display(student.published![key])}</p>
-                      <p>À valider : {display(draft[key])}</p>
-                    </li>
-                  );
-                })}
-            </ul>
-          </details>
-        )}
-        <label>
-          Formation / promotion
-          <Select
-            name="trainingId"
-            value={draft.trainingId}
-            onChange={(e) => patch({ trainingId: e.target.value })}
-          >
-            <option value="">Sélectionner une formation</option>
-            {store.calendars
-              .filter((c) => c.school === student.school)
-              .map((c) => (
-                <option value={c.id} key={c.id}>
-                  {c.title}
-                </option>
-              ))}
-          </Select>
-        </label>
-        <section className="inherited-calendar">
-          <div>
-            <Icon name="calendar" />
-            <strong>Calendrier hérité automatiquement</strong>
-            <Badge tone={calendar?.mode === 'weekly' ? 'green' : 'warning'}>
-              {calendar?.mode === 'weekly' ? 'Renseigné' : 'À vérifier'}
-            </Badge>
-          </div>
-          <Week calendar={calendar} unavailable={draft.unavailableDays} />
-        </section>
-        <div className="form-grid">
-          <label>
-            Disponible à partir du
-            <input
-              name="availableFrom"
-              type="date"
-              value={draft.availableFrom}
-              onChange={(e) => patch({ availableFrom: e.target.value })}
-            />
-          </label>
-          <label>
-            Permis B
-            <Select
-              name="license"
-              aria-label="Permis B"
-              value={draft.license}
-              onChange={(e) => patch({ license: e.target.value as StudentDetails['license'] })}
-            >
-              <option value="unknown">Non renseigné</option>
-              <option value="yes">Oui, vérifié</option>
-              <option value="no">Non détenu</option>
-            </Select>
-          </label>
-        </div>
-        <fieldset>
-          <legend>Indisponibilités individuelles connues</legend>
-          <div className="day-toggles">
-            {DAYS.map((day) => (
-              <label key={day} className={draft.unavailableDays.includes(day) ? 'checked' : ''}>
-                <input
-                  name="unavailableDays"
-                  type="checkbox"
-                  checked={draft.unavailableDays.includes(day)}
-                  onChange={(e) =>
-                    patch({
-                      unavailableDays: e.target.checked
-                        ? [...draft.unavailableDays, day]
-                        : draft.unavailableDays.filter((d) => d !== day),
-                    })
-                  }
-                />
-                {day}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-        <SkillsEditor
-          skills={draft.skills}
-          trainingId={draft.trainingId}
-          calendars={store.calendars.filter((item) => item.school === student.school)}
-          onChange={(skills) => patch({ skills })}
+      <div className="sheet-layout">
+        <SheetTabs
+          id="editor"
+          label="Rubriques de la fiche candidat"
+          tabs={sections}
+          active={section}
+          onChange={select}
+          vertical
         />
-        <label>
-          Expérience pertinente
-          <textarea
-            name="experience"
-            autoComplete="off"
-            rows={3}
-            value={draft.experience}
-            onChange={(e) => patch({ experience: e.target.value })}
-          />
-        </label>
-        <fieldset className="human-knowledge">
-          <legend>Connaissance humaine (facultatif)</legend>
-          <label>
-            Observations factuelles après entretien
-            <textarea
-              name="note"
-              autoComplete="off"
-              rows={2}
-              value={draft.note}
-              placeholder="Ex. : aisance orale observée, projet professionnel construit, écoute…"
-              onChange={(e) => patch({ note: e.target.value })}
-            />
-            <small>
-              Uniquement des faits observés. Glimlink les reprend dans une formulation neutre, sans
-              rubrique dédiée ni qualité supposée.
-            </small>
-          </label>
-          <label className="checkbox-label">
-            <input
-              name="highlight"
-              type="checkbox"
-              checked={highlight}
-              onChange={(e) => setHighlight(e.target.checked)}
-            />{' '}
-            Profil à valoriser (signal interne)
-          </label>
-          <small className="micro">
-            À utiliser exceptionnellement. Le signal reste invisible pour l’entreprise ; il compte
-            seulement dans l’ordre de présentation.
-          </small>
-        </fieldset>
-        <div className="new-cv">
-          <div>
-            <Icon name="file" />
-            <strong>Une nouvelle version du CV ?</strong>
-          </div>
-          <Button variant="secondary" onClick={() => setProposeCv(!proposeCv)}>
-            Simuler un nouveau CV
-          </Button>
-          {proposeCv && (
-            <div className="cv-proposal">
-              <p>
-                <Badge tone="warning">Proposition à confirmer</Badge> Nouvelle compétence proposée :
-                « Outils bureautiques ».
-              </p>
+        <div className="sheet-panel" ref={panel}>
+          <SheetPanel id="editor" tab="contact" active={section}>
+            <PersonalDetailsEditor student={student} />
+          </SheetPanel>
+          <form id="student-form" onSubmit={publish}>
+            <SheetPanel id="editor" tab="identity" active={section}>
+              <h3 className="sheet-title">Identité visible des entreprises</h3>
               <p className="micro">
-                Vos corrections précédentes sont conservées. La proposition reste à évaluer et ne
-                modifie pas la fiche publiée.
+                Seuls le prénom, la localisation générale et la mobilité sont publiés. Nom et
+                coordonnées restent dans la rubrique privée.
               </p>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  patch({
-                    skills: addSkill(draft.skills, {
-                      id: createId(),
-                      name: 'Outils bureautiques',
-                      level: 'unknown',
-                      status: 'learning',
-                      trainingId: null,
-                    }),
-                  });
-                  setProposeCv(false);
-                  notify('Proposition ajoutée au brouillon, à valider avant publication');
-                }}
-              >
-                Accepter dans le brouillon
-              </Button>
-              <Button variant="ghost" onClick={() => setProposeCv(false)}>
-                Ignorer
-              </Button>
-            </div>
-          )}
+              <div className="form-grid">
+                <label htmlFor="student-firstName">
+                  Prénom
+                  <input
+                    id="student-firstName"
+                    name="firstName"
+                    autoComplete="off"
+                    value={draft.firstName}
+                    maxLength={80}
+                    onChange={(e) => patch({ firstName: e.target.value })}
+                  />
+                </label>
+                <label>
+                  Localisation générale
+                  <ChoiceSelect
+                    name="location"
+                    value={draft.location}
+                    options={LOCATION_CHOICES}
+                    allowCustom
+                    onChange={(location) => patch({ location })}
+                  />
+                </label>
+              </div>
+              <label>
+                Mobilité du candidat
+                <ChoiceSelect
+                  name="mobility"
+                  options={CANDIDATE_MOBILITY}
+                  value={draft.mobility ?? ''}
+                  placeholder="À vérifier"
+                  onChange={(mobility) => patch({ mobility })}
+                />
+                <small>
+                  Distance acceptée depuis le domicile. Choisir uniquement une mobilité confirmée
+                  avec le candidat ; le permis reste une information distincte.
+                </small>
+              </label>
+            </SheetPanel>
+            <SheetPanel id="editor" tab="training" active={section}>
+              <h3 className="sheet-title">Formation, rythme et disponibilité</h3>
+              <label>
+                Formation / promotion
+                <Select
+                  name="trainingId"
+                  value={draft.trainingId}
+                  onChange={(e) => patch({ trainingId: e.target.value })}
+                >
+                  <option value="">Sélectionner une formation</option>
+                  {store.calendars
+                    .filter((c) => c.school === student.school)
+                    .map((c) => (
+                      <option value={c.id} key={c.id}>
+                        {c.title}
+                      </option>
+                    ))}
+                </Select>
+              </label>
+              <section className="inherited-calendar">
+                <div>
+                  <Icon name="calendar" />
+                  <strong>Calendrier hérité automatiquement</strong>
+                  <Badge tone={calendar?.mode === 'weekly' ? 'green' : 'warning'}>
+                    {calendar?.mode === 'weekly' ? 'Renseigné' : 'À vérifier'}
+                  </Badge>
+                </div>
+                <Week calendar={calendar} unavailable={draft.unavailableDays} />
+              </section>
+              <div className="form-grid">
+                <label>
+                  Disponible à partir du
+                  <input
+                    name="availableFrom"
+                    type="date"
+                    value={draft.availableFrom}
+                    onChange={(e) => patch({ availableFrom: e.target.value })}
+                  />
+                </label>
+                <label>
+                  Permis B
+                  <Select
+                    name="license"
+                    aria-label="Permis B"
+                    value={draft.license}
+                    onChange={(e) =>
+                      patch({ license: e.target.value as StudentDetails['license'] })
+                    }
+                  >
+                    <option value="unknown">Non renseigné</option>
+                    <option value="yes">Oui, vérifié</option>
+                    <option value="no">Non détenu</option>
+                  </Select>
+                </label>
+              </div>
+              <fieldset>
+                <legend>Indisponibilités individuelles connues</legend>
+                <div className="day-toggles">
+                  {DAYS.map((day) => (
+                    <label
+                      key={day}
+                      className={draft.unavailableDays.includes(day) ? 'checked' : ''}
+                    >
+                      <input
+                        name="unavailableDays"
+                        type="checkbox"
+                        checked={draft.unavailableDays.includes(day)}
+                        onChange={(e) =>
+                          patch({
+                            unavailableDays: e.target.checked
+                              ? [...draft.unavailableDays, day]
+                              : draft.unavailableDays.filter((d) => d !== day),
+                          })
+                        }
+                      />
+                      {day}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            </SheetPanel>
+            <SheetPanel id="editor" tab="skills" active={section}>
+              <SkillsEditor
+                skills={draft.skills}
+                trainingId={draft.trainingId}
+                calendars={store.calendars.filter((item) => item.school === student.school)}
+                onChange={(skills) => patch({ skills })}
+              />
+              <div className="new-cv">
+                <div>
+                  <Icon name="file" />
+                  <strong>Une nouvelle version du CV ?</strong>
+                </div>
+                <Button variant="secondary" onClick={() => setProposeCv(!proposeCv)}>
+                  Simuler un nouveau CV
+                </Button>
+                {proposeCv && (
+                  <div className="cv-proposal">
+                    <p>
+                      <Badge tone="warning">Proposition à confirmer</Badge> Nouvelle compétence
+                      proposée : « Outils bureautiques ».
+                    </p>
+                    <p className="micro">
+                      Vos corrections précédentes sont conservées. La proposition reste à évaluer
+                      et ne modifie pas la fiche publiée.
+                    </p>
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        patch({
+                          skills: addSkill(draft.skills, {
+                            id: createId(),
+                            name: 'Outils bureautiques',
+                            level: 'unknown',
+                            status: 'learning',
+                            trainingId: null,
+                          }),
+                        });
+                        setProposeCv(false);
+                        notify('Proposition ajoutée au brouillon, à valider avant publication');
+                      }}
+                    >
+                      Accepter dans le brouillon
+                    </Button>
+                    <Button variant="ghost" onClick={() => setProposeCv(false)}>
+                      Ignorer
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </SheetPanel>
+            <SheetPanel id="editor" tab="story" active={section}>
+              <h3 className="sheet-title">Parcours et connaissance humaine</h3>
+              <label>
+                Expérience pertinente
+                <textarea
+                  name="experience"
+                  autoComplete="off"
+                  rows={4}
+                  value={draft.experience}
+                  onChange={(e) => patch({ experience: e.target.value })}
+                />
+              </label>
+              <fieldset className="human-knowledge">
+                <legend>Connaissance humaine (facultatif)</legend>
+                <label>
+                  Observations factuelles après entretien
+                  <textarea
+                    name="note"
+                    autoComplete="off"
+                    rows={3}
+                    value={draft.note}
+                    placeholder="Ex. : aisance orale observée, projet professionnel construit, écoute…"
+                    onChange={(e) => patch({ note: e.target.value })}
+                  />
+                  <small>
+                    Uniquement des faits observés. Glimlink les reprend dans une formulation neutre,
+                    sans rubrique dédiée ni qualité supposée.
+                  </small>
+                </label>
+                <label className="checkbox-label">
+                  <input
+                    name="highlight"
+                    type="checkbox"
+                    checked={highlight}
+                    onChange={(e) => setHighlight(e.target.checked)}
+                  />{' '}
+                  Profil à valoriser (signal interne)
+                </label>
+                <small className="micro">
+                  À utiliser exceptionnellement. Le signal reste invisible pour l’entreprise ; il
+                  compte seulement dans l’ordre de présentation.
+                </small>
+              </fieldset>
+            </SheetPanel>
+            <SheetPanel id="editor" tab="publish" active={section}>
+              <h3 className="sheet-title">Fiche destinée aux entreprises</h3>
+              <p className="notice">
+                <Icon name="file" size={18} /> Les propositions issues du CV nécessitent votre
+                vérification. La fiche validée est la référence du matching.
+              </p>
+              <ul className="publish-review">
+                {sections
+                  .filter((item) => item.tone)
+                  .filter((item) => item.id !== 'publish')
+                  .map((item) => (
+                    <li key={item.id}>
+                      <span className={`sheet-dot sheet-dot-${item.tone}`} aria-hidden="true" />
+                      <button type="button" className="text-button" onClick={() => select(item.id)}>
+                        {item.label}
+                      </button>
+                      <small>{item.hint}</small>
+                    </li>
+                  ))}
+              </ul>
+              {pending.length > 0 && (
+                <details className="pending-comparison" open>
+                  <summary>Corrections en attente de publication</summary>
+                  <p>La version entreprise est conservée jusqu’à votre validation.</p>
+                  <ul>
+                    {pending.map((key) => (
+                      <li key={key}>
+                        <strong>{FIELD_LABELS[key] ?? key}</strong>
+                        <p>Publié : {display(key, published![key])}</p>
+                        <p>À valider : {display(key, draft[key])}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+              <label className="confirmation-box">
+                <input
+                  id="student-confirmation"
+                  name="confirmed"
+                  type="checkbox"
+                  checked={confirmed}
+                  onChange={(e) => {
+                    setConfirmed(e.target.checked);
+                    setError('');
+                  }}
+                />
+                <span>
+                  <strong>J’ai vérifié les informations à publier.</strong>
+                  <small>Compétences, disponibilité, calendrier et observations sont contrôlés.</small>
+                </span>
+              </label>
+              {student.status === 'published' && (
+                <div className="withdraw-block">
+                  {withdraw ? (
+                    <>
+                      <p>
+                        Ce talent a trouvé son contrat ? Le retrait le masque des nouveaux
+                        résultats et empêche les nouvelles mises en relation.
+                      </p>
+                      <Button
+                        variant="danger"
+                        onClick={() => {
+                          setStore((prev) => ({
+                            ...prev,
+                            students: prev.students.map((s) =>
+                              s.id === studentId ? { ...s, status: 'withdrawn' } : s,
+                            ),
+                          }));
+                          closeModal();
+                          notify('Profil retiré du vivier. Les demandes existantes sont signalées.');
+                        }}
+                      >
+                        Confirmer le retrait
+                      </Button>
+                      <Button variant="ghost" onClick={() => setWithdraw(false)}>
+                        Annuler
+                      </Button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      className="text-button danger"
+                      onClick={() => setWithdraw(true)}
+                    >
+                      Le talent est placé · retirer du vivier
+                    </button>
+                  )}
+                </div>
+              )}
+            </SheetPanel>
+          </form>
         </div>
-        <label className="confirmation-box">
-          <input
-            id="student-confirmation"
-            name="confirmed"
-            type="checkbox"
-            checked={confirmed}
-            onChange={(e) => {
-              setConfirmed(e.target.checked);
-              setError('');
-            }}
-          />
-          <span>
-            <strong>J’ai vérifié les informations à publier.</strong>
-            <small>Compétences, disponibilité, calendrier et observations sont contrôlés.</small>
-          </span>
-        </label>
+      </div>
+      <footer className="sheet-footer">
         {error && (
           <p className="form-error" role="alert">
             {error}
           </p>
         )}
-        <div className="form-footer">
+        {next && (
+          <button type="button" className="text-button sheet-next" onClick={() => select(next.id)}>
+            Suivant<span className="sheet-next-label"> : {next.label}</span>
+            <Icon name="arrow" size={16} />
+          </button>
+        )}
+        <div className="sheet-actions">
           <Button variant="secondary" onClick={save}>
-            Enregistrer le brouillon
+            <span>
+              Enregistrer<span className="sheet-long"> le brouillon</span>
+            </span>
           </Button>
-          <Button type="submit">
+          <Button type="submit" form="student-form">
             <Icon name="check" size={17} /> Valider et publier
           </Button>
         </div>
-      </form>
-      {student.status === 'published' && (
-        <div className="withdraw-block">
-          {withdraw ? (
-            <>
-              <p>
-                Ce talent a trouvé son contrat ? Le retrait le masque des nouveaux résultats et
-                empêche les nouvelles mises en relation.
-              </p>
-              <Button
-                variant="danger"
-                onClick={() => {
-                  setStore((prev) => ({
-                    ...prev,
-                    students: prev.students.map((s) =>
-                      s.id === studentId ? { ...s, status: 'withdrawn' } : s,
-                    ),
-                  }));
-                  closeModal();
-                  notify('Profil retiré du vivier. Les demandes existantes sont signalées.');
-                }}
-              >
-                Confirmer le retrait
-              </Button>
-              <Button variant="ghost" onClick={() => setWithdraw(false)}>
-                Annuler
-              </Button>
-            </>
-          ) : (
-            <button className="text-button danger" onClick={() => setWithdraw(true)}>
-              Le talent est placé · retirer du vivier
-            </button>
-          )}
-        </div>
-      )}
+      </footer>
     </Modal>
   );
 }

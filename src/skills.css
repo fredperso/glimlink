@@ -264,16 +264,6 @@ body .skills-editor h4,
   color: #475569;
   font-size: var(--text-compact);
 }
-.editor-section-shortcuts {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: 16px 0 24px;
-}
-#skills-title,
-#personal-details-title {
-  scroll-margin-top: 110px;
-}
 @media (max-width: 600px) {
   .skills-editor {
     padding: 16px;
@@ -310,10 +300,6 @@ body .skills-editor h4,
   }
   .formation-learning-skills {
     padding: 16px;
-  }
-  .editor-section-shortcuts .button {
-    flex: 1;
-    white-space: normal;
   }
 }
 

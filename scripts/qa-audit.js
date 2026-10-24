@@ -38,7 +38,7 @@ async (page) => {
     assert((await page.locator('.student-list').innerText()).includes('Sophie'), 'Profil corrigé absent du filtre');
     await page.locator('.student-row').filter({ hasText: 'Sophie' }).getByRole('button', { name: 'Ouvrir la fiche' }).click();
     assert((await page.locator('.pending-comparison').innerText()).includes('Jusqu’à 30 km du domicile'), 'Comparaison des corrections absente');
-    await page.locator('#student-confirmation').check();
+    await page.getByRole('tab', { name: 'Publication' }).click(); await page.locator('#student-confirmation').check();
     await page.getByRole('button', { name: 'Valider et publier' }).click();
     await route('/company/discover?need=need-admin');
     await page.locator('.talent-card').filter({ hasText: 'Sophie' }).getByRole('button', { name: 'Voir le profil' }).click();

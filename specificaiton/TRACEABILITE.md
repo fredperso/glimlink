@@ -72,6 +72,10 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md) et le PDF V6 visuel du 
 
 | USR-24 | Back Java, front sans framework JavaScript (Bootstrap), MFA intégrée, FIDO2 ; rédiger la spécification technique | ACC-009, AC-ACC-007, ARB-021 ; ARC-001–007, AUT-001–011, AUZ-001–006, PER-001–007, FCH-001–004, IAG-001–009, FRT-001–007, INF-001–007, LIV-001–005, EXP-001–006, AC-ARC-001–018 | spec-architecture-technique.md ; proposition technique non réalisée, choix « Conception » à valider en revue |
 
+| USR-25 | Le défilement de la fiche candidat semble lent | UX-014, AC-UX-013 ; ergonomie | styles.css (voile sans flou derrière les fenêtres) ; mesure d’images/s |
+
+| USR-26 | Éviter le long défilement des fiches en popin (onglets ou autre) | UX-015, AC-UX-014, ENT-014, AC-ENT-014, CON-013, AC-CON-009 ; ergonomie, entreprise, conseiller | SheetTabs, Modals (Profile, StudentEditor), ui.tsx (Modal `sheet`), rencontre.css ; test E2E UX-015 |
+
 USR-14 traduit la demande de clôture dans un état explicite confirmé par le conseiller ; elle ne signifie pas clôture dès l’envoi d’une demande. Les règles de réouverture restent ouvertes. Les premières demandes évoquant un « espace candidat » n’ajoutent pas de compte étudiant : aucun écran de ce rôle n’existe dans la V1 actuelle.
 
 ## Couverture du PDF V6

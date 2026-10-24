@@ -1,14 +1,14 @@
 ---
 title: 'Espace conseiller et vivier paginé'
-version: '1.3'
+version: '1.4'
 date_created: 2026-10-08
-last_updated: 2026-10-23
+last_updated: 2026-10-24
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
 pdf_revision: 3
 pdf_sections: [2, 6, 10, 13, 14, 15]
-maquette_revision: travail-local-USR-23
+maquette_revision: travail-local-USR-26
 tags: [specification, design, glimlink]
 ---
 
@@ -54,6 +54,7 @@ Permettre au conseiller de gérer le vivier, vérifier les fiches, consulter les
 | CON-010 | V6 §11, §13 | Une demande de relais (non-sélection) alerte le conseiller et apparaît dans Besoins entreprises avec la date et les pistes calculées ; le conseiller reprend le besoin avec l’entreprise. |
 | CON-011 | V6 §3, §16 | Lors de l’invitation, le conseiller peut préparer un premier besoin ; il reste « À confirmer par l’entreprise » et n’active aucun matching avant confirmation. |
 | CON-012 | V6 §13, §16 | Le conseiller ne voit jamais automatiquement les CV d’autres conseillers ou marques. Un besoin validé est routé vers le conseiller responsable de la formation/niveau, le référent relationnel étant conservé (routage multi-conseillers à réaliser, ARB-019). |
+| CON-013 | Demande utilisateur USR-26 | La fiche « Vérifier et enrichir » est découpée en rubriques (Identité, Formation & rythme, Compétences, Parcours & regard, Coordonnées privées, Publication). La rubrique Publication récapitule l’état de chaque rubrique, les corrections en attente face à la version publiée, la case de contrôle et le retrait du vivier. Le découpage ne change ni les champs, ni la validation, ni la séparation brouillon / version publiée. |
 
 ## 4. Interfaces et contrats de données
 
@@ -75,6 +76,7 @@ La consultation des formations reste dans `#/adviser/calendars` et depuis l’ac
 - **AC-CON-006** : cocher « Profil à valoriser » n’ajoute aucune mention côté entreprise ; seule la position du profil dans Découvrir peut changer.
 - **AC-CON-007** : une demande de relais apparaît dans la cloche (« Relais demandé : aucun profil retenu ») et dans Besoins entreprises avec ses pistes ; la lire la marque comme lue sans modifier les autres besoins.
 - **AC-CON-008** : un premier besoin préparé à l’invitation apparaît « À confirmer par l’entreprise » et ne produit aucun résultat de découverte.
+- **AC-CON-009** : modifier le prénom marque la rubrique Identité « Modifié » ; publier sans avoir coché le contrôle ouvre la rubrique Publication, affiche l’erreur dans la barre d’actions et liste la correction en attente ; une fois la case cochée, la publication ferme la fiche (USR-26).
 
 ## 6. Stratégie de test
 
