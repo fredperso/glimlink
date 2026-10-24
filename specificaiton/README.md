@@ -2,7 +2,7 @@
 title: 'Spécifications fonctionnelles consolidées Glimlink V1'
 version: '1.4'
 date_created: 2026-10-08
-last_updated: 2026-10-23
+last_updated: 2026-10-24
 status: reference-consolidee
 ---
 

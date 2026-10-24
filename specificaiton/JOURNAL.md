@@ -245,3 +245,26 @@ Pour la date et un identifiant unique, consigner : demande ; sources/impact ; d�
 - **Réalisation** : voile `#2b1d2c8c` sans flou derrière les fenêtres (`src/styles.css`).
 - **Fichiers / exigences** : UX-014, AC-UX-013 ; JOURNAL.
 - **Validation exécutée** : mesure après correction : 60 images/s sur les deux fiches (ordinateur et iPhone 13 émulé), aucune image lente sur ordinateur ; `npm test` 59 réussis ; Playwright 22 réussis et 2 ignorés ; capture revue ; spec:check. Mesures en Chromium sans tête : un essai sur appareil réel reste utile.
+
+
+## 2026-10-24 — USR-27 — Variante de déploiement Docker Compose
+
+- **Demande** : « imaginer aussi une architecture basée sur un déploiement avec Docker. Je ne sais pas si Scaleway le fait, mais en tout cas, ce serait le plus simple, je pense. »
+- **Impact** : Aucun changement fonctionnel ; ajout d’une variante d’hébergement dans la spécification technique. Scaleway exécute des images Docker de deux manières : conteneurs serverless (variante A, déjà décrite) ou instance avec Docker Compose (variante B, ajoutée).
+- **Proposition non approuvée** : variante B avec une instance Debian fr-par sans donnée métier ; Compose avec `proxy` (Caddy), `web`, `worker` et `migrate` ; PostgreSQL managé et Object Storage conservés ; groupe de sécurité limité à 80/443 et à SSH depuis l’administration ; conteneurs non root, en lecture seule, sans capacités ; images figées par empreinte ; secrets Compose issus de Secret Manager ; déploiement par SSH à commande forcée avec retour arrière ; reconstruction par OpenTofu et cloud-init ; même `compose.yaml` en local avec PostgreSQL et Mailpit.
+- **Décisions / questions ouvertes** : choix A ou B (ARB-011) ; dimensionnement de l’instance ; objectif de reconstruction (4 heures proposées) ; interruption de quelques secondes au déploiement.
+- **Fichiers / exigences** : architecture technique v1.1 (§1, §3.8, nouveau §3.11 DCK-001–013, §4, §5 AC-ARC-019–023, §6, §7, §8, §9, §10) ; arbitrages ARB-011 ; TRACEABILITE ; JOURNAL.
+- **Validation exécutée** : revue de cohérence avec les exigences communes (AUT, AUZ, LIV, EXP) et PRO-008 ; spec:check. Aucun test applicatif ni build, car le code ne change pas ; l’extrait `compose.yaml` n’a pas été exécuté.
+- **Note** : entrée créée sous le numéro USR-25, renumérotée USR-27 car USR-25 et USR-26 avaient été attribués en parallèle à des demandes d’ergonomie.
+
+
+## 2026-10-24 — USR-28 — Variante B retenue et hébergement des données Scaleway
+
+- **Demande** : « on part sur la variante B, commite tout ça. explique-moi par contre ce que propose Scaleway pour l’hébergement des données. »
+- **Impact** : décision d’hébergement ; aucun changement fonctionnel des parcours ni du code.
+- **Décision acquise** : variante B, Docker Compose sur une instance Scaleway fr-par, retenue ; la variante A reste documentée comme alternative. Le fournisseur reste soumis à AC-ARB-005 (garanties contractuelles, sous-traitants, SecNumCloud).
+- **Précisions ajoutées** : DCK-014 (PostgreSQL managé : accès privé, chiffrement au repos activé à la création, sauvegardes quotidiennes 14 jours, haute disponibilité optionnelle, exports chiffrés par l’application) ; DCK-015 (Object Storage Standard Multi-AZ, SSE-ONE, versionnage, bucket d’exports sans droit de suppression).
+- **Questions ouvertes** : haute disponibilité de la base selon le coût ; disponibilité de SSE-KMS et du verrouillage d’objets ; qualification SecNumCloud de Scaleway toujours annoncée « en cours » (à vérifier sur le catalogue ANSSI).
+- **Sources vérifiées** : https://www.scaleway.com/en/docs/managed-databases-for-postgresql-and-mysql/concepts/ ; https://www.scaleway.com/en/docs/object-storage/faq/ ; https://www.scaleway.com/en/docs/object-storage/how-to/enable-sse-one/ ; https://www.scaleway.com/en/blog/secnumcloud-qualification-trusted-cloud/.
+- **Fichiers / exigences** : architecture technique v1.2 (§1, §3.8, §3.11, EXP-003, lots, §7, §10) ; arbitrages ARB-011 ; TRACEABILITE ; JOURNAL.
+- **Validation exécutée** : spec:check ; revue des sources ci-dessus. Aucun test applicatif ni build, car le code ne change pas.

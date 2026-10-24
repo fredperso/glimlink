@@ -1,8 +1,8 @@
 ---
 title: 'Arbitrages, écarts et travaux de production'
-version: '1.5'
+version: '1.6'
 date_created: 2026-10-08
-last_updated: 2026-10-23
+last_updated: 2026-10-24
 owner: Glimlink
 status: reference-consolidee
 product_version: V1
@@ -53,7 +53,7 @@ Préserver toutes les décisions ouvertes du §20 du PDF V3 et du §21 du [PDF V
 | ARB-008 | Protection des données         | Information/base légale, consentement, droits sans compte étudiant, conservation, suppression, journalisation, âge et données transmises aux fournisseurs (V6 §18, §21). Questions V1 : moment où les coordonnées du candidat peuvent être communiquées, information du candidat, traitement de ses demandes de correction ou de suppression sans compte, responsabilités du centre et des entreprises. Formalisation avec le référent compétent, sans décision juridique inventée. |
 | ARB-009 | Qualification réglementaire IA | Analyse du cadre applicable au classement/matching et responsabilités des acteurs avec les personnes compétentes. Aucune qualification conclue ici.                                                                      |
 | ARB-010 | Notifications/routage          | Multi-marques, référent absent, republication, déduplication, délai mesurable, échec d’envoi (e-mail non délivré) et destinataire de chaque événement (Questions V1). V6 : premier appel après activation, alerte de non-sélection, routage du besoin validé vers le conseiller de la formation/niveau (ARB-019) ; Talent Alerts sans fréquence paramétrable en V1. |
-| ARB-011 | Exploitation/intégrations      | USR-20 impose un cloud souverain européen et privilégie la France. Fournisseur, périmètre de souveraineté et éventuelle qualification SecNumCloud restent à décider ; volumes, temps de réponse, sécurité, sauvegardes, coût IA et intégrations futures restent ouverts. Pages héberge uniquement une démo statique.                                                                  |
+| ARB-011 | Exploitation/intégrations      | USR-20 impose un cloud souverain européen et privilégie la France. Fournisseur, périmètre de souveraineté et éventuelle qualification SecNumCloud restent à décider ; volumes, temps de réponse, sécurité, sauvegardes, coût IA et intégrations futures restent ouverts. Pages héberge uniquement une démo statique. Deux variantes d’hébergement de la même image Docker sont décrites dans l’[architecture technique](spec-architecture-technique.md) : A, conteneurs serverless ; B, Docker Compose sur une instance (USR-27). La variante B est retenue (USR-28) ; fournisseur proposé Scaleway fr-par, garanties contractuelles, sous-traitants et SecNumCloud restent à vérifier (AC-ARB-005).                                                                  |
 | ARB-012 | Validation pilote              | Jeu expert, critères de recette, objectifs de découverte/sélection/relation/délai et périmètre du premier pilote. Recommandation Questions V1 : constituer avant le matching réel des besoins et candidats évalués par les conseillers (correspondance attendue, conflit, information manquante, profil intéressant malgré un parcours différent) pour vérifier l’ordre et la fidélité des explications. |
 | ARB-013 | Extension compétences          | Valider niveaux, descriptions, objectifs pédagogiques et preuve d’acquisition ; exemples actuels ne sont pas un référentiel RNCP.                                                                                        |
 | ARB-014 | Extension UX                   | Définir navigateurs/appareils cibles et recette Safari/clavier virtuel ; confirmer les choix visuels et accessibilité avec utilisateurs.                                                                                 |

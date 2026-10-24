@@ -1,8 +1,8 @@
 ---
 title: 'Architecture technique de production'
-version: '1.0'
+version: '1.2'
 date_created: 2026-10-23
-last_updated: 2026-10-23
+last_updated: 2026-10-24
 owner: Glimlink
 status: proposition-technique
 product_version: V1
@@ -43,7 +43,7 @@ Versions vérifiées le 23 octobre 2026 : Java 25 LTS, Spring Boot 4.1, Spring S
 
 **Objet** : définir l’architecture de production de la V1, de façon à réduire au minimum la surface d’attaque et les erreurs de sécurité écrites à la main.
 
-**Périmètre** : composants applicatifs, authentification et MFA, autorisations et isolation des viviers, persistance, fichiers CV, IA générative, front, infrastructure Scaleway, chaîne de livraison, exploitation, tests et découpage en lots.
+**Périmètre** : composants applicatifs, authentification et MFA, autorisations et isolation des viviers, persistance, fichiers CV, IA générative, front, infrastructure Scaleway, chaîne de livraison, exploitation, tests et découpage en lots. Deux variantes d’hébergement sont décrites pour la même application et la même image Docker : variante A, conteneurs serverless (section 3.8) ; variante B, Docker Compose sur une instance (section 3.11, USR-27). **La variante B est retenue (USR-28, 24 octobre 2026)** ; la variante A reste documentée comme alternative.
 
 **Hors périmètre** : règles métier (spécifications fonctionnelles thématiques) ; choix contractuel final du fournisseur et qualification SecNumCloud (ARB-011) ; qualification juridique RGPD et AI Act (ARB-008, ARB-009) ; compte étudiant (ACC-003) ; intégrations externes (ARB-005).
 
@@ -159,7 +159,9 @@ Versions vérifiées le 23 octobre 2026 : Java 25 LTS, Spring Boot 4.1, Spring S
 | FRT-006 | UX-001–013          | Amélioration progressive : les parcours essentiels fonctionnent sans JavaScript, sauf le geste de swipe, remplacé par des boutons. Objectif d’accessibilité : WCAG 2.2 AA.                                                    |
 | FRT-007 | Conception          | En-têtes : HSTS (1 an, `includeSubDomains`), `X-Content-Type-Options: nosniff`, `Referrer-Policy: same-origin`, `Cross-Origin-Opener-Policy: same-origin`, `Permissions-Policy` qui interdit caméra, micro et géolocalisation et réserve `publickey-credentials-get` et `publickey-credentials-create` à l’origine. |
 
-### 3.8 Infrastructure
+### 3.8 Infrastructure, variante A : conteneurs serverless (alternative non retenue)
+
+Les exigences ARC, AUT, AUZ, PER, FCH, IAG, FRT, LIV et EXP s’appliquent aux deux variantes. INF-001 à INF-007 décrivent la variante A ; INF-002 et INF-004 à INF-007 s’appliquent aussi à la variante B.
 
 | ID      | Source              | Exigence                                                                                                                                                                                                                                                         |
 | ------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -187,14 +189,36 @@ Versions vérifiées le 23 octobre 2026 : Java 25 LTS, Spring Boot 4.1, Spring S
 | ------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | EXP-001 | FIC-004, V6 §21     | Journal d’audit applicatif en ajout seul (le rôle applicatif ne peut qu’insérer). Événements : connexions et échecs, enrôlement et révocation de passkey, consultation d’une fiche complète ou d’un CV source, publication, retrait, export, changement de droits, réinitialisation d’accès. |
 | EXP-002 | Conception          | Journaux techniques structurés (JSON) envoyés vers Cockpit, avec identifiant de corrélation. Ils ne contiennent ni donnée de candidat, ni jeton, ni contenu IA.                                                          |
-| EXP-003 | ARB-011             | Sauvegardes automatiques de la base (rétention proposée : 14 jours) dont la localisation est vérifiée. Versionnage des buckets. Test de restauration trimestriel documenté.                                               |
+| EXP-003 | ARB-011             | Sauvegardes automatiques de la base (rétention proposée : 14 jours, DCK-014) dont la localisation est vérifiée. Versionnage des buckets. Test de restauration trimestriel documenté.                                               |
 | EXP-004 | Conception          | Alertes : taux d’erreurs, échecs d’authentification anormaux, file de tâches bloquée, quota IA atteint, expiration de certificat.                                                                                        |
 | EXP-005 | Conception          | Correctifs de sécurité critiques déployés sous 7 jours (proposition). Revue mensuelle des dépendances et suivi des fins de support de Java, Spring et PostgreSQL.                                                         |
 | EXP-006 | Conception, ARB-008 | Avant l’ouverture : analyse de risques, analyse d’impact relative à la protection des données (AIPD) à évaluer avec le référent données, test d’intrusion externe. Les vulnérabilités élevées sont corrigées avant la mise en production. |
 
+### 3.11 Infrastructure, variante B retenue : Docker Compose sur une instance
+
+Principe : l’instance ne contient aucune donnée métier. Base de données, CV et sauvegardes sont dans des services managés ; l’instance peut être détruite et reconstruite à tout moment depuis le dépôt.
+
+| ID      | Source            | Exigence                                                                                                                                                                                                                                                                   |
+| ------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DCK-001 | USR-28, PRO-008   | Une instance Scaleway (machine virtuelle) en fr-par, système Debian stable minimal, Docker Engine et Docker Compose v2. Dimensionnement proposé : 4 vCPU dédiés et 8 Go de mémoire, à confirmer par l’essai de charge.                                                    |
+| DCK-002 | USR-27, USR-28    | Un fichier `compose.yaml` versionné décrit quatre services : `proxy` (Caddy, terminaison TLS), `web` et `worker` (même image applicative, profils différents), `migrate` (Flyway, lancé uniquement au déploiement).                                                       |
+| DCK-003 | Conception        | Production : PostgreSQL managé joint par le Private Network, Object Storage pour les CV. Aucun volume Docker ne contient de donnée métier. Un conteneur PostgreSQL n’est utilisé qu’en local et en recette jetable.                                                        |
+| DCK-004 | Conception        | Seul `proxy` publie des ports (80 et 443) ; `web` et `worker` n’exposent rien sur l’hôte. Le pare-feu est le groupe de sécurité Scaleway, car Docker contourne les règles locales de type ufw : entrées autorisées 80 et 443 ; 22 uniquement depuis les adresses d’administration ; tout le reste refusé. |
+| DCK-005 | Conception        | Durcissement de chaque conteneur : utilisateur non root, `read_only: true`, `tmpfs` pour `/tmp`, `cap_drop: [ALL]` (seul `proxy` reçoit `NET_BIND_SERVICE`), `no-new-privileges`, limites de mémoire et de CPU, `restart: unless-stopped`. L’image sans shell ne peut pas exécuter de `healthcheck` interne : la santé de `web` est contrôlée par Caddy (vérification active de l’amont) et par le script de déploiement. Le socket Docker n’est jamais monté dans un conteneur. |
+| DCK-006 | Conception        | Images référencées par empreinte (`@sha256:`), jamais par une étiquette mobile. L’image applicative vient du Container Registry privé Scaleway ; les images tierces (Caddy) sont figées et mises à jour par Renovate.                                                       |
+| DCK-007 | Conception, INF-006 | Secrets fournis par `secrets:` de Compose (fichiers de l’hôte en mode 0400, propriété root), créés une fois par l’administrateur depuis Secret Manager. Spring Boot les lit par `configtree:/run/secrets/`. Aucun secret dans `compose.yaml`, dans le dépôt ni dans GitHub, hors clé de déploiement. |
+| DCK-008 | Conception        | Déploiement : GitHub Actions construit et analyse l’image, la publie au registre, puis se connecte en SSH avec un compte `deploy` dont la clé est restreinte à une commande forcée (`command="…/deploy",restrict`). Cette commande n’accepte qu’une empreinte d’image ; elle lance `migrate`, redémarre `worker` puis `web`, vérifie la santé et revient à l’empreinte précédente en cas d’échec. |
+| DCK-009 | Conception        | Hôte : connexion SSH par clé uniquement, connexion root interdite, mises à jour de sécurité automatiques (unattended-upgrades) avec fenêtre de redémarrage, rotation des journaux Docker (`max-size`, `max-file`), `live-restore` activé. Compte administrateur nominatif ; le groupe `docker` vaut des droits root et est limité aux comptes `deploy` et d’administration. |
+| DCK-010 | Conception        | Reconstruction : l’instance, le groupe de sécurité et le Private Network sont décrits en infrastructure as code (OpenTofu, fournisseur Scaleway) et initialisés par cloud-init. Une reconstruction complète depuis zéro est testée chaque trimestre. Objectif proposé : service rétabli en moins de 4 heures. |
+| DCK-011 | Conception, EXP-002 | Journaux et métriques : un agent de collecte (Grafana Alloy) transmet les journaux des conteneurs et les métriques de l’hôte à Cockpit. Une sonde externe vérifie la disponibilité de la page de santé publique.                                                         |
+| DCK-012 | Conception        | Interruption acceptée de quelques secondes au déploiement, compte tenu de la volumétrie. Les déploiements de production ont lieu hors des heures d’usage principales.                                                                                                    |
+| DCK-013 | Conception        | Le même `compose.yaml`, complété par `compose.override.yaml` en local, lance l’application complète sur un poste : PostgreSQL de la même version majeure, Mailpit pour les e-mails, stockage des CV sur disque local, réponses IA enregistrées. Aucune donnée réelle en local. |
+| DCK-014 | PRO-008, PER-004  | Base : Managed Database for PostgreSQL en fr-par, joignable uniquement par le Private Network ; chiffrement au repos activé dès la création (volume chiffré, clé gérée par Scaleway, irréversible une fois activé) ; sauvegardes automatiques quotidiennes conservées 14 jours ; nœud de secours en haute disponibilité optionnel, à décider selon le coût. Les sauvegardes logiques n’étant pas chiffrées par le service, un export complémentaire éventuel est chiffré par l’application avant dépôt. |
+| DCK-015 | PRO-008, FCH-002  | Fichiers : Object Storage en fr-par, classe Standard Multi-AZ (trois zones de disponibilité), bucket privé, chiffrement côté serveur SSE-ONE activé, versionnage activé. Un bucket distinct, sans droit de suppression pour l’application, reçoit les exports chiffrés. La disponibilité de SSE-KMS et du verrouillage d’objets est vérifiée au lot 0. |
+
 ## 4. Interfaces et contrats de données
 
-### Vue d’ensemble
+### Vue d’ensemble, variante A
 
 ```text
 Navigateur (HTML + Bootstrap + htmx + modules ES)
@@ -210,6 +234,24 @@ Serverless Container « web » (Spring Boot)      Serverless Container « worker
    web/worker ─► Object Storage privé (CV source, CV anonymisé généré)
    worker ─────► Generative APIs (fr-par)   worker ─► Transactional Email
    web/worker ─► Secret Manager             web/worker ─► Cockpit (journaux, métriques)
+```
+
+### Vue d’ensemble, variante B
+
+```text
+Internet ── groupe de sécurité (80, 443 ; 22 depuis l’administration)
+   ▼
+Instance Scaleway fr-par (Debian, Docker Compose) — aucune donnée métier
+   ├─ proxy  (Caddy, TLS)        ports 80/443 publiés
+   ├─ web    (Spring Boot)       réseau Docker interne, aucun port publié
+   ├─ worker (Spring Boot)       réseau Docker interne, aucun port publié
+   ├─ migrate (Flyway)           lancé seulement au déploiement
+   └─ alloy  (collecte)          journaux et métriques vers Cockpit
+   │ Private Network (TLS)
+   ▼
+Managed PostgreSQL (sauvegardes managées)     Object Storage privé (CV)
+worker ─► Generative APIs, Transactional Email (fr-par)
+GitHub Actions ─► Container Registry ─► SSH à commande forcée ─► script deploy
 ```
 
 ### Modules et correspondance avec la maquette
@@ -290,7 +332,7 @@ Le découpage suit les priorités V6 §22, précédé d’un socle de sécurité
 
 | Lot | Contenu                                                                                         | Priorités V6 couvertes |
 | --- | ----------------------------------------------------------------------------------------------- | ---------------------- |
-| 0   | Infrastructure de recette, intégration continue, socle Spring, FIDO2, sessions, audit, en-têtes | Préalable              |
+| 0   | Infrastructure de recette (variante B, OpenTofu et cloud-init), `compose.yaml` local, intégration continue, socle Spring, FIDO2, sessions, audit, en-têtes | Préalable              |
 | 1   | Organisation, droits, RLS, invitation entreprise, profil multi-sites, administration            | 1                      |
 | 2   | Import de CV, extraction IA, validation et publication conseiller, observations, signal interne  | 5, 8                   |
 | 3   | Besoin libre, reformulation IA, brief complet, calendrier si exprimé                            | 2, 3, 4                |
@@ -318,6 +360,11 @@ Le découpage suit les priorités V6 §22, précédé d’un socle de sécurité
 - **AC-ARC-016** : Étant donné une Talent Alert envoyée par e-mail, quand le message est inspecté, alors il ne contient aucune donnée de candidat, seulement un lien vers l’application.
 - **AC-ARC-017** : Étant donné une session de conseiller inactive depuis plus de 30 minutes, quand une page est demandée, alors une nouvelle authentification est exigée ; après déconnexion, l’ancien cookie de session n’ouvre plus aucune page.
 - **AC-ARC-018** : Étant donné un administrateur qui a perdu ses passkeys, quand une réinitialisation est demandée, alors elle n’aboutit qu’après validation par un second administrateur et elle est journalisée.
+- **AC-ARC-019** (variante B) : Étant donné l’instance de production, quand ses ports sont balayés depuis Internet, alors seuls 80 et 443 répondent ; le port 22 ne répond que depuis une adresse d’administration.
+- **AC-ARC-020** (variante B) : Étant donné les conteneurs en marche, quand leur configuration est inspectée (`docker inspect`), alors aucun ne tourne en root (hors démarrage de `proxy`), tous ont un système de fichiers en lecture seule et aucune capacité superflue, et aucun ne monte le socket Docker.
+- **AC-ARC-021** (variante B) : Étant donné la clé SSH de déploiement, quand elle sert à demander un shell ou une commande autre qu’une empreinte d’image valide, alors la demande est refusée et journalisée.
+- **AC-ARC-022** (variante B) : Étant donné un déploiement dont la vérification de santé échoue, quand le script se termine, alors l’empreinte précédente est de nouveau en service et l’échec est signalé dans GitHub Actions.
+- **AC-ARC-023** (variante B) : Étant donné l’instance de production détruite, quand l’infrastructure est recréée par OpenTofu et cloud-init puis l’application déployée, alors le service est rétabli sans perte de donnée, et la durée est consignée.
 
 ## 6. Stratégie de test
 
@@ -328,6 +375,7 @@ Le découpage suit les priorités V6 §22, précédé d’un socle de sécurité
 - **IA** : réponses de modèle enregistrées pour les tests automatisés ; jeu d’évaluation de CV et de besoins fictifs, dont des injections de prompt et des CV dégradés, rejoué à chaque changement de prompt ou de modèle (lien avec ARB-012).
 - **Sécurité dynamique** : OWASP ZAP en mode passif sur la recette à chaque déploiement ; test d’intrusion externe au lot 6.
 - **Recette métier** : V3-01 à V3-12 et scénarios V6 (REC-007) réécrits en JUnit et Playwright Java, avec les mêmes identifiants.
+- **Docker (variante B)** : `docker compose config` validé et `compose.yaml` analysé par Trivy en mode configuration à chaque fusion ; parcours E2E exécutés contre la pile Compose locale ; AC-ARC-019 à AC-ARC-023 vérifiés sur la recette.
 - **Charge** : essai léger (Gatling) au niveau de l’hypothèse de dimensionnement de la section 1.
 - **Couverture** : chaque règle de domaine et chaque règle d’autorisation possède au moins un test nommé ; aucun pourcentage global n’est imposé.
 - **Intégration continue** : tous les tests et contrôles LIV-002 bloquent la fusion dans `main`.
@@ -341,6 +389,19 @@ Le découpage suit les priorités V6 §22, précédé d’un socle de sécurité
 - **CV anonymisé généré** : expurger un fichier source laisse des risques (calques, métadonnées, texte masqué). Générer le CV depuis la version publiée reprend le comportement de la maquette.
 - **Monolithe modulaire** : un seul déploiement, une seule base, exploitation simple, adaptés à la volumétrie visée.
 - **Scaleway** : PRO-008 et compte existant (ANAL-003).
+- **Deux variantes d’hébergement (USR-27)** : les deux exécutent la même image Docker ; Scaleway accepte une image Docker en conteneur serverless (A) comme sur une instance (B).
+
+| Critère                         | A : conteneurs serverless                          | B : Docker Compose sur instance                                        |
+| ------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------- |
+| Compréhension et reproduction   | Configuration répartie dans la console ou OpenTofu | Un seul `compose.yaml`, identique en local et en production            |
+| Système d’exploitation à gérer  | Aucun : géré par Scaleway                          | Debian, Docker, SSH et mises à jour à la charge de l’équipe            |
+| Surface d’attaque               | Pas de SSH ni d’hôte exposé                        | Hôte et SSH à durcir (DCK-004, DCK-009)                               |
+| Déploiement                     | API Scaleway depuis GitHub Actions                 | SSH à commande forcée et script                                        |
+| Portabilité                     | Liée à l’API Serverless Containers                 | Transposable chez tout hébergeur européen qui fournit une machine virtuelle |
+| Disponibilité                   | Redémarrage et mise à l’échelle gérés              | Une seule instance ; reconstruction en moins de 4 heures (DCK-010)     |
+| Coût                            | À l’usage, avec instances minimales actives        | Prix fixe d’une instance                                               |
+
+Décision USR-28 : variante B retenue. Recommandation initiale : la variante B si la simplicité de compréhension, l’identité local/production et la portabilité priment, à condition d’accepter l’entretien de l’hôte. La variante A si l’on veut supprimer toute administration système. Dans les deux cas, base et fichiers restent dans des services managés : la donnée ne dépend jamais de l’instance.
 - **Alternatives écartées** : Django (ANAL-005) et Node.js (ANAL-003), remplacés par la décision Java ; SPA React, surface plus large ; fournisseur d’identité externe (Keycloak), écarté car la MFA est demandée dans l’application, mais il reste une solution de repli si le besoin d’authentification grandit (fédération, SSO des écoles).
 
 ## 8. Dépendances et intégrations
@@ -358,6 +419,7 @@ Le découpage suit les priorités V6 §22, précédé d’un socle de sécurité
 
 - **INF-DEP-001** : Serverless Containers avec Private Network. Limite connue : pas de trafic entrant depuis le réseau privé, un seul réseau privé par conteneur ; le worker consulte la file et n’a pas besoin de trafic entrant.
 - **INF-DEP-002** : Managed Database for PostgreSQL (accès privé, sauvegardes), Object Storage, Secret Manager, Container Registry, Cockpit.
+- **INF-DEP-003** (variante B) : Instances Scaleway avec groupe de sécurité et Private Network ; Docker Engine et Docker Compose v2 ; Caddy ; autorité de certification ACME pour les certificats TLS (elle ne reçoit aucune donnée applicative) ; OpenTofu et cloud-init.
 
 ### Dépendances de données
 
@@ -401,6 +463,82 @@ CREATE POLICY company_reads_authorised_brands ON student.student_publication
 
 Dans la réalisation, une politique distincte s’applique par rôle. Cet exemple ne montre que la branche entreprise.
 
+Extrait indicatif de `compose.yaml` pour la production en variante B (empreintes et domaine à remplacer) :
+
+```yaml
+name: glimlink
+
+x-hardening: &hardening
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: ['no-new-privileges:true']
+  restart: unless-stopped
+
+services:
+  proxy:
+    <<: *hardening
+    image: caddy@sha256:<empreinte>
+    cap_add: [NET_BIND_SERVICE]
+    ports: ['80:80', '443:443']
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    networks: [edge]
+
+  web:
+    <<: *hardening
+    image: rg.fr-par.scw.cloud/glimlink/app@sha256:${APP_DIGEST}
+    command: ['--spring.profiles.active=production,web']
+    env_file: ./app.env
+    secrets: [db_password, s3_secret_key, ai_api_key, mail_api_key]
+    mem_limit: 1536m
+    networks: [edge, backend]
+
+  worker:
+    <<: *hardening
+    image: rg.fr-par.scw.cloud/glimlink/app@sha256:${APP_DIGEST}
+    command: ['--spring.profiles.active=production,worker']
+    env_file: ./app.env
+    secrets: [db_password, s3_secret_key, ai_api_key, mail_api_key]
+    mem_limit: 1536m
+    networks: [backend]
+
+  migrate:
+    <<: *hardening
+    image: rg.fr-par.scw.cloud/glimlink/app@sha256:${APP_DIGEST}
+    command: ['--spring.profiles.active=production,migrate']
+    env_file: ./migrate.env
+    secrets: [db_owner_password]
+    restart: 'no'
+    profiles: [deploy]
+    networks: [backend]
+
+networks:
+  edge: {}
+  backend: {}
+
+volumes:
+  caddy_data: {}
+
+secrets:
+  db_password: { file: /etc/glimlink/secrets/db_password }
+  db_owner_password: { file: /etc/glimlink/secrets/db_owner_password }
+  s3_secret_key: { file: /etc/glimlink/secrets/s3_secret_key }
+  ai_api_key: { file: /etc/glimlink/secrets/ai_api_key }
+  mail_api_key: { file: /etc/glimlink/secrets/mail_api_key }
+```
+
+Le réseau `backend` n’est pas marqué `internal`, car `web` et `worker` doivent joindre la base managée par le Private Network ainsi que les API IA et e-mail. Seul `proxy` publie des ports.
+
+Clé de déploiement restreinte, dans `~deploy/.ssh/authorized_keys` :
+
+```text
+command="/opt/glimlink/bin/deploy",restrict ssh-ed25519 AAAA… github-actions-glimlink
+```
+
+Le script `deploy` lit l’empreinte dans `SSH_ORIGINAL_COMMAND`, la refuse si elle ne correspond pas à `^[0-9a-f]{64}$`, conserve l’empreinte précédente, puis exécute `docker compose pull`, `docker compose --profile deploy run --rm migrate` et `docker compose up -d worker web`. Il vérifie ensuite la santé par `https://<domaine>/sante` et revient à l’empreinte précédente si la vérification échoue.
+
 Cas limites :
 
 - **Passkey perdue par un conseiller** : il ne peut pas se connecter ; un administrateur réinitialise l’accès (AUT-008) et une nouvelle invitation d’enrôlement est envoyée. Les sessions et passkeys existantes sont révoquées.
@@ -415,11 +553,11 @@ Cas limites :
 
 Avant l’ouverture de la production :
 
-1. Critères AC-ARC-001 à AC-ARC-018 vérifiés et preuves archivées.
+1. Critères AC-ARC-001 à AC-ARC-023 vérifiés sur la variante B (USR-28) ; preuves archivées.
 2. Scénarios V3-01 à V3-12 et V6 réussis en JUnit et Playwright Java.
 3. Liste de contrôle ASVS 5.0 (ARC-007) renseignée ; écarts acceptés par écrit.
 4. Test d’intrusion externe réalisé ; aucune vulnérabilité élevée ou critique ouverte.
-5. Dossier PRO-008 (AC-ARB-005) complété pour chaque service de la section 3.8.
+5. Dossier PRO-008 (AC-ARB-005) complété pour chaque service de la variante retenue (section 3.8 ou 3.11).
 6. ARB-008 (conservation, AIPD) et ARB-021 (authentification des entreprises) décidés ; ARB-009 instruit.
 7. Restauration de sauvegarde testée (AC-ARC-014).
 8. Revue de cette spécification par l’équipe de réalisation ; les choix « Conception » acceptés ou modifiés sont consignés dans JOURNAL.md.
