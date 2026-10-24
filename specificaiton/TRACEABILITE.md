@@ -1,7 +1,7 @@
 ---
 title: 'Traçabilité PDF, demandes et maquette'
 date_created: 2026-10-08
-last_updated: 2026-10-23
+last_updated: 2026-10-24
 ---
 
 # Traçabilité
@@ -77,6 +77,16 @@ Le PDF V3 est archivé dans [SOURCE_V3.md](SOURCE_V3.md) et le PDF V6 visuel du 
 | USR-26 | Éviter le long défilement des fiches en popin (onglets ou autre) | UX-015, AC-UX-014, ENT-014, AC-ENT-014, CON-013, AC-CON-009 ; ergonomie, entreprise, conseiller | SheetTabs, Modals (Profile, StudentEditor), ui.tsx (Modal `sheet`), rencontre.css ; test E2E UX-015 |
 
 | USR-29 | Replier le formulaire d’ajout dans la rubrique Compétences | CMP-009, AC-CMP-006 ; compétences | Skills.tsx (bouton dépliable), skills.css ; test E2E UX-015 |
+
+| USR-27 | Imaginer aussi une architecture de déploiement Docker, jugée la plus simple | DCK-001–013, AC-ARC-019–023, ARB-011 ; architecture technique, arbitrages | spec-architecture-technique.md §3.11 ; variante B proposée, choix A/B ouvert |
+
+| USR-28 | Retenir la variante B (Docker Compose sur une instance) | DCK-001–015, AC-ARC-019–023, ARB-011 ; architecture technique, arbitrages | spec-architecture-technique.md v1.2 ; décision d’hébergement, aucune infrastructure créée |
+
+| USR-30 | Héberger chez OVHcloud (compte et domaine existants) avec Brevo pour les e-mails | IAG-002, INF-004–007, EXP-002, DCK-001, DCK-003–004, DCK-006–007, DCK-010–011, DCK-014–016, ARB-011 ; architecture technique, arbitrages | spec-architecture-technique.md v1.3 ; décision de fournisseur, aucune infrastructure créée |
+
+| USR-31 | Servir l’application sur app.glimlink.com dans un premier temps | INF-004, AUT-007 ; architecture technique | spec-architecture-technique.md v1.4 ; enregistrement DNS à créer avec l’instance |
+
+| USR-32 | Recette seule, images Docker sur GitHub Container Registry | DCK-006 ; architecture technique | spec-architecture-technique.md v1.5 ; projet glimlink-recette et serveur glimlink-recette-01 créés (OPS-006, OPS-007) |
 
 USR-14 traduit la demande de clôture dans un état explicite confirmé par le conseiller ; elle ne signifie pas clôture dès l’envoi d’une demande. Les règles de réouverture restent ouvertes. Les premières demandes évoquant un « espace candidat » n’ajoutent pas de compte étudiant : aucun écran de ce rôle n’existe dans la V1 actuelle.
 
